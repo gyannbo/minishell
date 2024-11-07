@@ -339,10 +339,12 @@ ls aaaa' 'aaaaaaaaa sssss' 'aa s' 'ssssssssss
 ls aaaa'     'aaaaa aaaaa"     "aaaa
 ls pourquoi'allo'lol"pourquoi"allo
 'ls' a''''a'''s' 
+ls aaa'aaa'aaa's's sss'sss'sss'ss'ss
+ls '    '    '   '  '   ''      '
+ls '   ''    '  '     ''    '
 
 NOT OK:
-ls aaa'aaa'aaa's's sss'sss'sss'ss'ss
-ls '    a    ''    a   '    'dddd      '  pareil
+ls '    a    ''    a   '    'dddd      '
 ls aaaaaaaaaaa'aaaaaaa'aaaaaaa aaaaaaa'aaaaaaa'aaaaaaa saaaaaaaaaaa'aaaaaaa'aaaaaaaaaa   'aaaa'a aaaaaaaaa'aaaaaaaaaaaaa' 'aaaaa' 'aaaaaaaaaa' 'aaaaaaaaaaa'
 
 
