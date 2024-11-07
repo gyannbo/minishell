@@ -966,3 +966,52 @@ Le probleme aussi c'est que count next quote repose sur un tab qui fonctionne, s
 j'incŕmente count lorsque ya des mutliples quotes tok, mais que se passe t il lorqu'il n'y a qu'un seul pair de quotes, est ce que je laisse quote pars incrémenter count? non je ne pense
 pas car sinon ce serait compliqué, entre gére le changement de type si jamais dans mutiple tok, et aussi gérer le cas dans manage count de quand il y a une seule pairs de quote, je 
 pense que c'est plus simple de faire un seul endroit ou on manage count.
+
+
+
+
+en fait pour count dans les fonctions qui manage le nouveau token, on est sur a priori d'avoir le bon type quand on commence a checker avec count (le bon type pour la premiere quote que l'on
+va rencontrer) Et donc pour l'entrée dans la foncion on peut checker avec type, c'est après que l'on devra probablement faire attention a lorsque ça change de type de quotes.
+ 
+Et en ce moment ça fonctionne car lorsque j'ai un token avec des quotes non multiple au debut, genre 'ls', count est incrémenté dans quote parsing, et après dans la cmd_strb tout fonctionne
+car on a la bonne quote de base, et count est bien incrémenté pour sauter les quotes deja utilisées.
+Non je viens de voir qu'il y a un probleme.
+ 
+aves 'ls' "allo"allo'allo'
+   
+ 
+ 
+ 
+Ah ouai en fait indépendamment de token avec multiple quote, je crois que meme des tokens avec plusieurs quotes d'affilée ça fonctionne pas. Et qu'il y a un probleme dans get next i de
+copy outside.
+ 
+ 
+ 
+   
+   
+   
+ 
+Ouai je viens de trouver le probleme, 
+ 
+ls a'   'a  sss'   'sss ddddddd'      'dddddddd
+ 
+Avec une commande comme ça, ya rien qui fonctionne en fait. A cause de la fonction get next i dans copy outside
+ 
+ 
+en fait ça fonctionne, mais seulement pour la premiere occurrence, je dois juste corriger pour que les autres ois ça va
+ 
+Ouai dès que je mets 'ls' avant ça exploser complètement les choses.
+
+
+
+
+
+Première chose, corriger la fontion dans copy outside pour qu'elle fonctionne lorsqu'il y a des multiples quote token mais avec juste un seul couple de quotes.
+Ensuite on fera le truc avec count.
+Parce que je crois que ça devrait fonctionner quand meme sur des trucs comme ls aaa'    'aaa ss'   'ss d'    'd
+
+
+
+
+
+ls aaaa'aaaa'aaaa'aaaa'aaa wewee'eeee'eee'eeeee'

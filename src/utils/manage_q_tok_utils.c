@@ -25,7 +25,7 @@ static size_t	get_next_i(t_values *v, size_t count_next_quote, size_t *calc_righ
 	type = 0;
 	while (v->cmd_str_b[i])
 	{
-		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
+		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')				//normalement si je change cette boucle pour utiliser count je devrais régler mes problèmes.		// je pense que normalement je peux juste avoir count pour démarrer au début sur la bonne quote, et après on dirait que tout fonctionne. je devrais juste après checker pour count
 		{
 			if (type && type == v->cmd_str_b[i])
 			{
