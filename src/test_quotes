@@ -335,15 +335,16 @@ ls aaa"aaaa"'    a'aaaa
 ls aaaa'     aaaaa'aaaa'    aaa'aaaaa''
 'ls' allo'allo'allo
 "ls" 'allo'allo"allo"
+ls aaaa' 'aaaaaaaaa sssss' 'aa s' 'ssssssssss
+ls aaaa'     'aaaaa aaaaa"     "aaaa
+ls pourquoi'allo'lol"pourquoi"allo
+'ls' a''''a'''s' 
 
 NOT OK:
 ls aaa'aaa'aaa's's sss'sss'sss'ss'ss
-'ls' a''''a'''s'   // je pense que pour clui la cest juste que jai pas encore build
 ls '    a    ''    a   '    'dddd      '  pareil
 ls aaaaaaaaaaa'aaaaaaa'aaaaaaa aaaaaaa'aaaaaaa'aaaaaaa saaaaaaaaaaa'aaaaaaa'aaaaaaaaaa   'aaaa'a aaaaaaaaa'aaaaaaaaaaaaa' 'aaaaa' 'aaaaaaaaaa' 'aaaaaaaaaaa'
 
-ls aaaa' 'aaaaaaaaa sssss' 'aa s' 'ssssssssss
-ls aaaa'     'aaaaa aaaaa"     "aaaa
 
 
 envvar  with quotes between token collé : ls 'allo'$envvarquotes'test' etc
@@ -1061,3 +1062,13 @@ minishell$ ls pourquoi'allo'lol"pourquoi"allo
 ls: cannot access 'pourquoiallololpourquoi': No such file or directory
 minishell$ ls pourquoi'allo'lol'pourquoi'allo
 celui la fonctionnait
+
+
+
+
+
+
+
+----------------------------------
+
+Oui donc verdict j'ai pas besoin de temp comme je disais le tableau de count parce que je l'utilise seulement pour aller sur le premier charactere lorsque j'en ai besoin.

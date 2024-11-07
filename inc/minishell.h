@@ -42,6 +42,7 @@ typedef struct s_quote
 	bool	two_type;
 	int		count[50];		// at wich quote to start in cmd_str_b	(or how many to skip)
 	char	type;
+	char	first_type;
 	int		*tab;
 	int	pos;
 	size_t	new_tok_size;
