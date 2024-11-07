@@ -342,10 +342,10 @@ ls pourquoi'allo'lol"pourquoi"allo
 ls aaa'aaa'aaa's's sss'sss'sss'ss'ss
 ls '    '    '   '  '   ''      '
 ls '   ''    '  '     ''    '
-
-NOT OK:
 ls '    a    ''    a   '    'dddd      '
 ls aaaaaaaaaaa'aaaaaaa'aaaaaaa aaaaaaa'aaaaaaa'aaaaaaa saaaaaaaaaaa'aaaaaaa'aaaaaaaaaa   'aaaa'a aaaaaaaaa'aaaaaaaaaaaaa' 'aaaaa' 'aaaaaaaaaa' 'aaaaaaaaaaa'
+
+NOT OK:
 
 
 
