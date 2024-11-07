@@ -1,0 +1,15 @@
+
+
+--------------
+env
+
+env has to be able to execute a program with an env that is given on the command line (for example a variable, or even several variables ?)
+Yes it needs to be able to have several variables passed to the programm to execute
+
+
+
+--------------
+cd
+
+there is a things about cd in the man, that it has to manage a certain way the two dots, or what is before, and also something about the
+symbolic links.

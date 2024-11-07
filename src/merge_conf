@@ -1,0 +1,12 @@
+Merge made by the 'ort' strategy.
+ inc/minishell.h       |  4 ++--
+ src/check_match.c     |  2 +-
+ src/exec.c            | 17 +++++++++--------
+ src/get_path.c        |  2 +-
+ src/handle_cmd_str.c  |  9 +++++----
+ src/main.c            | 10 +++++-----
+ src/manage_rest_tok.c |  9 ++-------
+ src/parser.c          | 10 ++++------
+ src/quotes.c          |  6 +++---
+ src/signals.c         | 35 +++++++++++++++++++----------------
+

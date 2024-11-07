@@ -1,0 +1,968 @@
+
+ls 'la '
+ls ' la'
+ls 'a a a a a'
+ls ' a a a a'
+ls 'a a a a '
+ls ' a a a a '
+
+(c'est surtout pour valgrind)
+
+
+
+lol='     ls    '
+$lol
+$lol'-la'
+$lol' -la'
+$lol'-la '
+
+ls ''
+ls ''''
+ls """"
+ls ''""
+ls ""''
+
+ls 
+(javais un invalid read sur non init parce que isquote était pas set à 0 et donc quand ça passait dans la fonction 
+
+
+
+
+
+problem :
+
+
+paul-f5Br3s6% make valgrind 
+minishell$ ls '' '' '' ''
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+minishell$ 
+make: *** [Makefile:128: valgrind] Error 2
+paul-f5Br3s6% bsh
+zsh: command not found: bsh
+paul-f5Br3s6% bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls '' '' '' ''
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+aussi :
+
+minishell$ ls '/proc/1' '..' '..'
+..:
+essai_waiter_philo  not_git_philo         test_philo
+git_minishell       philo                 waiter_philo
+maike_minishell     right_philo
+minishell           ssh_maaike_minishell
+
+/proc/1:
+arch_status         limits         root
+attr                loginuid       sched
+autogroup           map_files      schedstat
+auxv                maps           sessionid
+cgroup              mem            setgroups
+clear_refs          mountinfo      smaps
+cmdline             mounts         smaps_rollup
+comm                mountstats     stack
+coredump_filter     net            stat
+cpu_resctrl_groups  ns             statm
+cpuset              numa_maps      status
+cwd                 oom_adj        syscall
+environ             oom_score      task
+exe                 oom_score_adj  timens_offsets
+fd                  pagemap        timers
+fdinfo              patch_state    timerslack_ns
+gid_map             personality    uid_map
+io                  projid_map     wchan
+minishell$ 
+
+
+paul-f5Br3s6% make va
+make: *** No rule to make target 'va'.  Stop.
+paul-f5Br3s6% make valgrind 
+minishell$ ls '' '' ''
+lol
+lol
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+minishell$ ls '' '' '' ''
+lol
+lol
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+minishell$ ls '' '' '' '' ''
+lol
+lol
+lol
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+ls: cannot access '': No such file or directory
+minishell$ 
+
+
+
+ouai ici lol devrait se print le nombre de fois ou il y a un token avec des quotes, on voit bien que somehow je saute un token sur deux.
+
+Et qu'est ce qu'il se passe si je melange les tokens avec quotes et sans quotes.
+
+
+paul-f5Br3s6% 
+paul-f5Br3s6% 
+paul-f5Br3s6% 
+paul-f5Br3s6% make valgrind 
+minishell$ ls 'lol' pourquoi 'encore' poulet
+lol
+ls: cannot access 'lol': No such file or directory
+ls: cannot access 'poulet': No such file or directory
+minishell$ ls pourquoi oulet lol
+ls: cannot access 'pourquoi': No such file or directory
+ls: cannot access 'oulet': No such file or directory
+ls: cannot access 'lol': No such file or directory
+minishell$ 
+
+
+
+paul-f5Br3s6% make valgrind 
+minishell$ ls lol'lol'lol  aa'aaa'aa bb'bb'bb
+1
+2
+ls: cannot access 'lollollol': No such file or directory
+ls: cannot access 'bbaaabb': No such file or directory
+minishell$ 
+
+Il fait vraiment n'importe quoi avec les tokens
+
+
+
+encore quelque chose de bizarre 
+
+minishell$ ls 'lol' 'aaa' 'bbb'
+1
+2
+ls: cannot access 'lol': No such file or directory
+ls: cannot access 'aaa': No such file or directory
+minishell$ ls 'lol' 'aaa' 'bbb' 'ccc'
+1
+2
+ls: cannot access 'lol': No such file or directory
+ls: cannot access 'aaa': No such file or directory
+minishell$ ls 'lol' 'aaa' 'bbb' 'ccc' 'ddd'
+1
+2
+3
+ls: cannot access 'lol': No such file or directory
+ls: cannot access 'aaa': No such file or directory
+ls: cannot access 'bbb': No such file or directory
+minishell$ ls 'lol' 'aaa' 'bbb' 'ccc' 'ddd' 'eee'
+1
+2
+3
+ls: cannot access 'lol': No such file or directory
+ls: cannot access 'aaa': No such file or directory
+ls: cannot access 'bbb': No such file or directory
+minishell$ ls 'lol' 'aaa' 'bbb' 'ccc' 'ddd' 'eee' 'fff'
+1
+2
+3
+4
+ls: cannot access 'lol': No such file or directory
+ls: cannot access 'aaa': No such file or directory
+ls: cannot access 'bbb': No such file or directory
+ls: cannot access 'ccc': No such file or directory
+minishell$ 
+
+
+
+segfauult sur ce test la
+
+ls: cannot access '': No such file or directory
+minishell$ ls '11' 22' 33' 
+0
+1
+2
+make: *** [Makefile:128: valgrind] Segmentation fault (core dumped)
+paul-f5Br3s6% make valgrind
+
+
+
+
+
+
+
+maintenant probleme sur ça
+
+
+minishell$ ls ' allo' 'pourquoi ' 'lol '
+0
+1
+2
+3
+4
+5
+6
+ls: cannot access ' allo': No such file or directory
+ls: cannot access 'allopourquoi pourquoi': No such file or directory
+ls: cannot access 'lol ': No such file or directory
+ls: cannot access 'lol': No such file or directory
+ls: cannot access "'lol": No such file or directory
+ls: cannot access "'": No such file or directory
+minishell$ 
+
+
+Ouai, dois y avoir un probleme dans le x, je dois incrémenter trop, j;espere,si c;est que ça ce serait bien
+
+
+ça veut dire que je vais devoir tester plusieurs token avec des quotes a la suite, ainsi qu'avec tous les autres cas interpolé, lol' 'lol, env var etc..
+
+
+
+-still need to test with quotes in env var
+
+
+
+
+---------------------------------------------------------
+
+je reprends de zéro, l'autre commit fonctionnais mieux.
+Je vais lister les tests qui fonctionnent pas.
+
+
+OK:
+
+'ls'
+' ls'
+'ls''
+'ls '
+''
+'' ''		// prob dont work but doesnt leak
+ls 'a a a a a a'
+ls ' a a a a a '
+ls 'a a a a a a '
+ls ' a a a a a a'
+ls '-la'
+ls ' -la'
+ls '-la '
+ls '' ''
+'ls' '-la'
+'ls' ' -la'
+'ls' '-la '
+ls '"lol"'
+ls "'lol'"
+ls '"a a a a a"'
+'ls' '" a a a a a "'
+ls '"a a a a a "'
+ls '" a a a a a"  '
+ls '     "aaa"     '
+ls '   ""   '
+'ls' '  "" '
+"ls" "   ''   "
+"ls" '    ""   '
+"ls"  '    "   "    '
+'ls ""   '
+'ls""   '
+l's' -la
+l's ' '-la'
+ls 
+ls "" ''
+ls 'allo' 'pourquoi'
+'ls' ''
+ls ' put a tab with ctrl=v here '
+ls aaaaa'      'aaaaa					// all those cases are broken
+ls aaa'   'aaaaa
+ls aaa'   'aaaaa
+ls aaaaaaaaa'  'aaa
+ls aa'  'aaaaaaa
+ls  aa'          'aa
+ls aaaaaa'                      'aa
+ls aa'            'aaaaaaaaa
+ls aaaaa'      'aaaaaaaaaaa (plus de a derriere que devant) faire des check avec plus de a devant , invers, et plus de espace interieur et invers
+ls "" '  '
+ls '' '   '
+ls aaa'     aaa'aaa''
+lsaaa'    aa'aa''
+'ls''''	
+'ls' ''''
+'ls' ''''''
+ls  aaa''aaaa
+'ls'""''				
+'ls' ""''""'a'
+'ls' ''''''''		// je pense pas que ce genre de cas fonctionne vraiment,si ls ''''''aa a mon avis ça fonctionne pas, oui
+ls ''""					//ça a l'air de passer mais en fait ça prends en compte que un seul token pour linstant, si ls ''"'aa on voit ça bien
+ls ""''						//pareil
+ls ''''aa
+ls ""''aa
+ls ''""aa
+ls aa''''aa
+ls aaa'    'bbbb'   'ccc
+ls aaa'   ''   'ccc
+ls '    ''    '
+ls aaa'   ''   'aaa
+ls aaa"   "'   'aaa
+ls '   '"   "
+ls "    "'   '
+ls'   ''   '
+ls '     ''     ''      '
+ls '     '"      "'     '"      "
+ls '     'aaa'      'aa'     'aa
+ls '     'aaa"     "aa'    'aa
+ls 'allo''pourquoi''lol'
+l's''lol'
+l's'"    lol"
+l's''    lol'
+ls '      ''lol'
+ls '../''     '
+ls '      ''..'
+ls aaa'       ''..'aaa
+ls ' allol '' allol '' lol '
+ls aa'   aaa   'ddd'   aa  'ddd' aaaaa    'sss
+ls '    aaaaa''      aaaaa''     aaaa'
+ls aa'    aaaaa'sls'      aaaaa'aaaa'     aaaa'sss
+ls aaa'aaaa     'aaa'aaaaa    'aaa'aaa    'aaa
+ls '  ddddddd   ''   ddddddd  ''    dddd '
+ls '  a  ''   s  ''    ddddd     '
+ls '  a  '' ss  ''   ssss '
+ls aaaa'    aaaa'aaaa'     aaa'aaaa'     '''
+ls aaaa'      ''     ''       '
+ls aaaaa'        'aaa'       '
+ls ''''''''
+ls '" pourquoi lol encore"    ' 
+ls '" wwwwww eee eeeeeeeeeeeeeee"     '
+ls aaa"aaaa"'    a'aaaa
+ls aaaa'     aaaaa'aaaa'    aaa'aaaaa''
+
+NOT OK:
+ls aaa'aaa'aaa's's sss'sss'sss'ss'ss
+'ls' a''''a'''s'   // je pense que pour clui la cest juste que jai pas encore build
+ls '    a    ''    a   '    'dddd      '  pareil
+ls aaaaaaaaaaa'aaaaaaa'aaaaaaa aaaaaaa'aaaaaaa'aaaaaaa saaaaaaaaaaa'aaaaaaa'aaaaaaaaaa   'aaaa'a aaaaaaaaa'aaaaaaaaaaaaa' 'aaaaa' 'aaaaaaaaaa' 'aaaaaaaaaaa'
+
+ls aaaa' 'aaaaaaaaa sssss' 'aa s' 'ssssssssss
+ls aaaa'     'aaaaa aaaaa"     "aaaa
+
+
+envvar  with quotes between token collé : ls 'allo'$envvarquotes'test' etc
+
+
+
+
+OK JUSt POUR GET SIZE
+lol="'a'"
+
+ls '   ''    '   '     ''    '
+ls aaa'    '$lol'    'aaaa
+ls '     '$lol'    '
+ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa			//demain tester tout ceux la avec env var (juste un token split avec plusierus quotes, on verra apres pour plusieurs token plusieurs quotes
+ls '     ''     '$lol'    '
+
+avec lol="'aaa '"
+
+ls '   '$lol'   ' 
+
+
+TO TEST
+
+env var avec des quotes dedans, collée à des quotes valables dans un seul token de split lol="'' ls $lol'../ ' normalement ça posera probleme
+env var avec quotes, collé après un split token ls 'lol'$lol avec lol="'pourquoi"
+
+ls 'lol' env_var_with_quotes "double quotes here"    //etc, test other situation like this
+
+
+
+
+
+
+
+-ouai, pour le truc sur les quotes ls 'allo''pourquoi' etc.. c'est un truc assez gros a fix,
+ou alors je peux me dire que tant que je suis dans un token de split  je check si ya un nombre de quote pair, et si c'est le cas je met tout sur un token ?
+Mais il y a aussi le probleme que 
+
+
+En fait faut juste que je build une infra lorsque les quotes sont collées.
+
+
+
+Ouai déjà je peux me dire que je fais le cas ou dans un token de split on a des quotes pairs, donc la c'est bon je peux faire. Mais si les type sont impair, a ce moment
+la ça veut dire, non mais c'est une histoire de cmd_str de toute manière non ?
+Ouai en fait d'une manière ou d'une autre je dois avoir un detecteur dans le token de split si type est impair ou pair, mais je crois que je gere deja les token genre aaaa'     'aaaa
+Peut etre on peut dire que si je détecte que dans un token ce ya des quotes au dessus de 2.
+Non mais je serais obligé de regarder dans la cmd str de toute manière, 
+
+Ouai je peux juste checker dans le inside size si ya une quote juste après la deuxieme quote et si c'est le cas je continue
+Aussi je dois checker comment je copie pour faire ça
+
+OLA, MAIS IL SE PASSE QUOI SI AU MILIEU IL Y A UNE ENV VAR ?
+Évidemment il faut la gérer, donc je dois faire ça en aller parmi les split tok aussi ? ou alors je fais avec l'env var direct ?
+Ah ouai mais non en fait dès que ya pas de quote après dans la cmd str c'est bon on fait le taf dans le split tok ? et i je détecte encore une quote après je repart dans la str etc..
+et dans tout ça je dois manager le count aussi,
+car je dois etre capable de faire ls 'allo'$HOME'pourquoi       ' 'allo'   donc avec le dernier espace avant allo 
+
+En gros je dois juste build un reconnaisseur de quotes que je manage le token avec la première quote que je trouve et gérer count accordingly ainsi que le free des tokens etc..
+
+
+
+
+Pour faire ça je pense pas qu'il y aura des problemes avec check if pass parce que  c'est vis a vis des env var, je dois build ce que j'ai dis mais tout en respectant la logique
+du reste du programme, qui je pense n'est pas mauvaise.
+
+Aussi, j'oubliais, on doit etre capable de faire tout ce que je viens de dire avec des quotes différentes.
+Je pense pas que ce soit trop difficile a faire, je dois juste faire attention a bien gerer count et les token du split.
+
+Ouai si je mets un détecteur de quotes, peut importe le type ou quoi, après que je sorte de l'inside de cmd_str, ça devrait aller, et si je gere bien  count. Ouai parce que 
+normalement j'ai géré le fait d'aller dans un autre token de split, donc meme si je tombe sur une env var ça devrait aller, ouai mais non en fait parce que si ya des quotes
+dans l'env var je dois sauter autant de quote que ça non ?
+
+Tout ça ça parait compliqué mais je pense que c'est pas grave, toujours dans ma méthode de pas avoir du code complexe pour des situations non complexes etc..
+Ah mais attends, j'ai déjà le tableau pour dire combien de quotes je dois skip non ? donc ça devrait pas etre trop compliqué non ?
+Pour faire ça je dois vraiment faire une structure spéciale pour tout ce parsing là
+
+Ouai si je résume c'est vraiment 
+
+
+
+
+-verif le tab pour voir si je peux l'utiliser
+	Oui le tab fonctionne comme ça, donc je peux utiliser le tab pour build cette infra.
+
+
+construire une struct
+
+
+
+
+
+Ouai aussi car pour un cas comme ls 'something'$lol'    pourquoi'   avec $lol ou ya des espaces dedans je dois pas mettre ça dans un seul token non ?
+	ouai->
+		gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export lol='pourquoi   '
+		gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls 'something'$lol'else'
+		ls: cannot access 'somethingpourquoi': No such file or directory
+		ls: cannot access 'else': No such file or directory
+		gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+Donc ça voudrait dire que je dois juste regarder après l'inside quotes, et si je trouve une quote dans le token, meme après une env var ou pas je sais pas, je repasse dans l'inside etc..
+
+Je pense pas que ce soit trop difficile de build ça, c'est juste qu'après je devrais bien revenir dans le loop comme avant et continuer au bon endroit, pour tous les autres cas etcc (les cas normaux)
+En gros la stratégie ça va être de build l'infra pour ce cas spécial la sans toucher au reste au niveau de la logique, donc vraiment de passer autour de tout ça, donc pour aller dans ce module du
+programme je dois vraiment juste checker après l'inside de la premiere quote si ya une quote valide (skip le tableau) repartir dans l'insidecmd_str etc etc..
+
+
+pour faire ça, premierement faire des tests avec les env var et les quote pour voir si ça fonctionne, comme j'ai pas vraiment testé ça, ensuite changer les args des fonctions pour avoir
+une struct avec tout pour pouvoir passer plus facilement les choses et pouvoir respirer dans les fonctions que je fait.
+
+
+Ouai mais ça veut dire que je devrais aussi gérer le tab (je crois que c'est le z dans le gros loop) dans les cas ou je saute des quotes et en gros ou je colle
+ensemble plusieurs quotes)
+
+
+
+-test env var with quotes
+-build struct
+
+
+
+
+
+
+
+
+
+
+
+TEST ENV VAR:
+
+OK:
+export lol="' ' '"
+ls $lol'pourquoi'
+ls $lol' pourquoi'
+ls $lol' pourquoi '
+
+
+
+NOT OK:
+
+
+
+/////// pour ce cas la ce qu'il semble se passer c'est que je prends pas en compte la derniere quote de la env var alors que je devrait, et que 
+je print la derniere alors que je devraispa for some reason. Ah mais attends peut etre que c'est parce que dans le tableau des quotes a skipper je skip littéralement
+toutes les quotes des env var alors que je devrais pas les skipper si elles sont accrochées. donc ce serait le tab qui est mauvais
+
+
+je vais déjà build les quotes après et on verra
+
+
+AH OUI EN FAIT JE PENSE QUE C'EST DU AU FAIT QUE JE RETURN LE TOKEN QUAND YA LES DEUX QUOTES DEDANS OU QUELQUE CHOSE COMME ÇA
+
+
+
+
+
+(pour la suite de minishell, ne rien viser sur le timing, juste faire le protocole 10h par jour et le reste, pas de manga etc, et on 
+verra si je bh ou pas)
+
+
+
+
+
+
+
+
+
+
+
+//////////////
+
+
+Ouai en fait ce que l'on doit gérer c'est lorsqu'on sort de l'inside string, le token dans lequel on est, on a juste besoin de checker si ya une autre quote la dedans, tout en vérifiant
+que l'on soit pas dans une quote du tableau qu'il ne faut pas prendre en compte.
+
+
+JE VAIS SUREMENT DEVOIR CHANGER QUELQUE CHOSE SUR TYPE DANS LE CAS ls 'pourquoi'"allo"'bonjour' CAR SINON JE PERDS LE TYPE DAVANT ?
+
+
+
+
+
+
+
+
+
+autre probleme 
+
+
+minishell$ 
+paul-f5Br3s6% export lol="' ' '"
+paul-f5Br3s6% make valgrind 
+minishell$ ls $lolpourquoi
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+minishell$ ls $lol'' pourquoi
+ls: cannot access "'": No such file or directory
+ls: cannot access "'": No such file or directory
+ls: cannot access '': No such file or directory
+ls: cannot access 'pourquoi': No such file or directory
+minishell$ 
+
+
+///// probablement ce bug ne sera pas fixed lorsque l'env var sera derriere
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////
+
+-donc pour le ls $lol' pourquoi' avec lol="' ' '", la raison c'est que je check dans les token pour skipper le nombre de quote, mais je check pas une fois que je suis dans le token lui meme. Le probleme
+vien de la boucle ou je copie avant cmd_str, car je check juste pour type, et donc si ya une quote d'une env var ça merde car ça stop sur la quote, enfin bref ça merde quoi. Je dois trouver un moyen 
+de faire en sorte que je print la quote de l'env var.
+
+Je pense que je peux lors du pass choper la position de la bonne quote et après et au lieu de checker sur le type dans la copy avant cmd_str je copie jusquá cette position
+
+
+
+
+
+-TOUT CE QUE JE FAIS POUR GERER QUOTE ENV VAR AVANT QUOTE TOKEN CA SERA PROB A FAIRE APRES QUOTE TOKEN AUSSI, TESTER AVEC UNE ENV VAR AVEC QUOTE APRÈS QUOTE TOKEN
+
+
+
+
+
+------------------------------------------
+
+
+ouai pour le cas ls 'allo''pourquoi''etc' je pense que je peux juste checker dans le rest du split apres la inside size, et i ya une quote dedans avec le tab décrémenté (par ex si ya ''' dans une env var et
+juste collé après une quote d'un token de quote, et si c'est le cas et bien de je repart dans les fonctions des getsize etc.. Normalement ce comportement devrait fonctionner, car si on ne trouve pas 
+de quote dans l'envar (ou dans les tokens split) meme si dans la cmd_str_b c'est 'allo'$envarquote'test' ce sera cut en terme de token. Oui, maintenant par rapport a la gestion des tokens après ça.
+
+Je pense que d'après le code que j'ai déjà fait je pense que j'ai pas besoin de manager les indices quand je copy le new token, je peux tout gérer après, mais je dois pas toucher au tab quand je fais ça, parce que
+je dois pouvoir sauter les quotes des envvar dans les tokens de split, oui c'est juste ça en fait, normalement tout sera fait, je dois juste pouvoir trouver le bon token après, et pour cela je dois juste
+savoir combien de quotes je dois sauter.
+
+Verifier que le tab bouge pas
+
+
+-gerer le copy in tok sans penser a après
+-avoir le new tok
+-manager les token après via le tab pour réussir a free et manager l'indice jusq'au token d'après
+-repartir dans la boucle principal au bon endroit.
+
+Normalement je devrais pas avoir a toucher tellement au code qui est autour, essayer en tout cas de faire comme ça
+
+
+
+FAIRE GAFFE AVEC COUNT, ÇA RISQUE D"ETRE COMPLIQUÉ PUISQUE JE DOIS GERE ČA AUSSI
+Là count est juste incrémenté dans la boucle, je pense que je ne dois pas toucher à ça, mais je dois le passer dans les fonctions de quote pour pouvoir le gérer lorsqu'il y a plusieurs quotes viables
+dans un seul split token et que je dois en somme créer un split token avec deux quotes qui compte pour count.
+Je pense que je dois incrémenter count dans les fonctions de quote seulement pour ce cas et pas toucher au reste des cas pour pas les péter.
+Ah ouai j'avais aussi oublié l'histoire selon laquelle je dois pouvoir gérer count sur un seul token comme ça mais avec deux types de quotes genre ls 'allo'"lol".
+Boarf, ça devrait pas être trop compliqué. Je dois juste checker que je manipule pas deja count quelque part.
+
+Aussi je me dis que une fois que l'on est dans le parsing d'un token de quote, une fois qu'on est sorti du premier, si ya des trucs après, et surtout si ya des quotes valables, on s'en fout à ce moment
+la du type des quotes, parce la prochaine que l'on rencontre, simple ou double, d'ailleurs on peut rewrite type a ce moment la, comme c'est un pointer, de toute maniere une fois qu'on sort du managing
+de ce token je crois que count est redéfini, donc c'est pas grave si c'est pas le meme type, verifier ça. Oui en effet c'est bien le cas.
+
+Aussi je pense que je peux utiliser les fontions de size pour checker et avoir la size inside et outside des quotes. Je veux dire que j'ai pas de réécrire des fonctions ou de faire plus de logique.
+
+Ouai pour count, j'y ai accès dans la struct, mais aussi c'est pas difficile d'incrémenter le compteur je pense, j'aurais juste besoin de regarder le type et voila, par, ouai en fait le seul truc que 
+j'aurais besoin de faire c'est d'incrémenter count pour le type d'avant avant de changer le type pour un nouveau type de quote, et après si le type change pas c'est pas grave on remet invariablement le
+meme type dans type et voila, et c'est le dernier type qui ne devra pas etre incrémenter et se fera incrémenté après en sortant de manage q tok dans la boucle de quote parsing.
+Juste pour etre sur je dois checker pourquoi j'utilise count, je crois que c'est pour checker les bonnes quotes dans la cmd_str.
+Oui je viens de checker et en effet je touche pas a count (dans la logique du code, parce que litteralement j'y touche mais j'ai un temp après pour revenir a la vraie valeur)
+Ouai j'ai verif et je touche a count, et l'utilise, en effet seulement dans le copy de la cmd_str, en fait je touche meme pas, ce que je veux dire c'est que je peux incrémenter count
+comme je veux c'est pas grave.
+Ou peut etre non justement je devrais juste incrémenter count pas dans get size mais dans le copy, parce que si j'incrémente dans dans get size copy_in tok ne copiera pas les bon trucs. Je dois juste
+me rappeler que je dois incrémenter seulement jusqu'à la dernière quote.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(je pensais aussi a comment je vais faire pour les double quotes ou je dois faire les expand, mais je pense que c'est assez facile vu que je dois juste regarder le type et checker pour des dollars et
+après je mets toutes les fonctions qui managent les env var, je veux dire que c'est pas trop difficile d'intégrer ça dans le code que j'ai fait je pense. Par contre je devrais aussi checker pour le type
+et les expand dans le get size pour le malloc des quotes aussi parce que sinon j'aurais pas la bonne size. Ce que je veux dire avec tout ça c'est que je pense que je ne pourrais pas faire une pass après
+les quotes, attends si, peutetre que c'est mieux, ouai probablement, je peux juste faire ça une fois que j'ai bien clean les token de split, à ce moment j'aurais juste besoin d'un tab pour voir si je dois sauter
+dans les tokens de split des $ (en gros juste gérer ceux qui sont dans les double quotes (oui parce que il peut y en avoir dans les env var en théorie, et donc je dois savoir si je dois combien je dois skip
+de $ non valable dans les tokens, car a ce moment la il ne restera que les eventuels qui ne sont pas dans, 
+Ouai, encore une fois je pense que c'est bon si je fait encore un tab et que je check pour les $ a l'intérieur des env var, puis a nouveau a l'interieur des quotes, comme je disais pour je ne sais plus quel
+tableau.
+Si je me souvient bien je fais du coup faire les 3 tableaux dans get counter etc.. et après faire séparément le cutting et managing de strings, ce sera plus clean comme ça, comme je crois que c'est assez simple
+pour moi de fabriquer des tableaux en plus vu comment j'ai codé le get counter, je peux juste insérer tout ce qu'il faut la dans les fonctions et aussi vu que je skip le characteres entre les quotes je peux
+aussi facilement mettre des checks dans les quotes pour des dollars etc.. je dois verif que c'est easy de checker dans les env var et aussi que j'ai le type quand je check dans les quotes. Oui je viens de regarder
+ça me parait pas trop difficile.
+
+
+
+
+---------
+
+probablement je peux utiliser la fonction if pass ou jsplus quoi a la sortie de l'inside size dans le token de split correspondant pour voir si ya un quote valid, et comme ça j'incrémente
+automatiquement le tab.
+Et aussi comme ça j'ai la q->pos
+
+
+
+
+
+
+
+
+------
+Je viens de voir que je ne peux pas faire des temps sur le tab, si je dois utiliser le tab après pour les redpip tok, je devrais dupliquer le tab avant que je l'utilise dans les quotes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----
+Je viens de penser à quelque chose, lorsque j'ai un redpip token au milieu d'un token genre 'pourquoi'>'allo' je devrais dans la tokenize string alors avoir trois token plutot qu'un ?
+Oui, mais ça change pas grand chose, ce sera juste du managing de strings dans tokenised string, du moment que j'ai le bon tab je pourrais gérer ça, car ce cas là c'est juste dans un
+token split quand yen a plusieurs, j'aurais juste besoin de compter, ouai d'ailleurs parce que je peux avoir un truc comme ls |wc|wc|wc|wc|wc|wc| wc etc.. et donc je devrais pouvoir gérer ce genre de cas la aussi.
+
+Oui je viens de tester c'est bien le cas.
+
+
+Ouai je devrais avoir une fonction de detecteur de token qui renvoie le type de redpip token que c'est pour que je puisse mettre ça dans le tab 
+
+
+
+
+
+
+
+
+
+
+
+lol="'a'
+
+ls ""''
+ls ''""
+ls '    ''    '
+ls '   ''    '   '     ''    '
+ls aaa'    '$lol'    'aaaa
+ls '     '$lol'    '
+ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa
+ls aaa'   ''   'aaa
+ls aaa"   "'   'aaa
+ls '   '"   "
+ls "    "'   '
+ls '     ''     '$lol'    '
+ls'   ''   '
+
+avec lol="'aaa '"
+
+ls '   '$lol'   ' 
+
+
+avec lol='"aa '
+
+ls $lol'   'aaaa'    'aaaa a pas l'air de fonctionner. non ça fonctionne, c'était le deuxieme token apres ls les size javais pas compris
+
+
+
+
+
+
+
+
+
+Je pense que je devrais utiliser les memes fonctions pour copier dans le nouveau token, mais avant, je dois retester les autres cas avec les fonctions get_size que j'ai changé
+
+
+
+
+
+peut etre que pour le probleme de ls aa'   'aaa aaa'    'aa aaa'    'aaa pour le tab, je peux faire une copie temporaire du tab. Ouai mais non en fait le probleme c'est que j'ai juste pas encore 
+gérée la sortie de tout ça, donc si jamais j'ai incrémenté le tab etc, ça veut aussi dire que je vais devoir sauter des tokens, ce que je gere pas maintenant. Ouai mais attends pq j'aurais besoin 
+d'en sauter dans ce cas la c'est as logique
+
+
+
+
+
+-------------------------------------
+
+Pour le copy dans le new tok pour les tokens collés, je pense que je peux copier dans le token via deux fonctions, copy inside et copy outside, meme si je saute des endroits
+dans la mem c'est pas grave, c'est plus pratique comme ça, faut juste qu'il n'y ai pas de bugs dans les fonctions get size. Parce que je pense que je dois réutiliser le code 
+de ces fonctions et de juste copier au lieu de compter.
+Lol peut etre je peux avoir une seul fonction et donner un flag pour savoir si la fonction doit chercher ou copier.
+
+
+
+a faire:
+	- test si coun_next_quote est en effet changé dans inside size
+	- test si type change aussi dnas inside size
+
+non les deux cest bon, type est passé by value, et normalement count next quote est recalculé
+
+
+
+
+
+
+test copy in tok
+
+
+
+
+
+
+
+
+
+
+
+
+-Pour le probleme de 'ls' ''""''""'a'
+
+D'abord faire un essai en remmettant z sur la valeur avant, meme si ça fonctionne pas et que je devrais dupliquer le tableau si je veux que ça fonctionne avec
+les env var etc..
+Mais pour l'instant juste dupliquer le z, car dans cet exemple normalement ça va fonctionner
+
+
+
+
+
+
+-------
+
+j'ai trouvé la raison pourquoi, c'est juste que j'ai pas géré la sortie encore. Alors ya un probleme sur ma maniere de compter
+dans la cmd_str_b dnas le get i de copy outside, il prends en compte le premier token de quote de la cmd_str_b et donc c'est pas bon 
+il copie pas les bons trucs.
+
+Et ya aussi l'histoire avec le tableau qui fonctionnera pas pour les env var comme je disais avant
+
+
+
+
+
+-----
+
+
+ls probleme pour ls a'     'aaaaa a'     'aaaaa c'est que j'utilise pas count pour de  get i, mais je dois vérifier que
+count_next_quote c'est useless du coup, mais je sais plus a quoi ça sert. 
+-> verif a quoi ca sert
+
+
+OK, je crois que j'ai compris, count[] c'est pour avoir le debut de la ou copier/avoir la size, et count next quote c'est pour savoir
+combien de quote dans le meme token de split on doit avoir
+
+
+
+
+Oui je comprends petit a petit, le cas ls a'    'aaaaa a'      'aaaaa ne fonctionne pas juste parce que j'ai juste pas géré la sortie
+de manage tok sur count (je dois incrémenter count pas juste dans quote parsing sur la premiere quote mais sur toutes les quotes
+sur lesquelles je passsent. Aussi je dois aussi revoir comment je gere de next quote counter pour voir si ça va mais ça normalement
+c;est jsute dans un seul token de split donc c'est set a 0 quadn on repart dans quote parsing. Mais je dois gérer coun[] pour partir
+du bon endroit dans copy outside inside etc rechecker tout ça.
+
+Mais pour l'instant je dois finir de clean sur un seul token avec plusieurs quote collées, free les useless tokens et bien incrémenter
+les trucs etc.. et après je gérerais le cas dont je parle (ainsi que les autres avec env var)
+
+
+Ouai en fait dans mon exemple avec ls a'    'aaaa a'       'aaaaa count eest a 1 quand je suis dans le deuxieme token qui il s'est incrémenté
+dnas quote parsing, et cest tout, ya rien dautre qui incrément ça.
+
+je dois regarder si le fait d'avoir plusieurs quotes dnas le meme token ca fonctionne sur le premier deja et si c'est le cas j'aurais
+plus qu'a mettre le i au bon endroit et on sera bien
+
+
+
+
+
+------
+
+tous les cas dans ok sont clean, je dois maintenant gerer la sortie pour un seul token plueiurs quote, (il manque le free a gerer)
+Puis après je dois faire plusieurs token a la suite avec plusieurs quotes, (donc gerer la sortie et la rerentré dnas les fonctions
+de copy, puis après tester avec les env var. Puis ensuite continuer sur le pass pour les doubles quotes ainsi que donc doubler les tableaux
+et construire les nouveaux tableaux necessaires comme javais dit avant.
+
+
+
+
+
+-----------------
+
+La je suis en train de tout build pour pouvoir faire les multiple quote in single token and multiple of those token. Apres je verrais et
+testerais avec les envvar avec quotes. Pour l'instant juste build sans env var, de toutemaniere je devrais juste utiliser le tab dans les
+fonctions, après je devrais cehcker et voir i je dois le temp ou le duppliquer.
+Mais pour l'instant on dirait que mon code pour un seul multiple token fonctionne, je dois juste probablement juste adapter la data qui me sert
+a faire ça (temp ou dup), ainsi que bien set up la sortie de boucle pour pouvoir repartir
+
+
+
+pour count next quote normalement la data est toujours la pour le manage rest tok. Je dois checker pour le tab, je crois que jai pas trop le choix de 
+l'incŕementer directement et que je vais devoir faire une copie.
+
+DEJA ESSAYER SANS ENVAR AVEC COUNT NEXT QUOTE POUR VOIR IS CA FONCTIONNE
+
+
+
+
+was working on 59 manage rest tok
+
+
+
+
+
+
+
+
+----------------------
+
+pour la sortie multiple multiple q tok
+
+checker count
+checker tab
+
+
+
+
+
+
+Ouai en  fait le probleme avec tab c'est qu'on est obligé de checker pour les env var meme entre les quotes dans un singletok multiple quote
+Aussi je dois verifier la gueule du tab.
+Ouai c'est bizarre quand je regarde le tab, normalement les values du tab sont plus la pour la copy, ouai mais c'est normal en fait, c'est parce que 
+j'ai pas testé avecdes env var encore, sinon j'aurais vu que ça fonctionne pas.
+
+Je pense que je dois deja travailler sur count et régler le proble,e dincrementation entre les call de manag_q_tok, faire passer tous les tests, et après
+on verra pour le tab, ou et comment le duppliquer
+
+Count je crois que a part lincrementation en sortie on est bon
+Ouai on est bon mais justeement un peu trop, a la sortie des fonctions size et copy il faudra trouver un moyen de bien incrémenter count. Je pense 
+que pas toucher au fonctions de sixe et copy c'est  mieux, comme elle utilise toutes les deux la meme fonction autant en faire une autre et incrémenter
+manuellement en sortie après que tout soit fait.
+
+
+
+
+
+-----------------------
+
+
+
+-pour incrémenter count on peut juste utiliser count next quote,  comme normalement on a pris en compte tab (meme si en ce moment je crois pas que tab
+fonctionne correctement car je dois duppliquer tab a un moment, je sais plus si c'est entre size et copy ou si cest entre les multiples multples tok
+
+
+en fait en ce moment le tab "fonctionne" parce que ya rien dedans (que des 0) parce que je teste pas avec des env var, mais si je commence a tester avec des env var et des quotes
+ça peterais tout, et que je temp juste le z lorsque j'utilise le tableau. peut etre je peux temp a la fois le z, mais aussi les valeurs du tableau lorsque je l'utilise ?
+
+
+deja on va faire count, on verra après pour tab
+Le probleme aussi c'est que count next quote repose sur un tab qui fonctionne, si tab ne fonctionn pas count next quote ne sera pas accurate.
+
+
+
+
+
+-------------------------
+
+j'incŕmente count lorsque ya des mutliples quotes tok, mais que se passe t il lorqu'il n'y a qu'un seul pair de quotes, est ce que je laisse quote pars incrémenter count? non je ne pense
+pas car sinon ce serait compliqué, entre gére le changement de type si jamais dans mutiple tok, et aussi gérer le cas dans manage count de quand il y a une seule pairs de quote, je 
+pense que c'est plus simple de faire un seul endroit ou on manage count.

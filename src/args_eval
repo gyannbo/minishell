@@ -1,0 +1,105 @@
+
+
+
+
+
+- attention notamment dans l'expand, avec var dans check exist, je protege des mallocs dans d'autre fonctions. Je fais ça a plusieurs
+reprises je sais plus si j'ai laissé les comments
+
+
+
+
+
+- attention lorsqu'on fait echo $$PATH dans bash ça met le pid puis PATH après alors que minishell traite ça comme un $ tout seul.
+Je ne me souviens plus trop avec tout le testing que j'ai fait mais on dirait que le comportement des env var c'est que lorsqu'il
+y a un char non alphanum juste après le dollar il ne faut toucher a rien et afficher le dollar et ce qu'il y a après, le cas ou on 
+enleve le dollar et le potentiel nom de la var si elle n'est pas trouvé ça vaut manifestement que lorsqu'alphanum directement après
+ou la fameuse règle du seul chiffre.
+Donc pour expliquer comment je gère le cas $$ je considère que c'est comme si je faisais $. donc j'imprime. Oui non en fait j'ai changé,
+maintenant je fais un comportement comme .
+Oui non je pense que c'est plus logique de faire que si c'est pas un charactère alphanum je reprends le parsing dès le charactère d'après
+et donc l'expand peut se faire, en fin de compte ça veut dire traiter le $ comme un charactère comme les autres, donc je print le premier
+dollar, comme c'est le cas lorsqu'on ne peut pas aller chercher un nom de var, puis ensuiteje reprends le parsing etc..
+Si je juge que c'est moins dangereux de pas expand sur $$PATH pour vraiment etre au plus près de bash, car je fait déjà ça sur les numéros.
+En fait il faut dire que c'est juste que bash va chercher dans une liste de nom de variable qui est plus grande que celle auquel j'ai accès,
+donc moi comme je peux pas les trouver je fait comme si elle existait pas.
+Honnêtement je pense que c'était une bonne idée de faire le parsing sur  $9 etc similaire a bash meme si ça sert a rien, au moins ça ressemble.
+Mais pour le cas de $$ je sais pas ce qui est le mieux de faire, je pense que laisser tous ls $ que je peux pas expand en plan comme ça et 
+expand dès que je peux sur un dollar, parce que comme ça ça ressemble plus au fait que si cest pas alphanum on laisse les char, alors que sinon
+ça fait vraiment genre j'ai vu que je dois mettre le pid mais je bloque etc.. alors que l'autre solution c'est juste je gère pas et voila.
+ 
+
+
+
+
+
+- . is a builtin. It is not specified in the subject. Also even if I launch Bash and order it to execute the source command (.), I wont give
+the right return because it is launched in another shell, when in bash it doesnt launch anything it just returns an error code like of a binary.
+What I mean is that what I would have with launching bash with execve is bash itself exit status and not the source command one.
+
+In fact I can't even launch the builtins of bash, because with execve the only thing I can do is to pass to bash arguments on command line, I cant
+pass arguments to bash once it is launched.
+
+Just not segfault or leak for this and it will be enough.
+
+
+
+- about ctrl-Z, I didn't even bother register a sighandler, because the subject doesnt asks for it, but also because this is way too complicated to
+even have a small thing working.
+For example ctrl-z has to do nothing when not bin is running, but as to put in the background when someting is running, etc, etc, I wont bother with
+this.
+
+
+NO MAYBE I SHOULD, IT JUST SEGFAULTED WHEN I OPENED VIM I MINISHELL AND THEN ctrlZ 
+(this was because of printf internals, normally i wont have this for the eval (im using it to print $? now), but maybe to be sure i can register a sighandler
+for crtl-z)
+
+
+
+- dirent->d_name cannot overflow because system refuses to touch a file with too long name
+
+
+- ~ is a special char is not required for the subject
+
+
+
+
+- check thoroughly in the subject if we can do -1 like I did with the global variable, and justify why i did it and know all the cases why I did it I why there
+was no other choices.
+
+
+
+
+-if something weird in eval, test with reboot term or without valgrind, for valgrind it was prob my fault, but the term i dont think so. Also sometimes i needed
+to make re (if change header i think), even if had no error.
+
+
+
+
+
+-Si jamais on nous fait chier sur le printing de string qui n'est pas exactement comme Bash, montrer que si je fais lsss comme commande par exemple il nous montre
+les commandes qui ont des noms proches etc.. et que on peut juste pas faire exactement comme bash et en plus les strings d'erreur c'est pas précisé dans le sujet
+en théorie on doit pas les faire (mais faire quand meme le minimum syndicale, command not foudn, no perm etc.., en gros les erreur que j'ai déjà géré dans les
+paths)
+
+-Faut faire gaffe parce que lorsqu'on fait nm -D sur minishell il met les variables de readline aussi, il faudra vraiment avoir une explication béton et vraiment lutter
+et montrer que ce ne sont pas des fonctions, et que donc c'est autorisé. On peut aussi voir la chose comme enp du main, je suis sur que c'est affiché aussi comme
+un truc dynmique si environ c'est afffiché comme ça.
+D'ailleurs est ce qu'on a le droit a environ ? comme c'est une variable ? mais que c'est dynamiquely linked
+
+
+
+
+- expliquer si problemes avec $$ $- $0  que ce sont des variables spéciales du shell, et non des variables d'environnement et que comme le sujet nous impose seulement
+de faire $? j'a décidé de pas les faire. Et donc ils seront géré comme des variables d'env qui n'existe pas.
+Faire attention car le comportement du coup pour $-  et $+ par exemple est différent, bien expliquer que j'ai choisi de faire comme si ce variables étaient recherchées,
+non plutot ce que j'ai fait c'est que j'ai pris le comportement pour les non alphanum mais pas ceux qui ont une signification speciale, comme je dois pas implémenter
+les significations spéciales. Donc le comportement c'est comme + = / et non -
+
+
+
+- attention parfois avec certain clavier j'ai eu des bugs sur minishell comme sur bash ou le ctrl-d ne fonctionne plus. Mais ce n'est pas a cause de minishell ou bash. Etre
+capable de savoir pourquoi et d'expliquer ou reproduire le bug sur bash.
+Oui je viens de savoir pourquoi, c'est quand on fait un ctrl-s, mais j'ai l'impression que ca fait la meme chose sur bash comme sur minishell, donc peut etre pas besoin de
+register un sighandler ou quelque chose comme ça. Je vais regarder quel sig ca genere.
+Oui, ça genere le stop characteres, donc il faut faire le start character pour que tout reprenne, ou un signal i guess.

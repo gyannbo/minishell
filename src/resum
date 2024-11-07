@@ -1,0 +1,359 @@
+
+
+
+-env var parsé jusqu'au permier charactere non alpha
+
+-lorsque les quotes sont collé à quelque chose, peu importe ce que c'est on respecte à la lettre cela lorsqu'on resolve les quotes
+
+-quand des quotes sont collées a rien et sont vide, il faut faire un arg seul avec rien dedans char * = "";
+
+-la résolution de variable d'env sur la string de la ligne de commande est fait avant le parsing de whitespace (le split)
+
+-la résolution d'env var a l'intérieur de double quote est faite après le split, ça signifie que les whitespaces présent dans une var d'env sont préservés
+
+-lorsqu'une env var n'est pas trouvée ça ne produit rien, si c'est collé à quelque chose ça ne produit pas d'espace ou quoique ce soit, comme des quotes vides,
+par contre contrairement aux quotes vides collées à rien qui vont faire un arg vide ( char * = "" ) une var d'env non trouvé va produire un whitespace avant
+splitting de la command line et donc pas d'arg. (ouai encore une fois c'est parce que le resolving c'est avant le split whitespace)
+
+-le moindre characteresspecial qui peut se retrouver dans une variable d'env, lorsqu'elle est resolved sur la ligne de commande, ses characteres spéciaux ne
+doivent pas etre interprêtés, mais si dans minishell ce cas est impossible car on n'a pas accès au \ pour échapper les char speciaux et donc sur export le shell
+aurait pas le choix d'interprêter les characteres spéciaux et donc ils pourraient pas se retrouver dans une env var de toutes maniere.
+Pour le parsing ça veut dire que ce serait bien que j'essaie de faire en sorte que lorsque je vais le resolving de variable d'env je repasse pas dessus après.
+Mais si c'est trop compliqué je peux ne pas le faire théoriquement.
+Ceci est valable pour le $, ', ", <, >, | etc..  Ça veut dire que pour chacun de ces parsing je dois checker que je suis pas en train de parser une variable d'env.
+Je pense que la solution est de faire quelque chose comme regarder dans la string original pour détecter les quotes et redir etc.. et vérifier après qu'on est 
+dans le bon token pour pouvoir faire le travail après sur les quotes, ou les redir etc..
+
+(mais je pense à ça maintenant si on a une env val sans rien ça produit un arg de split vide, ah non en fait parce que je dois faire ça avant le split de toute
+manière donc c'est bon)
+
+-Si on arrive a foutre $HOME dans une env variable (ce qui est impossible avec le sujet car on aurait besoin du \ car sinon le resolving se fait avant meme que
+export puisse foutre la string dans la variable) meme dans ce cas la le shell ne resolve pas la variable (d'ailleurs c'est bizarre car si théoriquement le parsing
+d'env var pas dans des quotes, ça voudrait dire normalement que on resolverais aussi la var a l'intérieur, ou alors c'est que qu'il y a une seule pass alors du coup,
+et il garde en tete la position dans la string de base comme ça il repasse pas sur la var resolved (donc si elle meme contient $HOME ou quelque chose comme ça ?)
+
+->
+bonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\$HOME
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ env 
+LOL=$HOME
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+$HOME
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL lol
+$HOME lol
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL $home
+$HOME
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL $HOME
+$HOME /home/gbonis
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo "$LOL" $HOME
+$HOME /home/gbonis
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL $HOME
+
+-d'ailleurs que se passe-t-il i jamais il y a des quotes dans la variable d'env ? est ce que les whitespaces sont gardés ? Encore une fois c'est impossible avec notre
+sujet car on peut pas escape de characteres spéciaux et donc les quotes se feront resolve par le shell avant export puisse mettre dans la variable ?
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\''      'pourquoi'       'lol\'
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL='      pourquoi       lol'
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+' pourquoi lol'
+
+Ouai je sais pourquoi j'ai pensé que ça ferait autre chose que ça, non c'est pas con en fait, c'est bizarre ça veut dire que lorsqu'on a des quotes dans la var env, elles
+sont juste pas du tout traitées comme des vraies quotes, même si elle sont pas échappées. Ce qui voudrait dire que si on pouvait échapper des charactères dans minishell il
+faudrait resolve les env var avant le split, mais après il faudrait pas gérer les quotes si elles viennent de env var ?
+
+
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\''     'pourquoi'     '\'
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL.lol
+' pourquoi '.lol
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL='     pourquoi     '
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\''     'ls'    '\'
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL='     ls    '
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ $LOL
+': command not found
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+Oui ici on a la preuve que lorsqu'il y a des quotes dans les env var elles sont justes pas gérées comme des quotes.
+Un meilleur example serait export LOL=\'ls\'	et $LOL dans le shell et ça devrait pas fonctionner.
+
+->
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\'ls\'
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ $LOL
+'ls': command not found
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  resum  signals.c  test_ran
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ 'ls'
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  resum  signals.c  test_ran
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+Içi la preuve que les quotes sont en effet pas gérées lorsque elles sont dans une env var. Je suis quasiment sur que l'on ne doit pas gérer ça, mais vérifier quand même
+Autrement dit est ce qu;on peut avoir des quotes dans une env var, non on est obligé d'avoirle backslah pour faire ça.
+Ce serait pas mal d'implémenter quand même dans le doute, si jamais j'ai un blindspot, mais ça veut aussi dire que ce serait beaucoup plus difficile de parser, car on devrait
+voir si on a une env var qui contient des quotes si elle doit pas passer par le parsing de quote.
+
+Je sais pas vraiment comment je builderais ça, peut etre que je peux quand faire le split, et du coup si j'ai des env var a résoudre je mets ça dans une autre string, et pour le
+parsing de quote je regarde d'abord dans la string originale si ya des quotes (parce si je regarde dans la string env_var_resolved il y en a peutetre mais je dois pas y toucher)
+et je met le curseur dessus (dans la envvarresolved, en recherchant si il y a toutes la string de quotes, et la je fait le travail, de cette manière ça me permettrais d'avoir 
+le comportement de bash).
+Et d'ailleurs maitenant que j'y pense que devrais aussi faire quelque chose de similaire avec les env var dans les env var.
+
+
+
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ export LOL=
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ ls $LOL
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  src	test.c	to_do
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+quest ce qu'il se passe içi, la variable est "", donc je fait rien avec la string de depart j'enleve juste le nom de la var, et après je cut avec le split whitespace
+
+
+
+
+- essayer de faire que on reregarder jamais dans une env resolved (pour par exec un pipe qui était dedans ou quote etc..), meme si ça sert a rien vu que dans minishell rien
+ne se retrouvera dans une env var de toute maniere (en char spec), car ils seront interprété en command line avant de toute maniere, comme sur un shell tradi.
+
+Tester export LOL=lol>log pour voir
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ export LOL=lol>log
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  src	test.c	to_do
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ cat log
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ nvim log
+
+(yavait rien dans log)
+
+Ceci dit :
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ exoirt LOL=lol>log
+exoirt: command not found
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ export LOL=lol>log
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ env
+LOL=lol
+
+Je pense que ce qu'il se passe içi est que c'est qu'on prend le return de export et on le met dans un fichier log, sauf que export doit
+rien return probablement
+
+Peut etre si je fais export='>log on va avoir un code d'erreur dans log
+Ya toujours rien
+
+
+
+
+Autre cas interressant
+
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ cat LICENSE  |$LOL
+674
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ cat LICENSE |'wc -l'
+wc -l: command not found
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ export LOL='wc -l'
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ cat LICENSE  |$LOL
+674
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+Attends ya peut etre un moyen d'avoir un env var avec des char speciaux sans export, oui j'ai confirmé que ça fonctionne.
+Il faut créer un dir avec mkdir qui a un nom avec un pipe ou par exemple  si je mets ça dans une quote genre 'lol>lol'
+ça créera un v
+Ouai j'ai la solution pour checker, il faut mkdir '@HOME' et après echo @PWD. Bash echo le pwd avec @HOME a la fin, mais selon le parsing
+que l'on fait on peut avoir une résoluton de @HOME à la fin du echoing de @PWD alors qu'il faudrait pas.
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ mkdir '@HOME'
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ ls
+a.out  @HOME  inc  libft  LICENSE  log	Makefile  minishell  obj  pourquoilol  src  test.c  to_do
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell$ cd '@HOME'/
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/@HOME$ echo $PWD
+/home/gbonis/projets/third/ssh_maaike_minishell/@HOME
+
+
+
+Donc j'ai vraiment raison de faire ce travail de parsing, comme je viens de le démontrer.
+
+
+
+Oui ->
+
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ cat lol
+	lol	
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ cat pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL='cat pourquoi > lol'
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+cat pourquoi > lol
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+cat: '>': No such file or directory
+	lol	
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ cat pourquoi > lol
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ cat lol
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+pourquoi
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+
+En fait le problème c'est que dans une variable d'env tous le characteres perdent leur signification,
+J'ai eu un brain fart tout a l'heure je sais pas pq je pensais qu'on pouvais pas mettre de charactere speciaux, j'avais complétement oublié les quotes.
+re regarder mes examples
+
+
+
+
+AUSSI "'$HOME'" en parler
+
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ echo "'$HOME'"
+'/home/gbonis'
+
+ouai ->
+
+
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL="'ls'"
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+'ls': command not found
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ 'ls'
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  resum  signals.c  test_ran
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ 
+
+Alors j'ai en effet eu un gros brain fart, on peut tout a fait mettre des characteres spéciaux dans les variables d'env, faut juste utiliser des quotes différentes,
+comme "'ls'" ou '"ls"'
+
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL='"ls"'
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+"ls": command not found
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL="'ls'"
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+'ls': command not found
+
+
+Pour finir, je dois vérifier que dans mon parsing lorsque j'ai bien gérer l'expansion dans "'$HOME'" ainsi que le fait que lorsqu'une variable d'env est expand, plus aucun
+de ses characteres n'a un sens spécial pour le shell
+
+
+
+exemple ->
+
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL='"            ls"'
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+": command not found
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ 
+exit
+made-f0Ar7s7% fg
+[1]  + continued  ~/usrbin/nvim/bin/nvim resum
+made-f0Ar7s7% bash
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL='"       ls -la"'
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+": command not found
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL='"ls -la"'
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+Command '"ls' not found, did you mean:
+  command 'rls' from snap rustup (1.27.1)
+  command 'ols' from deb speech-tools (1:2.5.0-12)
+  command 'hls' from deb hfsutils (3.2.6-15build2)
+  command 'fls' from deb sleuthkit (4.11.1+dfsg-1)
+  command 'ils' from deb sleuthkit (4.11.1+dfsg-1)
+  command 'ls' from deb coreutils (8.32-4.1ubuntu1.2)
+  command 'als' from deb atool (0.39.0-11)
+  command 'jls' from deb sleuthkit (4.11.1+dfsg-1)
+See 'snap info <snapname>' for additional versions.
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL='"cat list | wc -l"'
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+"cat list | wc -l"
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+Command '"cat' not found, but there are 17 similar ones.
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ export LOL='"cat list > a_file"'
+gbonis@made-f0Ar7s7:~/projets/third/ssh_maaike_minishell/src$ $LOL
+Command '"cat' not found, but there are 17 similar ones.
+
+
+Je pense que pour le cas de "'$HOME'" c'est juste que je dois ignorer jusqu'a ce que je trouve l'autre quote, et si c'est double quote j'expand etc.. mais je 
+pense que j'aurais géré de toute manière ce cas sans presque le savoir. Sinon pour les variables d'env, normalement si je fais ce que j'ai dis, je devrais avoir
+des tokens d'arg avec les espaces et meme pas regarder ce qu'il se passe, je ne me souviens plus ce que je disais sur mon gros texte mais je pense que c'est bon
+avec ma méthode.

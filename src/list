@@ -1,0 +1,1664 @@
+to do:
+
+
+
+	-build a linked list with environnement variable in order to be able to add variables, or an array idk, whatever is more suited in order to do export (with all the bullshit with the alphabetical order
+	also be careful with export without args because there is a variable that isnt there i dont know which one. I dont think it matters if its an array or a tab, but we have to decide before doing builtins
+	with env var manipulation
+
+
+
+
+	-incrémenter SHLVL
+
+
+
+Je viens de penser à quelque chose, lorsque j'ai un redpip token au milieu d'un token genre 'pourquoi'>'allo' je devrais dans la tokenize string alors avoir trois token plutot qu'un ?
+Oui, mais ça change pas grand chose, ce sera juste du managing de strings dans tokenised string, du moment que j'ai le bon tab je pourrais gérer ça, car ce cas là c'est juste dans un
+token split quand yen a plusieurs, j'aurais juste besoin de compter, ouai d'ailleurs parce que je peux avoir un truc comme ls |wc|wc|wc|wc|wc|wc| wc etc.. et donc je devrais pouvoir gérer ce genre de cas la aussi.
+
+Oui je viens de tester c'est bien le cas.
+
+
+Ouai je devrais avoir une fonction de detecteur de token qui renvoie le type de redpip token que c'est pour que je puisse mettre ça dans le tab 
+
+
+
+	-est ce que j'ai géré le cas ou il y a une env var qui pete et une autre après qui est là ?
+
+
+
+
+
+	-je me disais que pour faire la tokenized strings, j'aurais besoin de savoir quels redpip char je dois garder et ceux que je ne dois pas garder, mais je me disais
+	que avec la cmd_str_b j'ai juste besoin de regarder dedans et c'est bon, et je pourrais faire un truc similaire avec le tab, mais pour les redpip ? parce que le 
+	probleme c'est qu'après le parsing de quote j'aurais plus de quote et donc je pourrais pas me servir des quotes pour detecter les redpip, et donc si ya des redpip
+	dans les quotes comment je ferais ? Je pense que je peux faire une infra comme le tab que j'ai fais, et checker dans les env var combien je dois skip
+
+	Ouai je pense que c'est une bonne idée de faire la tokenised string après le parsing des quotes, car je devrais pas toucher au char (et token) des env var (j'ai le tab pour ça)
+	En fait non c'est juste que je devrais avoir un autre tab pour savoir comment ignorer les char spéciaux a la fois dans les env var mais aussi dans les token quotes. Je me dis
+	que pour faire ça c'est peut etre plus facile de faire le tableau des redpip avant le gerer les quotes (comme je peux skip facilement puisque les quotes seront encore la ? Et
+	puis a ce moment la 
+	En fait ce que je veux dire c'est d'avoir un check quand je fait le tableau pour les quotes (avoir aussi un tableau pour les redpip ici, et après juste avant de faire les quotes
+	je fais un autre tableau pour les redpip dans les quotes (comme je les ai encore a ce moment la). Je préconise ça car parser sans les quotes ça serait très compliqué je pense
+	avec tous les cas, ouai comme on peut avoir un redpip d'une envar dans un gros token quote si tout est collé etc. Ouai de toute manière je suis obligé d'avoir un counter pendant
+	le env var et aussi un dans les quotes(qui prends en charge les env var aussi).
+	En fait non, le truc c'est que je dois obligatoirement parser les deux et c'est tout, env var et dans quote, je veux dire peu importe ou je le fais je suis un peu obligé d'utiliser
+	la cmd_str pour ça, et que le faire avant ou après les quotes ça revient au meme ? non pas forcément car c'est peutetre mieux de le faire après que les evn var soient expand car
+	car ça me permet de ne pas checker pour la fin des noms de env var et celle qui sont pas la etc..
+	Ouai je pense que ça revient un peu au meme mais faire une pass d'abord dans les env var, puis après dans les quotes en utilisant le début de tab pour les env var c'est peutetre mieux.
+	Non parce que je ne saurais pas exactement combien de case j'ai besoin dans le tableau. Ou alors je fais un premier tableau et après un deuxieme lors de la pass pour les quotes ?
+	Tout dépend d'à quel point c'est facile de de gérer les mauvais noms de variable et ce genre de chose là.
+	Non, pour l'amount dans le tab c'est facile de savoir combien c'est parce que il suffit juste d'allocate en fonction du nombre de quotes et env var, juste une case pour entre a chaque
+	fois et voila.
+	Oui, quand je regarde mon code pour le tab des quotes, je peux facilement faire un autre tab pour les redpip token, je dois juste build une fonction qui check pour le nombre de token,
+	calculer le nombre de case dans le tab, et puis voila j'ai plus qu'à insérer tout ça dans cette section de code. Et après quand je devrais build la tokenized strings ce sera donc
+	facile de calculer le malloc necessaire, et après refaire les tokens, honnêtement j'aurais meme pas besoin vraiment de duppliquer les strings, je devrais juste décaler les characteres et
+	puis c'est bon, yaura juste deux zéros a la fin mais je pense pas que je soit grave pour le free mais je dois quand meme checker si c'set le cas avant de me faire chier a faire ça.
+
+	Et j'ai pas dit aussi que je dois skip un nombre différents de char selon ls token redpip >> > etc.. Je pense que je peux faire un tab de tab avec dans le deuxieme tab des indices
+	pour le type de token, avec un enum ou define etc, comme ça ça me permett de skipper le bon nombre de char 
+
+
+
+
+	-un test avec un résultat bizarre que je comprends pas:
+		
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export lol="allo  ' "
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls 'test'$lol'test'
+ls: cannot access 'testallo': No such file or directory
+ls: cannot access "'": No such file or directory
+ test
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'test'$lol'test'
+testallo ' test
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+J'ai compris c'est parce que j'avais un fichier qui s'appellais test dans le dir, sinon tout fonctionne comme je le pensais
+
+
+
+
+
+
+
+
+
+	-NOTER QUE JE DOIS REJETTER SI UN PIPE EST AU TOUT DÉBUT DE LA COMMANDE STR, OU ALORS NON ON ATTENDS L'EXEC POUR ÇA, COMME SI IL DETECTE PAS
+	Non en fait je pense qu'il faut laisser l'exec gérer ce genre de chose la, par exemple si ya | | c'est viable pour mon parsing mais cest a l'exec
+	de comprendre que ya des choses qui manque, j'ai juste fait un check basique sur les characteres speciaux de pipe mais pas leur meaning, parce que
+	ce serait beaucoup trop complexe de le faire dans le parsing.
+
+
+
+
+
+
+
+
+	-ah ouai mais il y aura un probleme par exemple si j'arrive su un token après une quote genre 'oui, dans un contexte 'pourquoi 'oui. ah mais non en fait ça va c'est
+	facile je peux free ce token la car je l'aurais copié dans le token des quotes de toute maniere.
+
+
+
+
+
+
+
+
+
+		-dailleurs j'y pense maintenant, mais lorsque j'ai utilisé getenv, pour avoir path ou autre chose je sais plus, et que j'ai changé après
+		pour plus utiliser environ, est ce que ça change quelque chose sur le comportement le fait de faire le syscall ou pas ? genre si ya pas
+		la variable qu'on demande, ou si je fais ma propre variable PATH dans l'env qui est dans la memoire de mon process
+
+
+
+
+
+
+
+
+	- comme j'ai changé des trucs avec le fait de dupliquer la string de départ, j'ai peur que les retours soit plus bon (vis a vis de la logique si readline renvoie nulletc.. avec ma copie peut etre jai un return trop tot
+	dans certain cas etc..
+	Mais de toute maniere je devrais absolument tout retester avant de rendre le sujet de toute manière.
+
+
+
+
+
+
+	-je viens de me rendre compte en fait que les || c'est pas deux pipes c'est un truc de ogique, OR je crois.
+	Donc quest ce que je fais, je return false dès que je le chope ?
+
+
+
+
+	-ok, j'ai fait plein de tests
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls <
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls <<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |
+> wc
+     12      12      73
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||
+> wc
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |||
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >|
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >>|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >>>|
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls <|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls <<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls <<<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>||			//fonctionne alors que non
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|||			//fonctionne alors que non
+bash: syntax error near unexpected token `||'
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|			//parieil
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>||			//pareil
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|>			//pareil
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|<		//pareil
+bash: syntax error near unexpected token `<'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|>>			/[ariel
+bash: syntax error near unexpected token `>>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|<<				//[areil
+bash: syntax error near unexpected token `<<'
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|>    // celui fonctionne alors que non, et aussi |>|>|>|>| etc
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >||
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >|> // fonctionne alors que non
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls >|<			// pareil
+bash: syntax error near unexpected token `<'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |||<
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |||<<
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||<<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||<<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>|
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>>| 
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>||    //fonctionne alors que nonfg	// ouai apres ||>| aucun redipip cahr ne doit fonctionner
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>|>		//fonctionne alors que non	//APRES >| OU <| AUCUN REDPIP NE DOIT FUNC
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>|
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>|<  //fonctionne alors que non
+bash: syntax error near unexpected token `<'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>||		//fonctionne alors qe non
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>>|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||<<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>|
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>||				//fonctionne alors que non
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ||>|||				//fonctionne alors que non
+bash: syntax error near unexpected token `||'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls <|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls <|>
+bash: syntax error near unexpected token `|'
+
+quand token newline c'est qu'on doit gérer
+
+attention encore de nouveau cas:
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<<		// ca c'est une herestring, on doit pas le gerer
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<<<
+bash: syntax error near unexpected token `<'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>>>
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>>|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<<|
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<<>
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |<<>
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+
+
+	-ptin ls || doit fonctionner aussi
+
+
+	-encore un nouveau cas a gerer : ls ||>
+
+
+	en fait faudrait que je test toutes les possibilitées a nouveau et que je fasse gaffe a l'erreur token  newline
+
+
+
+
+
+
+	minishell$ ls |>|
+ls: cannot access '|>|': No such file or directory
+2
+
+
+	attention ca ca doit pas fonctionner,jepense
+
+	Merde si ça doit non seulement passer au parsing mais aussi ça erase totalement le fichier si on met un fichier après, genre ls |>| LICENSE ça erase license, le fichier
+	est la mais ya rien dedans.
+
+
+	ATTENTION 
+
+paul-f5Br3s6% ls   
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+paul-f5Br3s6% bash 
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ cat rien
+a.out
+inc
+libft
+LICENSE
+log
+Makefile
+minishell
+obj
+rien
+src
+test.c
+to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>| rien
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ car rien
+Command 'car' not found, but can be installed with:
+apt install ucommon-utils
+Please ask your administrator.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ cat rien
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+
+
+paul-f5Br3s6% bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls > rien
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ cat rien
+a.out
+inc
+libft
+LICENSE
+log
+Makefile
+minishell
+obj
+rien
+src
+test.c
+to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|>|
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|>| rien
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|> 
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>|> rien
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls |>| rien
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ car rien
+Command 'car' not found, but can be installed with:
+apt install ucommon-utils
+Please ask your administrator.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ cat rien
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+
+
+
+
+
+	-attention quelque part je devrais checker que je gere les choses comme ls|wc, car ça doit fonctionner.
+
+
+
+
+
+
+
+	-corriger ls |   , ca passe pas ca devrait passer,  ouai en fait c'est parce que la fonction return pas si c'est bon, et donc ca fail sur redir apres parce que ca doit return false je pense
+	ouai maintenant ca fait un lopp infini
+
+
+
+
+
+
+
+	-ouai, peut etre que je peux faire un peu une technique comme dns l'expand, genre je passe dans les fonctions pour chaque tokken et si je return false
+	je continue etc.. 
+	Et en fait si je detecte pas le charctere que j'essaie d'eval ça sort de la fonction direct, mais ça passe dans chaque fonction comme ça, parce que j'ai
+	beaucoup de chose a verif ici alors c'est plus pratique d'aller dans les fonctions et return tot plutot que avoir plein de if dans une seule fonctiogt
+
+	>|
+	|>
+	|>>
+	|<
+	|<<
+
+
+
+
+
+	oui je pense que je peux avoir une fonction qui regarde si après un | ya un redirtok viable et voila, et puis juste dans la fonction redirtok j'ai juste
+	un check pour voir si jamais ya un | après et que c'est un > sur lequel on est que du coup il faut compter 2 token viables, en gros reutiliser la fonction
+	redirtok et c'est bon normalement
+
+
+
+
+
+
+
+	-bref après tout ça je me dis que je peux vraiment laisser ça a l'exec, parce qu'il y a des spécificité mais que ce sera plus simple
+	de les gérer la bas, comme je dis le fait de ne pas avoir une clean tokenised string ça serait trop compliqué juste pour éviter des
+	petits cas d'erreur et je vais devoir faire des fonctions de check dans l'exec sur les redpip de toute maniere.
+
+	juste checker que c'est bien pas possible d'avoir lese token collé dans le cas genre ls | >> rien (pas de probleme de parsing mais ça produit rien
+	cette ligne de command
+
+
+	Ouai un cas spécial que je redoutais :
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>> rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls <<| rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>>> rien
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>> | rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>>  wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do  wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>>  wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>>  wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do  wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat wc
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+	je dois refaire redpip token pour que ça laisse passer dans ce cas la, comme le fichier doit etre créé, et aussi du coup ça valide le fait que je vais checker tout ça dnas l'exec
+
+
+	Ouai voici tous les cas ou je devrais laisser passer le redpip tok, c'est toujours après le pipe, je doisv verif que c'est vraiment juste dans ce cas la, c'est j'ai le message
+	d'erreur parsing token etc.. ça veut dire que je gere pas mais si j'ai autre chose ca veut dire que je dois gerer.
+
+
+
+
+	Ouai en fait on voit qu'il y a plein de petit cas de merde, et je suis meme plus sur que mon idée de redpip token avant de parser quoique ce soit fonctionne
+
+
+paul-f5Br4s7% bash
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls <| rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls <<| rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >| rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >| rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien 
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+aout  file  inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >| rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien 
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls <| rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls <<| rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >>| rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >| rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+a.out
+file
+inc
+libft
+LICENSE
+log
+Makefile
+minishell
+obj
+rien
+src
+test.c
+to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|<< rien
+bash: syntax error near unexpected token `<<'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|< rien
+bash: syntax error near unexpected token `<'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|>> rien
+bash: syntax error near unexpected token `>>'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|> rien
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>> rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |< rien
+bash: rien: No such file or directory
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |< LICENSE
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ nvim LICENSE 
+Command 'nvim' not found, but can be installed with:
+snap install nvim    # version v0.10.2, or
+apt  install neovim  # version 0.6.1-3
+See 'snap info nvim' for additional versions.
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ vim LICENSE 
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ nothing wierd in LICENSE
+nothing: command not found
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |<< LICENSE
+> $HOME 
+> $HOME
+> LICENSE
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ vim LICENSE
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ nothing wierd in license
+nothing: command not found
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  file  inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm file
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+	Donc quest ce qu'il fonctionne:
+	>| quelquechose				(et  ça met quelque chose dans quelqeuchose)
+	|>>			(ne fait rien ?)
+	|<			(ne fonctionne pas mais bash essaie d'exec)	
+	|<<			(fait un heredoc mais ça sert a rien concretement je pense)
+	ya aussi |>
+
+
+		test :
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >| rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+a.out
+inc
+libft
+LICENSE
+log
+Makefile
+minishell
+obj
+rien
+src
+test.c
+to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|>|>|>| rien
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|>|>|> rien
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|>|>| rien
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|>|> rien
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|>| rien
+bash: syntax error near unexpected token `>|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >|> rien
+bash: syntax error near unexpected token `>'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >| rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>> rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  src	test.c	to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>> rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>>| rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |>>|>> rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  src	test.c	to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+paul-f5Br4s7% bash
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |< rien
+bash: rien: No such file or directory
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |< /
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat ls
+cat: ls: No such file or directory
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |<| /
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |<|< /
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ rm rien
+rm: cannot remove 'rien': No such file or directory
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |<<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |<< pourquoi
+> lol
+> lol
+> pourquoi
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |<<| pourquoi
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |<<|<< pourquoi
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls <<|<< pourquoi
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+	Donc ça veut dire que je dois juste laisser passer les 4 que j'ai noté avant
+
+
+
+
+
+
+
+
+
+
+
+
+	-ouai je pense que je peux attendre l'exec avant de checker pour ce genre d'erreurs car de toute maniere je devrais le
+	faire dans l'exec, du moment que j'ai des token valides, après je me débrouillerais dans ll'exec
+	par exemple je peux tester encore une fois le fait de faire un redir et un pipe, je crois que ça fonctionnais, juste pour
+	montrer que deux token redpip peuvent se suivre . Je dis ça parce que si je dois parser pour voir ce qu'il y a après les tokens
+	etc.. autant faire ça une fois que j'aurais tous les tokens bien propre etc..
+
+
+	ouai ya juste une petite subtilité, on peut avoir deux token valide l'un apres l'autre mais ça fait rien
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+/proc/1
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls | >rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls | >> rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >> | rien
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >> rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+a.out
+inc
+libft
+LICENSE
+log
+Makefile
+minishell
+obj
+rien
+src
+test.c
+to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls | wc -l >> rien
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat rien
+a.out
+inc
+libft
+LICENSE
+log
+Makefile
+minishell
+obj
+rien
+src
+test.c
+to_do
+12
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+	exemple heredoc
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat << pourquoi
+> 
+> $HOME
+> pourquoi
+
+/home/gbonis
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat <<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+
+
+	-ya des spécificité dans les pipes et redir que je comprends pas vraiment encore :
+
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls < rien
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  rien  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls < cat rien
+bash: cat: No such file or directory
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo < rien
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat < rien
+/proc/1
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat < rien |
+> wc -l
+1
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+	avec ça et le fait que je dois pas bloquer lorsque  c'est un pipe et que y rien apres ou une redir
+	Ouai je viens de tester aussi et on peut pas avoir deux pipes d'affilée sans rien
+	mais après je dois juste rechecker que j'ai bien MAL fait le fait d'avroi des token redpip les uns après les autres
+	sans rien entre
+
+
+
+
+	ouai quand je vois ça je me dis que c'est safe de refuser la strings si ya des token valid mais rien après, sauf pour le pipe
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls > shite >
+bash: syntax error near unexpected token `newline'
+
+	ou alors lorsqu'il y a plusieurs token valid d'affilée séparé par des espaces
+
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >> |
+bash: syntax error near unexpected token `|'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >> log |
+> wc -l
+0
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls | >> log				// ah ouai non en fait c'est a cause de la commande d;avant qui fait que jai >> a la finde log
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls
+a.out  inc  libft  LICENSE  log  Makefile  minishell  obj  src	test.c	to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ cat log
+==684530== Memcheck, a memory error detector
+
+
+// etc, valgrind output //
+
+
+==684530== LEAK SUMMARY:
+==684530==    definitely lost: 10 bytes in 2 blocks
+==684530==    indirectly lost: 0 bytes in 0 blocks
+==684530==      possibly lost: 0 bytes in 0 blocks
+==684530==    still reachable: 208,175 bytes in 222 blocks
+==684530==         suppressed: 0 bytes in 0 blocks
+==684530== 
+==684530== For lists of detected and suppressed errors, rerun with: -s
+==684530== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+a.out
+inc
+libft
+LICENSE
+log
+Makefile
+minishell
+obj
+src
+test.c
+to_do
+
+donc on voit je pense que après un pipe il peut y avoir un autre token c'est valide, attends peutetre pas avec <<
+
+
+
+
+
+
+
+
+
+	-AUTRE CAS SPECIAL
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ./LICENSE  >>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ./LICENSE  <<
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ./LICENSE  |
+> wc -l
+bash: ./LICENSE: Permission denied
+0
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ LICENSE  | wc -l
+LICENSE: command not found
+0
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ LICENSE  |
+> wc -l
+LICENSE: command not found
+0
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+
+
+
+
+	-ATTENTION CAS SPECIAL 			// donc on doit
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls |
+> 
+> 
+> log
+Command 'log' not found, but there are 16 similar ones.
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls | 
+> wc -l
+11
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls >>
+bash: syntax error near unexpected token `newline'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+
+	-cas que je gere pas
+
+minishell$ ls ''< | <
+ls: cannot access ''\'''\''<': No such file or directory
+ls: cannot access '|': No such file or directory
+ls: cannot access '<': No such file or directory
+2
+minishell$ 
+make: *** [Makefile:122: valgrind] Error 2
+paul-f5Br4s7% bash
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls '' < | <
+bash: syntax error near unexpected token `|'
+
+je pense que je dois rejetter la strings quand il y a deux token a la suite non viable, en ce moment si il des whitespaces je laisse passer alors que je devrais pas,
+et aussi je pense que je dois gerer des la dans le parsing quand un token valide en theorie n'a rien après et donc peut pas redir ou pipe etc.., sauf pour le heredoc ? tester tout
+ça dans bash et voir, si bash renvoie des syntax errors sur les cas je dois faire en sorte que ca va pas jusqua lexec, si bash envoie les tests dans les commandes je dois les envoyer
+jusaqua lexec
+
+
+
+
+	-peut etre que je peux passer dans les tokens
+
+	Je ne ne souviens plus lorsque je check si les quotes sont valides ou pas
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	-tester expand et redpip_counter
+
+---------------------------------------------------------
+
+
+
+
+
+
+	-ATTENTION QUAND BASH EXIT, QUE CE SOIT SUR CTRL-D 	OU AUTRE JE SAIS PAS, IL DOIT AVOIR COMME CODE DE SORTIE RETVAL. Et donc après dans zsh on doit avoir retval de minishell en $?
+
+
+
+	-build un chiffre après $ a considérer comme une variable (donc si elle n'existe pas et comme elle n'existera pas dans minishell, il faut supprimer le $ et le numéro qui suit).
+
+	-ouai, ne pas gérer $0 ou $$ (pid number), comme on nous demande explicitement de $? alors je vais faire que ça. Mai je vais quand meme gérer
+	l'histoire avec les chiffres au début
+
+
+
+	-probleme ya un cas spécial 
+
+gbonis@paul-f5Br3s2:~/projets/third/ssh_maaike_minishell$ cat $.lol
+cat: '$.lol': No such file or directory
+gbonis@paul-f5Br3s2:~/projets/third/ssh_maaike_minishell$ cat $Ho.lol
+cat: .lol: No such file or directory
+gbonis@paul-f5Br3s2:~/projets/third/ssh_maaike_minishell$ 
+
+	ouai en fait le truc c'est que il y a une différence entre le fait d'avoir un $ et des alphanum après, non meme pas regarde :
+
+gbonis@paul-f5Br3s2:~/projets/third/ssh_maaike_minishell$ cat $999999999.lol
+cat: 99999999.lol: No such file or directory
+gbonis@paul-f5Br3s2:~/projets/third/ssh_maaike_minishell$ cat $lol999999999.lol
+cat: .lol: No such file or directory
+
+
+
+
+
+paul-f5Br3s6% bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $9999lol.pourquoi
+ls: cannot access '999lol.pourquoi': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $0
+bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $1
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $2
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $3
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $0
+bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $5
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $6
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $5
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $7
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $8
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $9
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $10
+0
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $a
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $z0
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $z1
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $z1-1
+-1
+
+
+paul-f5Br3s6% bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $11
+1: command not found
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $00
+Command 'bash0' not found, did you mean:
+  command 'bash' from deb bash (5.1-6ubuntu1.1)
+Try: apt install <deb name>
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $22
+2: command not found
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $111
+11: command not found
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $222222222222222222222222222222
+22222222222222222222222222222: command not found
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $222222222222222222222222222222.lol
+22222222222222222222222222222.lol: command not found
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $2.lol
+.lol: command not found
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ $22.lol
+2.lol: command not found
+
+
+Donc, comme on le constate, l'expand accepte au début un chiffre, puis après si ya rien derriere ce chiffre en variable le shell cut la variable 
+et affiche tout ce qui est après, alors qu'on s'attendrais a ce que le shell aille regarder le nom de la variable jusqu'au bout des chiffres 
+comme il le fait lorsqu'il y a d'abord des lettres puis après des chiffres :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $h99999999999999999999999.lolpourquoi
+ls: cannot access '.lolpourquoi': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $9999999999999999.lolpourquoi
+ls: cannot access '999999999999999.lolpourquoi': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+	En fait le seul probleme avec ça c'est que selon la logique que j'avais je pensais que si j'vais $9999999./lol ça donnait ./lol alors qu'en
+	fait le comportement est différent.	Ouai en fait c'est ça surtout le truc étrange, c'est qu'on dirait qu'il y a une règle spéciale qui fait
+	que lorque l'on chope une var avec un nom qui commence par un num, on attends pas la fin des alphanum, on "cherche" la var avec juste le premier
+	chiffre après le dollar et on cut le tout (donc chez nous on trouvera rien) et on garde tous les chiffres ou alphanum après.
+	tester ça
+
+
+	gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $9allo
+allo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $999allo
+99allo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $99999
+9999
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $9-9999
+-9999
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $a9999999lo
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $a999-9999lo
+-9999lo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+
+
+
+	autre cas special, lorsqu'il y a rien après $
+
+
+
+
+
+paul-f5Br3s6% bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $HOME $HOM $HOME$
+ls: cannot access '/home/gbonis$': No such file or directory
+/home/gbonis:
+ brouillon_to_merge   Dictionaries    Documents   goinfre    misc    note_philo   philo      prochain_trade   Public   sgoinfre   snap	      test_git	 usrbin  'VirtualBox VMs'
+ Desktop	      distance_bike   Downloads   help_git   Music   perso	  Pictures   projets	      sec      shortcut   Templates   trash	 Videos:Te
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+exit
+
+
+
+
+
+
+	-qu'est se qu'il se passe si on fait echo $?<>,./,    le shell a l'air de traiter ? comme un charactere alphanum special, genre just un if si ya le moindre ? derriere le dollar
+	on se pose pas la question et on met retval, on regarde meme pas ce qu'il y a après
+
+
+
+
+	-aussi que se passe-t-il lorsque les variables sont collées a quelque chose, et qu'elle ne fonctione pas, est ce que il faut laisser après jusquau non alpha et ceux la ne pas les cut ?
+
+	
+	-probleme avec mon programme, si je cherche la variable $HOM et que $HOME existe il va expand $HOME je pense que je dois inverser les sens dans le checking, ou eest ce que je peux ?
+
+
+	-oui en effet lorsque le shell trouve pas une variable d'env il fail pas il continue après et si yen a dautre il les expand
+
+
+
+
+
+
+	-still need to remove env var if it is not found/// put it in the if var i not found and break the function and manipulate the strings etcc
+
+	-do retval
+
+	-try tilde if space and is easy to do
+
+
+
+
+
+	-peut etre je peux mettre le retval dans le tableau d'env pour que ce soit vraiment comme une variable d'env ? ou sinon j'ai un petit check a chaque expand
+
+
+
+
+	-essayer de faire le tilde a un moment dans l'expand
+
+
+
+	/////////-IF NOTHING AFTER PIPE OR REDIR CHARACTER, WILL LET EXEC HANDLE ERROR WHEN IT WILL CHECK FOR REDPIP
+
+	-Dont forget to reinitialize redpip counter after exec
+
+
+
+	-il se passe quoi si on a >>>> ? ça fait une erreur, donc je dois checker d'abord si les redir/pipes sont valides, pfiou
+
+
+
+C'est bon pour le split refactor
+
+
+	-put what i can in free functions on exit (après exec(0 in handlestr)
+
+	-noter dans args eval que les 3 fd ouvert ce sont les standards et que le 4e c'est le log file 
+	-noter args eval qexplication que je suis obligé d'utiliser les variables de readline pour faire return la ligne sur l'exemple du signal ^C et prouver que c'est 
+	possible que via l'utilisation des variables de readline (montrer un programme exemple)
+	-aussi noter que si on met suivre enfant on aura les leaks de bash si on met bash dans minishell
+
+
+	
+	-test split managing if it is possible	// oui c'est bon
+	-don't use environ but use envp (in order not to have nm -D show dyna link on this) V
+	-refactor to have split in parser and manage abs resolving etc.. if needed (prob will be in the exec, but refactor in order to have the prog work if given no quotes or variable or redir
+
+	-build quote checker
+	-build redir token counter
+	-build env var expand
+	-split whitepace
+	-build quotes resolve
+	-malloc tokenied string if needed
+	-build put in tokenised strings (redi token checker)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	-ça peut peutetre etre pas mal de gérer le ~ aussi, genre comme une expansion de $HOME	
+
+
+	steps parsing:
+		-are quotes valid
+		-count redir/pipe tokens
+		-expand env var
+		-split whitespace
+		-resolve quotes
+		-if redir/pipes malloc tokenised string
+		-if redir/pipes put all tokens in tokenised string
+
+
+
+
+	-quand est ce que je pourrais checker pour les redir et pipe ? En fait comme si jamais je détecte des redir ou pipe (dans la cmd_str, je peux probablement d'bord faire le 
+	resolving d'env var, mais ensuite checker dans la string originale pour voir si ya des redir ou des pipes sans regarder dans une eventuelle env var qui en contiendrais, comme
+	ça je pourrais avoir le nombre de token pour pouvoir mallocer le bon nombre de truc. Non en fait je devrais attendre le resolving de quotes aussi, pour éviter d'interpréter
+	des pipes dans des quotes.
+	Non en fait avec la complexité d'avoir des quotes collée a rien sans rien dedans ( '' ) ou je dois quand meme compter ça comme un token, je pense que ce sera probablement
+	plus facile de faire en comptant les tokens après env var resolve, puis quotes resolve, et regarder combien de token en plus j'ai avec les characteres de pipe et redir en
+	plus. Genre je peux regarder dans les tokens si il contiennent des pipes ou redir, je dois juste checker que je suis pas en train de regarder dans une env var.
+	Parce que faire ça ça va etre compliqué, puisque je peux pas vraiment checker si les tokens sont bons après jusqu'a la fin de la string vis a vis de la string originale car
+	si ya encore des env var après ça le fait pas, a moins d'avoir un checker qui soit capable d'aller voir dans les env var, mais ça ferait un checker aussi complexe que parse
+	vraiment manuellement les whitespaces. Peut etre que je peux faire justement un compteur de token pour voir combien de malloc je fais, et qu'il puisse aller dans les env var,
+	dans les quotes et tout ça. Mais ça serait peut etre plus prone au bug comme je disais la plupart du temps c'est parsable avec des whitespaces de toute manière. Ouai parce 
+	pour les redir et pipes je peux juste checker la string originale de toute manière, je dois juste me débrouiller pour pas regarder dans les quotes si ya des pipes/redir,
+	ouai parce qu'on peut etre se dire que si dans la string originale si ça jusqu'au check de redir c'est que ya le bon nombre de quotes, donc dès que je vois une quote dans la
+	string originale je peux juste skipper jusquà la prochaine probablement (ou alors je peux juste réutiliser ma petite fonction de checkage de toute maniere). Le probleme après
+	c'est pour trouver le bon split du token pour pas réinterpréter un quote dans une en var. C'est vraiment ça honnetement le probleme car sinon je pourrais juste regarder les
+	charactères de la string originale et les checker dans les tokens. Ouai après c'est ptet pas non plus un truc de barge vu que je peux facilement checker les envs var si ça
+	coincide ou pas.
+	ouai je suis con en fait je peux regarder au tout début pour le redir et pipes, avant meme le parsing d'env var pas dans les quotes, comme je disais je peux juste checker, ouai
+	en fait faudrait faire un tout premier le check pour voir si les quotes sont valides, comme ça après je peux skip les quotes quand je check pour les redir, puis après je fais le
+	check pour les tokens de redir/pipes, je met le nombre de pipes dans une variable dans la struct values, puis après je fais la résolution d'env var, je split puis je fais la 
+	resolution des quotes (c'est plus facile comme c'est juste une histoire de charactères je peux juste parcourir les splits pour tout regrepper, normalement les charactères sont toujours
+	là, et donc une fois que j'ai tous les tokens dans le split, je peux a nouveau regarder dans la cmd_str pour voir ou sont situés les token de redir pour les mettre aux bons
+	endroits pour la tokenised string (parce que je pense que de toute maniere les choses vont partir dans du execve donc c'est bien d'avoir des tableaux de char *, et de pouvoir
+	choisir les éléments a envoyer dans les pipes ou dans les execve) parce que a ce moment la tous les token sont bon a envoyer dans l'exec, mais il manque juste la gestion des pipes
+	et redi, mais comme ces characteres ne vont pas aller dans les execve et les args d'execve c'est bien de pas les avoir dans les tokens, mais je devrais quand meme avoir des token
+	de redir/pipe au bon endroit pour pouvoir faire l'exec, donc a ce moment la je pourrais rechecker la string originale et tout parcourir, sauf que cette fois je pourrais ne pas
+	interprêter ce qu'il y a dans les quotes, non en fait ça revient un peu au meme sauf que j'aurais plus facilement le nombre de redir/pipe token a malloc, c'est juste que je 
+	pourrais plus facilement parcourir les token a partir de la cmd_str pour trouver le bon endroit pour mettre les pipes/redir token dans la tokenised string, je pense que ça
+	évitera des bugs, parce que le plus chiant c'était d'avoir le bon nombre de token pour la tokenised strings et avec cette méthode on voit que c'est beaucoup plus facile, et
+	je pense pas que ce sera trop dur de parcourir les split en fonction de a cmd_str et des env var, sauf peut etre le fait que yaura plus de whitespace dans les résolutions de
+	variable d'env et que du coup faudra que je saute de token en token, mais après on peut aussi se dire que les \0 dans les tokens seront équivalents au whitespace alors c'est pas
+	trop grave, mais maintenant que j'ai dis ça je me demande si ce serait pas plus facile de juste checker ça juste après la premiere resolution d'env variable, parce que la yaura
+	aucun split, ouai mais non parce que faudra quand meme que je check si je suis en train de checker une env var ou pas, les quotes et tout le bordel, ouai parce que meme si j'étais
+	capable de compter ou ce serait dans la tokenised strings les whitespace ça serait vachement compliqué, et aussi le fait de faire comme j'ai dit ça a le mérite que on peut malloc
+	la tokenised strings dès le début et ensuite au fur et a mesure que l'on cherche ou mettre les token de pipes et redir on peut mettre les autres token dans la tokenised string
+	au fur et a mesure. Le seul truc chiant serait de vérifier dans les variables d'env mais je pense pas que ce soit trop compliqué.
+	Et pour finir je pense que si j'ai des quotes et que je dois les manager, je peux juste faire la cuisine genre lorsque j'arrive sur le token ou commence la quote, je free et je
+	recopie selon la cmd_str et voila, après je peux passer toute la cmd_str jusqua la prochaine quote, puis je regarde le token a qoi il doit ressembler, puis je le met la ou il doit
+	etre puis je continue.
+	En fait cette maniere me parait plus facile de base car on a les malloc de fait déjà, et on est pas obligé de regarder la ou on est pour savoir si faut mettre des whitespaces ou pas,
+	et aussi ça me permet de beaucoup plus facilement avoir le bon nombre de split ou de token (entre les env var qui doivent etre splittés et les quotes non).
+	Ouai ceci dit peut etre que c'est plus simple si je (je voulais parler de juste compter les token vis a vis de si je suis dans une string ou une env var, ptet c'est plus facile) 
+
+	En fait c'est vraiment la meme chose entre les deux methodes, on est de toute maniere obligé de checker les env et les quotes pour parser de toute manière, la seule différence 
+	C'est que je dois splitter manuellement dans un et je dois réorga les splits dans l'autre, mais a part ça ya as grand chose qui change. Peut etre le split comme je dis c'est plus
+	versatile.
+	Faire ma version, ça revient au meme de toute manière.
+	Et aussi avec ma manière je peux faire petit a petit, plutot que tout checker pour avoir le nombre e token, mallocer, puis mettre les choses, moi c'est déj`fait etc, mais ça revient
+	au meme, aussi c'est légèrement plus simple pour les token de redir et pipe ma version comme j'ai deja le nombre de redirpipe tok plutot que de ne pas les chercher dans les env var.
+
+
+
+	parler refactor split pas au meme endroit  (avec mon current code) du coup mais dans le parsing après l'expand
+
+
+
+
+	-est ce que je peux utiliser la meme fonction pour le resolving de env var au début et dans le double quotes ? Ouai je pense que ce sera la meme chose
+
+
+
+	-La plus grande probabilité est que je puisse pas faire le rendu de minishell avant que maaike parte, je pense que la bonne chose est de freeze pendant un mois, afin d'être 
+	safe sur tout  novembre, enfin je veux dire freeze ce que je peux sur octobre et la moitié de novembre afin de pouvoir quand meme faire le nombre d'heure sur novembre. Et si 
+	je vois que ça va je stop le freeze, mais partir sur cette base pour être le plus prudent possible vis a vis du bh. Si j'arrive a ne pas bh sur minishell, et que je continue a bosser
+	au meme rythme j'aurais moins de chance de bh je pense, le plus gros risque visiblement c'est en ce moment, et aussi sur transcendance j'aurais aussi beaucoup de risque (vis a vis du
+	fait que si j'ai très peu de marge en temps et qu'on est sur un projet avec 4 ou 5 personnes ça peut vite devenir l'enfer)
+
+	-relire envvar et faire resum, demain je dois faire 12h et essayer de finir ou au moins d'avancer le plus sur le parsing des quotes et env var, afin d'essayer de passer
+	la semaine prochaine a essayer de finir les redir et pipes. Comme ça je pourrais partir en freeze et juste avoir a faire les builtins la semaine d'après, et comme ça je pourrais
+	fignoler la semaine d'après pour un rendu avant que maaike parte (demain aller a made pour pouvoir faire des corrections et choper les points, etre la bas a 8h et rester jusqu'a 20h
+	au moins voir 21h pour essayer de choper 3 points dans la journée ainsi qu'avancer pas mal
+	Aussi faire 12h par jour la sem pro pour avancer au rythme que je viens de décrire, ce serait vraiment pas mal de faire une tentative de rendu avant que maaike parte, mais si je veux
+	avoir une chance de faire ça, je dois finir le parsing la semaine pro pour faire les builtins celle d'après si vraiment elle fout rien, et puis de toute maniere meme si elle fait
+	quelque chose je devrais repasser derriere pour que le projet soit solide.
+
+
+
+	-un truc étrange, c'est que si l'env var existe pas  il faut enlever de la string totalement la variable, le shell fait comme il elle existait pas de base, avant le quote parsing
+	c'est déjà plus la.
+
+	-build en var resolving not in quotes
+	-build quotes cutting and managing the split
+	-build double quotes variable resolving
+	-build $? resolving (in en var resolving)
+	-build tokenised string for redir and pipes
+	-adapt the execute to check for redir and pipes
+	-build redir and pipes
+
+
+	-les étapes du parsing
+		-split
+		-if env var not in quotes
+		-quotes
+		-if dir or pipe
+
+	-les étapes de l'exec
+		-if redir or pipe
+		-execve
+
+
+
+	-J'ai oublié un truc un truc super important, c'est que je dois pouvoir gérer les variables d'env meme quand elle sont pas entre quotes, comment faire ?
+	Peut etre je peux faire quelque chose de similaire à ce que je veux faire dans les redir et pipes, on cut d'abord et après on voit si ce qui reste je dois
+	resolve ça ou pas, encore une fois je pense que ce sera mieux vis a vis du split, car normalement les choses seront ok après les quotes sur le split, j'aurais
+	plus qu'a faire de petite manipulation si besoin, mais pas de changer tout le split en lui meme.
+	Mais ya quand meme un petit probleme :
+	gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo lol$HOME
+lol/home/gbonis
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo lol$HOMElol
+lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo lol$HOME'lol'
+lol/home/gbonislol
+
+	En fait non pas tellement ça veut prob juste dire que je dois juste faire un peu l'inverse que ce que je disais, je dois juste faire le resolving de env variable
+	avant de faire les quotes, parce que sinon ce serait difficile de gérer le genre de spécificités du dessus.	Parce que sinon ce serais difficile d'avoir le bon
+	nom des variables d'env.
+	Oui je pense qu'on peut partir la dessus.
+
+	En fait la je suis en train d'ajouter plein de trucs et de spécificités à mon parsing sur le split, ce serait peut etre mieux peut etre si je faisais sans split de
+	base ?
+	Encore une fois je pense pas parce que c'est, encore une fois, le chemin le plus courant d'un shell de rien avoir et juste etre séparé par des whitespaces, donc je
+	minimise le nombre de bug en fonctionnant comme ça.
+	Après si on prends  un cas avec des variables d'env pas dans les quotes, puis dans les quotes, avec plein de redir et trucs comme ça, oui à ce moment c'est peut etre
+	mieux de fonctionner directement en parsant la cmd_str, de toute maniere on a dit que j'utilisais la tokenised string juste pour les redir et pipes.
+	Au final ça change pas grand chose.
+	OUI POUR LES ENV VARIABLE PAS DE PROBLEME POUR LE SPLIT
+	Ouai je pense que c'est même mieux d'avoir déjà un split et de manager ça plutot que de devoir gérer un char **, devoir compter le nombre de char * etc...
+
+
+	-attention petit subtilité dans les pipes et redir si j'ai '|' quelque part je ne devrais pas considérer ça comme une redir, car c'est entre quote. Comment faire ?
+	Deux possibilités, soit je le fait avant, j'enlève les token de redir et pipes et je fait les strings, mais du coup c'est peut etre un peu plus compliqué d'avoir le
+	nombre de token.
+	Ouai en fait je pense que le plus facile ce serait d'avoir d'abord les quotes resolved, et ensuite pour générer les token, si ce sont des redir ou pipe j'aurais
+	juste à checker dans la string originial si jamais le symbole de redir ou pipe est valide (mais si jamais le symbole est dans une env variable ? NON ON DIRAIT QUE
+	LES SYMBOLES DANS LES VARIABLES D'ENV SONT ÉCHAPPÉ DE BASE (d'ailleurs il faut faire attention sur export, je pense que export ne devrait pas accepter les noms de variables
+	avec des quotes ou des symboles de redir pipes etc, les trucs du sujet quoi, si ils ne sont pas entre quote. Non mais en fait yaura pas le probleme car une fois que ça 
+	arrivera en args a export dans les builtins ce sera géré en amont et donc yaura pas de symbole spéciaux qui doivent etre interprété.
+
+
+
+	-mais du coup, dans quel ordre faudrait checker/grepper pour les redir, parce meme si ya des redir et pipes, faudrait quand meme que je puisse faire le parsing de quotes, tester
+	ça maintenant. Mais je pense que je peux faire d'abord les quotes, et après regarder si il y des redir et tout et seulement à ce moment là je metterais dans la tokenised string.
+	De cette manière j'évite le fait que j'aurais pas assezde split si il y a des pipes et redir qui sont collé aux args, je m'en fouterais car de toute manière je ferais probablement
+	un malloc du bon nombre de token et puis je metterais les tokens dedans et puis voila. Donc en résumé je pense qu'on s'en fout des redir et pipes pour les quotes, je fait mon parsing
+	de quotes, et seulement après dans tous les cas j'irais regarder si j'ai des redir et pipes. Pareil pour l'exec faudra juste que je regarde si j'ai des pipes et si c'est pas le cas
+	je pourrais quasiment totalement utiliser mon code que j'ai la maintenant pour les path.
+
+
+
+
+
+
+
+
+
+	-je pense qu'on peut penser ça en 3 cas
+		-pas de quotes
+		-quotes, single ou double peu importe -> on verif si viable et on cut la cmd_str et on met le result dans les split et on free les split restant et on met a NULL le dernier.
+		-si redir ou pipe, on utilise la tokenised string pour mettre les tokens dedans, et après dans l'exec on fait le boulot inverse d'enlever les token de pipe et redir pour
+		pouvoir execve ou gerer les pipes directement.
+	Je pense que ce design facilite aussi l'exec, ou j'aurais juste besoin de checker si ya des redir, sinon j'aurais juste le split a executer. Ouai je pense que je peux partir sur ça.
+	Ouai le fait de partir sur un parsing qui utilis de multiple strings comme ça ça me permet aussi peut etre de si j'ai des redir etc, je pourrais quand meme build une strings avec les
+	exec pour checker les paths, non si j'ai la tokenised strings c'est bon je pourrais faire ça facilement. 
+
+
+
+
+
+
+	-faire quand meme un test avec le split avant de démarrer pour etre sur quand meme
+	-tester aussi le free, vis a vis du NULL de la fin etc..
+
+
+	-Faut vraiment se dire que la en ce moment je malloc deja les args avant , je les split et je cherche si les choses sont la ou pas etc..
+	Mais ce serait peut etre plus intelligent de d'abord parser la string sans avoir splitté et de splitter les bonnes choses? Non je pense pas, ça serait plus complexe et aussi
+	source de bugs je dirais, c'est plus simple de faire un split, et comme je disais je peut toujours manipuler le split.
+	Ouai mais maintenant que j'y pense si j'ai une connerie comme echo 'w w w e e e e e e e' ça va me faire plein de split différent alors que j'en aurais besoin que de deux, c'est ptet
+	con de fonctionner comme ça non ?
+	Ouai je pense pas forcément que ce soit débile, comme la base de l'utilisation du shell de toute maniere c'est parsé par des espaces, je veux dire que c'est utilisé comme ça la plupart
+	du temps.
+	Non je pense que ce sera plus simple d'avoir déjà un split et de checker la string original et de manipuler le split a coté, plutot que de s'embarquer dans un parsing global ou je fais 
+	manuellement le split, surtout que c'est pas une fonction qui serait appelé super souvent, juste quand ya des quotes.
+	Oui et puis de toute manière j'ai les deux, si je veux faire du parsing sur la string original je l'ai de toute manière.
+	Ouai je pense que c'est pas trop compliqué si jamais ya des quotes ce que je peux faire c'est juste traiter le split comme du storage et juste free les split et les remplacer par des bonnes
+	strings, puis mettre a zéro la fin du char **, et free le reste, comme le split c'est un tableau de pointer terminé par un void * = 0;
+	Mais pout finir 
+
+	(mais a ce propos la qu'en est t il de l'exec, vis a vis de la manip de la tokenised strings et du cahr ** que l'on doit passer a execve (aussi checker sur execve que je peux passer l'abspath
+	en nom de prog dans le cahr ** des args ce sera plus simple), ainsi que les redirections, quest ce qui serait le plus simple de faire.
+	Je pense que je dois déjà build 
+	Ouai parce que par exemple cat fichier|wc -l ça fonctionne. Ça veut dire que pour cet exemple la split aurait pas malloc assez de place pour tous les tokens. Mais comme j'ai aucune idée de comment
+	on fait pour les redir ou les pipes je peux pas dire a quoi va ressembler l'exec, mais je pense que je peux deja build une tokenised string. 
+	D'ailleurs meme avant de build les pipes et redir etc.. je peux build une tokenised strings, ou array d'ailleurs, car ce sera un array de char *. Et une fois que j'ai fait ça on pourra s'enmerder 
+	avec le fait d'executer tout ça. Mais pas besoin de comprendre ls pipe et redir pour build la tokenised string.
+
+	Mais alors je peux me poser la question sur le fait que ça fait faire quoi sur le nombre de split de faire tout ça. Je pense que avant tout on peut faire un token counter pour pouvoir malloc tout,
+	puis ensuite cutter et mettre dans les char *  ? Ouai je pense qu'une architecture comme ça ça fonctionnera bien, genre avec des if pipes, if redir, if quotes, a chaque fois et pareil du coup dans
+	l'exec ou si jamais ya un pipe dans la suite de token on met en place le pipe et on passe au token d'après etc.
+
+	En fait la la question que j'essaie de résoudre c'est si je peux partir sur mon truc d'utiliser le split ou si je dois directement faire un compteur de token maintenant, ouai j'ai une idée, en
+	fait je peux faire un peu tout en meme temps, genre si ya pas de pipes, redir ou quotes j'utilise le split et voila, si jamais ya que des quotes j'utilise le split avec la manipulation car comme 
+	j'expliquais mathematiquement yaura toujours assez de place dans le split.
+	Le seul problème c'est que en ce moment je check les paths avant de parse je crois, mais de toute manière je crois que je fais le checking de path avec juste des fonctions qui prennent le token de
+	l'executable donc ça a rien a voir je pourrais toujours utiliser ces fonctions pour checker un token d'executable lorsque j'aurais besoin. en plus meme maintenant je pense que fait le lexer avant
+	de partir sur la recherche des paths, sinon je pourrais pas executer 'ls'
+
+	Ouai je pense que je dois d'abord fair fonctionner les quotes, et pouvoir build la tokenised string si besoin avant de faire un gros refactor et pouvoir vraiment séparer exec et parse, parce que meme
+	sans travailler sur l'exec de redir je vais devoir faire pas mal de boulot pour pouvoir executer meme des commandes simples comme je peux faire maintenant.
+	Non meme pas en fait, j'utiliserais la tokenised strings seulement lorsqu'il y aura des redir ou pipe ?	Ouai c'est pareil après pour l'exec, j'aurais qu'à parser la string originale et si je vois qu'elle
+	contient des redir ou dir je regardais a ce moment la la tokenised string et sinon j'utiliserais juste le split pour execve.
+
+
+
+
+
+	-ouai en fait je devrais juste build un mecanisme de cutting sur les quotes, dès que j'en vois je cut selon ce qu'il faut faire et puis voila, pas se poser de question.
+	Par contre il y a la question de si les quotes sont dans des quotes, comment je fais pour ça, et aussi je pense que c'est bon je vais utilier les char * du split pour l'instant.
+	Ah ouai aussi vis a vis de l'ordre il faut que fasse la resolution de variable d'emv que lorsque les quotes qu'on a pu résolved sont les doubles, sinon faut pas resoudre.
+	Je me dis c'est pas compliqué on va avoir un cutter qui prend aussi en arg, ou en détection je saispas, le type de quote et donc lorsque je cut lorsque je builderais la string 
+	j'aurais juste besoin de regarder quel est le type pour savoir si je fais la résolution ou pas.
+	Ah ouai mais non, parce que je me disais que dès que je trouve un nombre impair de quote je return, ce qui est une bonne idée, mais après faudrait que yai une deuxieme passe pour
+	voir si ya des quotes dans les quotes, ainsi que si les quotes sont pas dans le bon sens, non c'est pas le cas car on peut avoir une single quote dans les double quote, (TESTER ÇA)
+	En fait le seul moyen viable je pense pour faire tout ça, surtout du au fait que je peux avoir un checker qui dès qu'il rencontre un type de quote il va checker si plus tart yen
+	a une pareil, sinon il return, et si il en trouve une pareil il cutt (en gardant en memoire la position, comme la quote sera plus la je sais pas, et la resolution de env variable
+	peut se faire dans le cutter si on passe le type), puis il continue après après la deuxieme quote qu'il a rencontré etc..
+	Peut etre que avant d'avoir ce checker la je peux avoir juste un checker simple qui regarde si on a pas un mauvais nombre de quote de base, avant meme de regarder si les quotes sont
+	viable ou pas. Et pour ça ce serait pas mal qu'il soit un peu intelligent, qu'il puisse checker aussi si malgré le nombre impair de quote ce serait bon, ouai parce que en fait la
+	seule façon de mettre des quotes dans des quotes c'est d'avoir de quotes differentes dedans, parce que si je fais ''ls -la'' ça va fonctionner, alors que 'ls -la' ne fonctionnera pas ?
+	Et de la meme maniere on peut tester pour echo ''ls -la'' et ça affiche aucune quote, d'ou le fait que l'on est sur que les quotes sont differentes. Ça veut dire que les quotes on peut
+	faire le checker en mode dès que jai un type de quote, je regarde si ya une autre quote du meme type plus loin et si c'est le cas je regarde meme pas ce qu'il y a entre et je continue
+	une case plus loin, si je rencontre a nouveau n'importe quel type de quote je check plus loin etc..  et sinon je return.
+	Build ça déjà.
+	Et après si je me pose la question sur comment cutter, deja ça voudra dire que je serai sur que la string est viable
+
+
+	-NE PAS OUBLIER QUE JE DOIS BUILD $? A UN MOMENT DONNÉ
+
+
+	
+	-Il faut faire attention pout les quotes dans les quotes il ne faut pas toucher au quotes qui sont dans des quotes, meme a la résolution de env variable. Peut etre que ça invalide
+	mon idée de faire plusieurs pass sur les quotes dans un ordre précis, car si je grep des quotes alors qu'elles sont dans des quotes ce sera pas bon.
+	Oui, je dois revoir comment je vais faire les choses.
+	Je dirais que je peux faire un détecteur de quotes et grepper etc.. juste a un moment je devrais checker quel type de quote je suis en train de manipuler et la je vais resoudre les
+	variable d'env ou pas.
+
+
+
+
+	
+	
+	-Ouai pour les builtins je ferais juste un module qui check si l'arg est un builtin dans la tokenised string juste pour voir, et si c'est le cas j'envoie ça dans la fonction des builtins
+	qui correspond, car comme c'était noté dans le man je pense que c'est mieux de rester dans le meme process pour pouvoir changer curdir ou des choses comme ça.
+
+
+	-man 7 environ
+	Ola je vois que execve passe ça au process après, je me dis merde il faut peut etre que je puisse vraiment ajouter les variables d'env de export a environ parce que si je passe un programme
+	qui a besoin d'aller checker ces variables la et que j'ai pas passé celles qu'on a exporté ce serait peut etre la merde ? Répondre a cette question. Je suis pas sur que vraiment j'utilise
+	l'environnement dans execve de toute façon, mais si par exemple si je passe ls.
+	Si en vrai c'est pas très difficile, vu que j'ai copié environ et que je l'ai mis dans la struct values, je peux toujours construire un nouveau char ** avec a la fin des nouvelles variable
+	d'environnement. Mais la question reste toujours est ce que les binaires on vraiment besoin d'env ou pas. Ouai par exemple la command who, probablement a besoin de l'env.
+	Je viens de tester ça et lorsque je mais env a NULL dans execve, dans minishell si je fais who ça fonctionne, mais si je fais who dans un minishell dans un minishell ça crash le minishell
+	dans le minishell jai limpression.
+	Oui je viens de tester avec deux programmes et en effet si on passe pas l'env a execve le process peut pas fonctionner si il a besoin de l'env, je sais pas ce qu'il se passait avec who et
+	minishell dans minishell.
+	Oui je viens de tester c'est en effet le cas, que l'env passe pas, mais je pense que les commandes que je testes utilisent des choses plus complexes alors je vois pas le changement, mais
+	je viens de lancer bash via un execve avec un env NULL et en effet lorsque j'ai fait la commande env j'ai bien vu que yavait presque rien, mais yavait quand meme deux trois trucs de set.
+	Je pense qu'on doit faire notre possible pour que l'env soir régulier avec l'env du term original, et aussi via export. Et aussi je pense que pour export on doit rester sur un tableau de 
+	char *, car c'est ce que execve prendra de toute manière, si jamais ya un call a export on recopie le tableau c'est pas grave, on est obligé de toute manière, car si on fait une liste 
+	chainée on pourra pas la passer à execve.
+
+
+	-pour les builtins, je pense que faut juste faire des fonctions qui prennent des char ** en arg, et je passe un char ** avec juste les args une fois que j'ai parsé la tokenised string
+
+
+
+
+	-spécificité quotes    ls /b'i'n works as ls /bin, et aussi echo   lol'lol      ff'pourwuoi bash considere que echo ici a un seul argument, en fait les quotes au milieu d'un arg fonctionne
+	comme un echappement des characteres du milieu de l'arg.
+	il se passe aussi la meme chose pour ls '   '/bin, il ne reconnait pas, car il considere les espaces avant comme collés a /bin et donc tout ça ça fait un seul arg
+	attention ls /proc'/1'' ' doit aussi etre géré,
+	Ça voudrait aussi dire que je ne peux pas juste regarder dans un char * du split si il y a des quotes sur les cotés, parce que sinon je peux louper des quotes au milieu du mot.
+
+	Aussi je pense que mathématiquement il y aura toujours plus de char * du split que de token après parsing des quotes, car comme le parsing du split ne se fait que via les espaces, et
+	au vue du fonctionnement de bash le seul moment ou je devrais manipuler les char * de split c'est lorsqu'il y a des whitespaces dans des quotes viable.
+	Je dois aussi enlever les quotes lorsqu'elles sont a l'intérieur d'un mot,   l''s fonctionne.
+
+	Je pense qu'avec tout ça le meilleur moyen de faire les choses probablement, aux vues de comment bash se comporte, c'est de d'abord checker dans la cmd_str le nombre total de quotes.
+	Si ya un nombre impair de quotes ont return c'est tout (petite error string peut etre).
+	ensuite si il y a un nombre pair de quotes après faut juste voir ou elles sont placé dans les tokens et faire le nécessaire, comme je le disais je pense que je n'aurais pas besoin de 
+	remalloc le split, car le seul moment ou j'aurais besoin de manipuler le split c'est lorsque des spaces sont dans les quotes, auquel cas j'aurais juste un char * de trop du au whitespace
+	et je pourrais alors free le char * en trop en mettre a NULL la fin du split et voila.
+	Et après que j'ai fait pour les doubles quotes je regarde à ce moment la pour expandre les variables d'env. Mais pour ça je dois voir dabord si je peux ajouter quelque chose a environ
+	manuellement avec un programme ou pas, je ne pense pas, je pense que probablement on devra garder les variables d'env dans la memoire du program, et que on pourra pas just
+
+	Ah ouai mais il y a une spécificité vis a vis des quotes dans les variables d'env, si je fais echo $PA'TH' par exemple ça va echo TH,  echo lol$PATH va faire lol:bin/etc  et echo lol$PATH'pouruqoi' fonctionnerra
+	etc, faire attention vis a vis des espaces a mettre ou pas mettre.
+	Ce que je voulais dire sur la spécificité c'est que peut etre que je dois faire attention a ne pas resolver/supprimer des quotes dans une env variable si ? CONITNUER ICI, aussi verif double quotes in an env variable
+
+	Et si jamais
+
+	attention si on a une variable d'env avec whitespace genre LOL='      pourquoi     ' quand je fais echo ça supprime les whitespace on dirait, je vais essayer avec ls et un dir. Oui je confirme, d'ailleurs
+	ce comportement ne se retrouve pas dans zsh, si j'ai LOL='       .      ' et que je fais ls $LOL ça fonctionnera, alors que ls '    .     ' ne fonctionne pas. 
+	Tout ça sera très important pour le resolving de env variable. Mais pour l'instant je peux faire les single quotes.
+
+
+aussi whatabout quotes in quotes ? est ce que je peux faire plusieurs passes et voila, mais du coup ce serait dans quel ordre
+
+
+	-en fait le truc avec le split, c'est surement que je pourrais supprimer et free et set a NULL des char *, mais le truc c'est je peux pas en rajouter, mais pour gérer les quotes
+	je pense que j'ai pas besoin, après je peux toujours malloc un autre split.
+
+	-Non mais en fait c'est peut etre plus compliqué que ça, c'est pas vraiment possible d'avoir   llol'pourquoi    lool'lol  parce que ça fonctionnerais pas de toute manière
+	Ouai en fait ce qu'il faudrait c'est peut etre juste voir si les quotes sont la au début et pas a l'arrière, c'et peut etre pas la peine de
+
+
+	-si je trouve pas les quotes autour, je peux checker pour une quote, puis après si il y a une seule quote dans le split je peux passer au 
+	split d'après pour voir si ya une autre, si c'est le cas je check les withspace dans cmd_str et je grep le tout en un truc.
+	Ouai après je peux checker le type de quotes que je check, et si je
+
+
+
+
+
+	-ah oui mais il y a le probleme avec les quotes, que si on fait un split whitespace on a perdu les whitespace dans les quotes, mais si
+		-mais ,ca veut dire que split a le mauvais nombre d'args ?
+		-est que execve supporte avoir des whitespaces dans les args du bin ?	-> non parce que de toute maniere les bin pourront pas executer
+		-aussi quest ce qu'il se passe si on a des espaces avant la commande ou les args dnas les quotes ?  -> not found, c'est bon
+
+
+	-pour build les quotes avec les whitespaces, je dois peutetre avoir un compteur de quotes, et checker tout les split pour voir si, ah ouai mais en fait split yaura plus les whitespaces, mais
+	normalemenet j'aurais toujours la string de base. A voir
+
+
+
+
+
+
+	-try do refactor to have a better place to start parsing (right now the path checking is getting in my way)
+	Probably for a big refactor, I should just refactor in order to have a parse and an exec.
+
+
+
+	-even if we dont have to handle only one quote, it still shouldnt segfault, think about this in the quote parsing
+
+	-fix exit return on abs path fail (free)
+
+
+	-try to build everything without needing to refactor, cause it will be a heavy one, and maybe its better to build when i still can, i think it is truly when doing the pipes and redir that i will need to refactor
+
+	-quote autour args snas whitespaces
+	-quote avec whitespace dedans
+	-double quote avec intégration env variable
+	-ATTENTION ! les variables d'env devront être resolved meme sans les quotes
+	(je me dis que pour ça, je peux faire une pass deja sur les double quotes avec gestion variable env, et si jamais 
+	ya pas de quote du tout, je fais une pass quand meme pour resolve les variables si ils y en a)
+	-double quote avec $?
+	
+
+
+
+	-peut etre la tokenised strings je peux la build, ainsi que l'exec, seulement une fois que je serais au niveau des redir et pipes, parce que c'est vraiment seulement à ce moment la que je devrais vraiment
+	faire de la manipulation avec l'exec sur la tokenised string, car je devrais launch les pipes et tout, alors que sur les strings c'est juste une histoire de translation, après j'envoie juste ça à execve,
+	je peux alors attendre pour faire le gros refactor pour avoir un parser et un exec
+
+
+	- je dirais que le meilleure moyen de faire c'est de build une tokenised strings, et après par exemple si je vois que j'ai trois pipe ou tel redirection etc...
+	Et aussi la dessus je pense que lors de la tokenisation, vis a vis des quotes il s'agit juste de les enlever et de mettre a la place les tokens (mettre les whitespaces so
+	il faut, ainsi que les variables d'env)
+	Et puis après c'est dans le exec que on va réinterpréter les token et contruire là des char** ou char * pour execve ou les arguments des builtins etc..	Je pense que c'est la
+	meilleure façon de fonctionner.
+	Ouai avec une bonne tokenised string l'exec va pas être très difficile, suffira juste de compter et de parser les | >> etc et de launch tous les trucs
+
+
+
+
+	- En fait probablement ce que je vais devoir faire dans le parse c'est de d'abord parser pour les > | etc et ensuite verifier les quotes ?
+
+
+	-première étape faire fonctionner minishell avec 'args'
+	-ensuite faire fonctionner avec ls 'shite alsoshite' sur un dir avec un espace dans le nom ? 
+
+
+
+
+
+	- be careful cat script >'log'	works
+	but cat script '>log' doesnt
+	also cat script ">log" does not work
+	What does that mean for the parsing of the quotes ?
+	Also cat script >log ou cat script> log works. Donc je peut garder le split pour les whitespaces, mais
+
+	Peut etre que je peux faire par module de priorité, je split sur les whitespace, puis je check pour > etc, je génère les tokens, puis
+	après je passe au module pour les quotes, je sais pas selon le bon ordre quoi, puis je regénère des tokens si besoin,
+
+	par tokens je veux juste dire des char * dans un char **, et enuite on décide de quoi faire, je pense que pour les quotes c'est pas si
+	compliqué que ça je pense, mais faut juste que je check à quel point on peut faire de la manipulation de string sur le split ou faut
+	le free et resplit a chaque fois.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	- i should register empty sighandler for ctrlz and ctrly because it seems to mess up the program sometimes (if ctrly and then cat, ^\ cant return for some reason), same ctrlz
+	Ouai après avoir testé ça, ça a dégommé tous mes settings du signaux sur le terminal et je comprenais pas pq fonctionnais pas le ctrl-\
+
+
+
+	- check protec if fail anything in execute
+
+	- check if protect all the mallocs
+
+-les builtins devrait être probablement juste des fonctions du programme que l'on call, plutot que des bin called via execve, par exemple cd devra changer probablement le dir du process ou quelque
+chose comme ça, car dans la doc des builtins il est dit que certain truc sont impossible a faire autremenent que interne au shell
+
+	-check for potential errors with the name of the program in second parameter of execve, does it have to be asbolute path or not ? is it safer to put abs path ?
+
+	-comment gerer $?, juste mettre ,ca dans la struct ou pas ?, comme je crois pas qu'on a accès a la veritable $? du shell on peut faire fonctionner avec elle ? on est obligé de faire
+	avec notre propre mem ?
+	
+	-be careful, in unset man, it is specified that VARIABLE= i not an unset variable, VARIABLE=0 probably is an unset variable, je devrais tester ça lorsque on aura export
+	JE DEVRAIS AUSSI TESTER ÇA DANS LE PARSING DES DOUBLE QUOTES.
+
+
+	-but wait, should it be the actual env variable ? and not a variable in my program ? not that it makes a difference ?
+	oui c'est une variable du shell, on peut voir ça avec set, mais que dans zsh
+
+-attention sur le man de execve on dirait qu'il y a un max sur le nombre d'arg que peut avoir execve (2e para je pense)
+
+
+	-when quotes and $? is finished, do pipes and redirection (wich will be the hard part probably)
+
+
+	-parfois ligne en plus a la sortie de minishell, lorsque j'ai fait un ctrl-C
+
+
+-try to fully free history
+
+-réfléchir si NODEFER et mask vide pour signaux c'est bien
+
+- need to be able to exec with trailing white space
+
+- test be able to exec abs path when no PATH is set
+
+-read about history and its relations with readline, in order to not make any mistakes, for example if there is an easy way to free and i just dont know it
+
+- test path resolving when adding a path to PATH
+
+
+-FAIRE UN CHECK SUR EXECVE MAX ARG ET TOUS LES TRUCS COMME ÇA, MAX PIPE, MAX FD JE SAIS PAS ETC... POUR PAS AVOIR DE FAIL POUR UN CORRECTEUR QUI MET 1000 PIPES OU JSP QUOI
+
+
+-tester minishell avec paht= et path=0, ainsi que d'autre env var comme ça pour voir si ya pas de problemes
+
+-verif que avec '' ou "" en premier arg ça fait un command not found
+
+
+-essayer quand meme de build des printing de error string un peu car sinon on va nous enmerder
+
+
+
+
+

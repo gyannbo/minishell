@@ -1,0 +1,130 @@
+path testing  opendir vs bash
+
+../../../../../../../../../../ will aways be a /
+// will always be a /
+./././././a.out will work
+trailing / dont matter -> ./.. or ./../ is the same
+~ DOES NOTE WORK WITH OPEN BUT WORKS WITH BASH, for things like ~/a.out, ~/ wont work with opendir
+~/a.out does indeed work if we are elsewhere in bash
+
+///////bin/ls
+
+is something with / always an abs path or pass using cur dir
+Yes, even if i have a file .a.out in ./ it wont work, also file cant have / in their aname unescaped. This means
+a cur dir path will always have a /, and a path without a / can only be found via PATH
+
+
+CAN EXECVE DO //bin/ls ?
+yes it can
+
+can a file or a dir have a / in it? 
+No, and we dont have to interpret \/ also
+
+
+excve with /home/gbonis/projets/thirds/ssh_maaike_minishell/src/a.out, it works
+
+
+add_history leaks, 4 leak when no call to destroy history or whatever, and 1 leak if one call, check if there is another way
+
+test inside minishell with an export PATH= to see if valgrind complain, if i export path= before starting minishell, i just cant start make or valgrind
+so i need to be inside minishell and have export built
+
+
+- should test with PATH= and PATH=0 once i can valgrind (need to have export in minishell)
+
+- . and .. to execve result in an error, nothing happen and -1 is returned. So that would mean that it doesnt matter that the get abs path functions return
+a dir if we give . or .. because exec wont do anything. But keep this in mind
+
+- can overflow dirent->d_name because shell wont allow to have a name longer than 255 char
+
+- if get_abs_paths return a file /something/.. etc when we passed .. in args for minishell in doesnt matter because even if we pass it to execve it will fail on
+execution and do nothing, so dont bother fixing this as long as valgrind in ok
+
+
+TESTING FOR PATHS
+-ls when ls is there on the machine
+-shite when shite isnt on the machine
+-/bin/ls when on machine
+-./a.out when no a.out in cur dir
+-./a.out when a.out in cur dir
+-.
+-..
+- BE CAREFUL didnt test bin/ls code path (shouldnt work), had a leak there because dont free on error get dir (with /bin)
+-/bin (had a bug for this because the position of the / is 0 in an array and i was checking for == 0, so i set error value to -1)
+- ./LICENSE didnt work because there was a trailing space characte and my prog didnt like it
+-TRAILING WHITESPACE AFTER BINARY
+-WILL NEED TO TEST WITH PATH= AND PATH=0 ONCE WE HAVE EXPORT BUILTIN
+	-still need to be able to launch with abs path if PATH=, normally it is the case
+
+
+
+------------
+
+execve args
+
+ls lol ..  (execve not like zsh)  no, it behaves like bash pr zsh, it tested with ls shite .. and ls -pourquoi .. and it just doesnt give the same resulZZZZt
+
+for args of execve (2nd args), it needs the filename in fist char *, but it can be the abs_path for the filename
+
+
+
+
+--------
+fun fact, i had to recompile everything in order to make the global variable work, i wonder why
+
+-------
+
+Some thing weird happens when I do ls^C and then go check the history, with minishell it show ls and with bash it show something weirder
+
+- ctrl v and then enter or tab to write whitespace character on command line.
+- Bash doesnt seem to parse for enter character, if i do <enter>ls it can;t recognize it, when minishell can, test with other whitespace
+
+
+-cat
+
+
+
+
+
+^/ ou ^C et check l'exit status
+
+-executer un bin viable mais sans les perms
+
+-pour les code erreur de bash, appendix e pge 802 de advanced bash scripting ça explique bien.
+
+
+- there is a leak if i put some commands in the history and then do a ^C, there are perm lost. I dont think this will happen at the evaluation but hey.
+I tried everything, I don't know it seems to be readline's fault.
+
+
+- ran all possibilities in the code path with ^\ and check the history to see if buffer is cleaned around the viable commands
+
+
+- . .    . shite    . /bin/ls   (just not segfault ok, . is a builtin, a i explain can do shit about this)
+- .../ ././././././   /././././././ ///////
+
+-./a.out with no perms
+
+-$? when interrupting a bin such as cat and sleep with ^\ or ^C
+
+-check buffer history after doing signals in a command
+
+
+-test all termios keys with signals, this can mess everything up and one needing to restart the terminal, at least have sighandler in order for the
+not specified signals not to mess up the program
+
+-ctrl-v to put tabs or other whitespaces
+
+
+TEST ENV VARIABLE
+
+echo lol$PATH   resolve path
+echo lol$PATHlol doesnt resolve path
+
+
+
+
+
+
+-valgrind ./minishell, then launch another minishell, then ctrl-z, then see everything messed up, exit everything, relauch minishell and see the ^\ doesnt 
+work anymore

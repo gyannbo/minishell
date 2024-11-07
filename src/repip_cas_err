@@ -1,0 +1,3 @@
+
+
+je pense que pour la gestion des erreur des redpip je peux juste checker lorsque j'arrive à un < > ou | je check ce qu'il y a après et ainsi de suite.

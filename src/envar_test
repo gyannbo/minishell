@@ -1,0 +1,899 @@
+aul-f5Br4s7% bash
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ export LOL="    .    "
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOLpourquoi
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOL'lol'
+. lol
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo 'lol''lol'
+lollol
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $PATH'lol'
+/home/gbonis/.local/funcheck/host:/home/gbonis/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/binlol
+
+
+mais est ce que l'espace est du a echo ou pas, faudrait tester avec ls $LOL'.' avec  '      .     ' dans LOl et '.'
+
+oui regarde :
+
+
+ls $LOL'.'
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='.    '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL'.'
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls . .
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+
+
+on dirait qu'en fait le resolving d'env var c'est juste on met le truc a la place et voila, et ensuite les quotes sont résolus. Mais en fait il y a des spécificités.
+
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='. '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL'.'
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=''. ''
+bash: export: `': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=''. ''
+bash: export: `': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=''
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='"$HOME"'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+"$HOME"
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo "$HOME"
+/home/gbonis
+
+
+
+
+paul-f5Br3s6% export LOL="$HOME"
+paul-f5Br3s6% echo $LOL
+/home/gbonis
+paul-f5Br3s6% export LOL='"$HOME"'
+paul-f5Br3s6% echo $LOL           
+"$HOME"
+paul-f5Br3s6% echo "$LOL"
+"$HOME"
+
+
+aussi :
+
+aul-f5Br3s6% bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=""$HOME""
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+/home/gbonis
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL=/home/gbonis
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+
+Ici on voit bien que export fait un travail de resolving avant de mettre dans les variable env
+Mais j'ai tojours pas compris pourquoi ya le refus avec les single quotes
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=''lol''
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Ouai, je sais pas ce qu'il s'est passé avant mais on voit bien que la resolution de env var ce fait avant une autre resolution
+de quotes.
+
+
+regarder pourquoi ça marchais pas tout a lheure et tester en melangeant les deux types de var dans tous les sens.
+
+
+Aussi apparemment bash utilise l'environnement et non la mem de son process pour les variables d'env, car lorsquon sort de bash ont a encore les anv var quon a set.
+Faire des recherches si je peux manipuler ça aussi ou non, et aussi pour $?.
+
+Non on peut pas il faudrait putenv, tout ce qu'on peut faire c'est manipuler notre propre verion de env, et donc rajouter des trucs etc..
+Non je me suis planté ici, bash prend l'env de zsh mais n'a pas d'influence sur zsh sur exit,
+Donc tout gérer dans la mémoire de notre process
+
+
+
+
+Aussi je pensais a export LOL=""$HOME"" qui fait lol=/home/gbonis, ça veut dire que si j'ai des doubles dans des doubles il faut quand meme que je resolve, au sens ou
+dans les doble quotes, le charactere de double quotes garde aussi son effet en plus du $ ?
+
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=''. ''
+bash: export: `': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='' .''
+bash: export: `.': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=' .'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='' .''
+bash: export: `.': not a valid identifier
+
+
+Oui je pense que ya un probleme avec export surtout, genre le shell parse les quotes donc export reçoit un espace et un point et il aime pas, ou non je sais pas, comme ça fonctionne avec 
+seulement une quote.
+Je pense qu'on peut partir du principe de que le shell resolve tout avant de filer ça a export
+
+
+
+
+attention du nouveau :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\''lol'\'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL='lol'
+
+
+
+Ok, donc après ça :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\'.\'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL'.'
+ls: cannot access "'.'.": No such file or directory
+
+On comprends bien que le shell resolve  les quotes avant de donner ça a export
+
+-> encore du nouveau
+
+
+zsh: suspended  ~/usrbin/nvim/bin/nvim list
+paul-f5Br3s6% echo '''''ls'''''
+ls
+paul-f5Br3s6% bash 
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ''ls''
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ '"ls"'
+"ls": command not found
+
+
+donc on a la meme choses sur les singles quotes, les singles quotes gardent leur meaning, non attends je me trompe, c'est pas le cas, c'est juste que ça fait rien
+c'est comme si on avait plein de rien, puis un arg. Donc si je veux tester ça is je met un espace au milieu ça devrait pas marcher, et meme avec les double je pense
+
+
+
+
+
+je comprends de moins en moins :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ''ls ''
+ls: cannot access '': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls 
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ '' ls''
+Command '' not found, but can be installed with:
+apt install mailutils-mh  # version 1:3.14-1, or					//// TESTER EXECVE AVEC '', non pas besoin ça doit juste faire une commande qu'on trouve pas, mais on doit quand meme gérer ça
+apt install mmh           # version 0.4-4
+apt install nmh           # version 1.7.1-11
+apt install termtris      # version 1.3-1ubuntu1
+Ask your administrator to install one of them.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls '' -la''
+ls: cannot access '': No such file or directory
+
+C'est comme si lorsqu'on a '' on a un args égal a rien, je sais pas
+
+Maintenant faut que je vois si je peux tester la meme chose mais avec les doubles quotes et une var d'env
+genre ls ""$HOME  "" si ça fait de resolving de quotes dans les quotes on devrait avoir un espace après et donc ça devrait faire le meme resultat que ls "$HOME  "
+
+Oui j'avais raison :
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ""$HOME ""
+ls: cannot access '': No such file or directory
+/home/gbonis:
+ brouillon_to_merge   Dictionaries    Documents   goinfre    misc    note_philo   philo      prochain_trade   Public   sgoinfre   snap	      test_git	 usrbin  'VirtualBox VMs'
+ Desktop	      distance_bike   Downloads   help_git   Music   perso	  Pictures   projets	      sec      shortcut   Templates   trash	 Videos
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls . ~ /
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+
+/:
+bin  boot  cdrom  dev  etc  goinfre  home  lib	lib32  lib64  libx32  lost+found  media  mnt  opt  osquery.flags  proc	root  run  sbin  sgoinfre  snap  srv  swap.img	sys  tmp  usr  var
+
+/home/gbonis:
+ brouillon_to_merge   Dictionaries    Documents   goinfre    misc    note_philo   philo      prochain_trade   Public   sgoinfre   snap	      test_git	 usrbin  'VirtualBox VMs'
+ Desktop	      distance_bike   Downloads   help_git   Music   perso	  Pictures   projets	      sec      shortcut   Templates   trash	 Videos
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls "$HOME    "
+ls: cannot access '/home/gbonis    ': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Maintenant je dois revenir sur la question d'export et des problemes que je comprends pas, quand est ce que le resolving se fait, ne pas segfault si on met des \ comme on doit pas
+les gerer faut faire gaffe a ce qu'il segfault pas après sur les paths.
+
+je crois que j'ai compris pour ça :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=''. ''
+bash: export: `': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='' .''
+bash: export: `.': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=' .'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+.
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='' .''
+bash: export: `.': not a valid identifier
+
+Je soupçonne que export prenne le truc comme si j'ai bien défini export mais que je cherche a définir une deuxieme variable, et donc il rejette comme c'est pas des charactères
+autorisé probablement.
+Je dois tester duex choses, les memes strings, mais vérifier si il a quand meme set la premiere variable qui etait bien formattée, et ensuite si je peux faire quelque chose 
+comme export VAR1=LOL VAR2=pourquoi 
+
+Oui c'est exactement ce qu'il se passait.
+
+Donc maintenant avec tout ça si je réunis mes preuves je devrais avoir l'idée complète pour le parsing des quotes et des variables d'env
+
+
+
+
+Vérifer que c'est bien export ou echo qui enlève les whitespace
+tester avec LOL='.   '
+ls $LOL devrait pas marcher
+echo $LOL'lol'
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='.     '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL'lol'
+. lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='.'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL'lol'
+.lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=' .'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL'lol'
+.lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='    .'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='.   '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Oui je soupçonne que export enlève tous les whitespace avant et après, je peux tester LOL='       l      ol     '
+et si echo 'lol'$LOL'lol' affiche loll     ollol je sais que oui
+
+
+Non c'est un peu plus bizarre :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='      l      ol      '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol'$LOL'lol
+> 
+bash: unexpected EOF while looking for matching `''
+bash: syntax error: unexpected end of file
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol'$LOL'lol'
+lol l ol lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol''lol''lol'
+lollollol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+(je fais tout ça pour savoir si c'est du a export ou si je dois resolve mes variables comme ça aussi, mais je pense pas.
+Parce que si je mets LOL=lol et que je fais echo 'lol'$LOL'lol' et que ça print lollollol j'aurais la confirmation que c'est export qui cut/rajoute des espaces.
+Mais meme ça ça n'explique pas pq ls ça fonctionnait (ou alors je me rappelle mal ?)
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol'$LOL'lol'
+lollollol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='     lol       '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol'$LOL'lol'
+lol lol lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=' .'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ' .'
+ls: cannot access ' .': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=' . '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Je pense qu'en effet export a l'air de réduire les whitespace avant et après quand il y en a, mais aussi apparamment ls peut prendre en arg des dir avec whitespace avant et après,
+mais pas juste avant, ou alors c'est un cas spécial du au fait que peut etre que le nom du . est stocké avec des espaces avant et après.
+Tester ls ' '.' ' et ls ' '..' ' ls ' '/' ' ls ' '/bin/ls' '
+
+
+
+voici le résultat :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ' '.' '
+ls: cannot access ' . ': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=' . '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol'$LOL'lol'
+lol . lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol''lol''lol'
+lollollol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo 'lol'$HOME'lol'
+lol/home/gbonislol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ' . '
+ls: cannot access ' . ': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='   /    '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+bin  boot  cdrom  dev  etc  goinfre  home  lib	lib32  lib64  libx32  lost+found  media  mnt  opt  osquery.flags  proc	root  run  sbin  sgoinfre  snap  srv  swap.img	sys  tmp  usr  var
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+je comprends pas ce qu'il se passe, ah si je crois que c'est bon, je pense que c'est une histoire d'ordre dans les parsings des espaces. Par exemple lorsque je 
+fais ls ' . ' j'envoie réellement les espaces à ls, alors que lorsque je fais ls $LOL avec LOL='     .     ' non seulement export a l'air de réduire mes espaces, mais aussi je 
+pense que dans le parsing du shell les variables d'env sont resolvée avant meme le parsing des espaces du shell, et donc c'est comme si je mettais plein d'espace avec le clavier
+avant le dir que j'envoie a ls.
+Je peux tester ça en envoyant dans une variable d'env des quotes avec des espaces en echappant les quotes, et normalement ls devrait plus fonctionner, verifier cette logique aussi
+avec echo pour voir si c'est concordant.
+
+
+C'est un peu plus compliqué j'ai l'impression :
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\'.\'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL='.'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+ls: cannot access "'.'": No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls '.'
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\'' '.' '\'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL=' . '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+ls: cannot access "'": No such file or directory
+ls: cannot access "'": No such file or directory
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+Je soupçonne que bash fait du parsing en deux fois ur les single quotes et sur les espaces, et aussi sur les env var, mais je sais pas excatement dans quel sens, mais je pense 
+que la clé se trouve la
+
+aussi
+
+->
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ' . '
+ls: cannot access ' . ': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls \' . \'
+ls: cannot access "'": No such file or directory
+ls: cannot access "'": No such file or directory
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+Donc avec ça on a vraiment la preuve que lorsqu'on resolve une env var, les whitespaces qui sont la cont etre interprété par le shell comme des whitespaces a cutter,
+quand bien meme il y aurait des quotes, d'ailleurs ça me fait penser que probablement c'est la meme chose pour les env var dans une env var,
+
+tester export LOL=\$HOME
+Non, echo $LOL affiche $HOME, donc ce serait que sur les whitespaces ?
+
+et si je fais export LOL=\"$HOME\",
+ouai ça donne dans env LOL="/home/gbonis/"  ce qui est logique car la variable est resolved avant meme que ça passe chez export.
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='.          ..'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls $LOL
+.:
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+
+..:
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo $LOL
+. ..
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo .            ..
+. ..
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Je pense que l'histoire avec les whitespace et les variables d'env c'est pas vis a vis d'export ou d'echo, c'est juste que les whitespace présent dans une variable
+d'env sont pas
+
+
+
+
+
+
+
+
+
+
+
+
+
+Quel impact ça va avoir sur le parsing de mon programme, et sur l'architecture meme ? Ça va m'obliger a parser directement la string sans faire de split ?
+
+
+
+
+Aussi enqueter sur le truc de tout a l'heure ou les '' generait des NULL ou je sais pas quoi
+(vite fait alors que je suis en train d'enqueter sur les envvar, je pense que c'est la meme histoire, lorsqu'on a des quotes avec rien dedans ça compte pour un arg, avec
+rien dedans, (donc que l'on doit passer a execve), alors que sur la résolution de variable d'environnement ya pas encore vraiment d'arg défini alors quand le shell split
+avec les whitespaces ça fait les effets que je vois la, ou echo ou ls a l'impression que c'est plusieurs args alors qu'a la base non.
+MAIS A CE MOMENT CA VEUT DIRE QUE LORSQUE LA RES DE ENV VAR EST DANS UNE DOUBLE QUOTE ON DOIT PAS AVOIR CE COMPORTEMENT ? oui ça parait logique parce que de toute manière 
+tout va être préservé dans des double quotes.
+
+Peut etre que du coup ce que est que je peux me dire que je fais le parsing d'env variable avant meme de split ? ou ça va pas suffir et je dois faire un brute force de parsing
+full sur cmd_str et doncpas de split faire manuellement ?
+
+Je dois d'abord checker cette histoire de space dans env var dans double quote
+Ainsi que les args NULL
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL='   .    '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ env
+LOL=   .    
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo "... lol $LOL..."
+... lol    .    ...
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ export LOL=\@HOME
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo "... lol $LOL..."
+... lol @HOME...
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ''
+ls: cannot access '': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ' '
+ls: cannot access ' ': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Oui, on peut en déduire:
+	-que en fait '' ne fait pas rien mais produit bien un arg "NULL" en quelque sorte, je devrais tester mettre '' a coté de quelque chose, noralement ça fonctionne
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ''
+ls: cannot access '': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ''.
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls .''
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls ""
+ls: cannot access '': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls "".
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ ls .""
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo ''
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ echo l''''''''''s
+ls
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/src$ 
+	-que si on arrive a mettre @HOME dans une variable d'env (ce qui n'est pas possible avec le sujet vu qu'on ne pourra pas echapper les characteres et que du coup 
+	la variable va se faire resolved avant meme de pouvoir etre mise dans l'environnement. Et bien avec bash la variable de se resolvera pas de toute manière, donc
+	pas besoin de gérer ça.
+
+Maintenant je dois me poser la question de l'impact des args NULL sur quotes seul (mais ça ça va pas faire merder execve si je passe des args NULL ? est ce que ls
+est capable de continuer a regarder après si on lui donne un arg NULL puis après quelque chose de viable sur la ligne de commande ? Oui je viens de checker ls
+est capable de faire ça), ainsi que l'impact du fait que les whitespaces des env var doivent etre considéré comme des whitespace de command line et donc etre splitté.
+
+
+Ça m'inquitète un peu cette histoire de pouvoir avoir des args NULL, je vais tester execve avc un arg NULL au milieu. Ok Non ça va on passe juste une chaine avec rien 
+dedans j'ai un peu buggé sur ça.
+
+Vis a vis de l'arg NULL je peux juste faire avec le split c'est bon.
+
+Sur les var d'env et leurs whitespace, c'est beaucoup plus compliqué, parce que si par exemple on a une variable qui ressemble a LOL="l l l l l l" que l'on doit expand
+dans un seul split, sachant que ça va faire un paquet de nouveaux args.
+Est ce que c'est possible de faire la résolution de variable d'env avant de split ? Quel est la relation avec les whitespace a l'intérieur de quotes (qui viendrais après ?)
+
+Pour tester ça il faudrait export LOL='   a s   d f   g     '
+echo @LOL
+echo "@LOL"
+
+->
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export LOL='   a  s d f g    gggg '
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo @LOL
+@LOL
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $LOL
+a s d f g gggg
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo "$LOL"
+   a  s d f g    gggg 
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+Donc c'est bien ce que je pensais, le comportement du resolving de variable d'env est différent dans ces deux cas. Ce qui veut dire que si j'ai une env var dans double quote
+le comportement des whitespace osef je mets ça dans un char * avec la var resolved if needed
+
+
+IL y a aussi le probleme de quand la variable d'env existe
+
+
+
+
+cas interessant : 
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $"HO""ME"
+HOME
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $"HOME"
+HOME
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $'HOME'
+HOME
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $HOME'HOME'
+/home/gbonisHOME
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+C'est justement la question quand il trouve pas la variable d'env quoi faire exactement 
+
+
+En gros, plusieurs possibilité, ça créer un arg NULL, c'est totalement ignoré, ça créer un whitespace ?
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $POUR.
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour.
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour..
+essai_waiter_philo  git_minishell  maike_minishell  minishell  not_git_philo  philo  right_philo  ssh_maaike_minishell	test_philo  waiter_philo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour/..
+bin  boot  cdrom  dev  etc  goinfre  home  lib	lib32  lib64  libx32  lost+found  media  mnt  opt  osquery.flags  proc	root  run  sbin  sgoinfre  snap  srv  swap.img	sys  tmp  usr  var
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour /..
+bin  boot  cdrom  dev  etc  goinfre  home  lib	lib32  lib64  libx32  lost+found  media  mnt  opt  osquery.flags  proc	root  run  sbin  sgoinfre  snap  srv  swap.img	sys  tmp  usr  var
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour /....
+ls: cannot access '/....': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour /..
+bin  boot  cdrom  dev  etc  goinfre  home  lib	lib32  lib64  libx32  lost+found  media  mnt  opt  osquery.flags  proc	root  run  sbin  sgoinfre  snap  srv  swap.img	sys  tmp  usr  var
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour 
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+C'est pas si évident que ça, mais avant de continuer je vais d'abord réfléchir si je peux faire le resolving de env var avant le split ou si je dois bourriner le parsing des whitespaces a la
+main.
+
+
+
+Oui je pense que je peux dire que je peux faire une pass sur les env var avant le split et c'est ok, après je split whitespace et on est bon, je ne vois pas de problème a faire ça.
+
+
+
+Maintenant avant de tout récapituler, je dois tirer au clair le truc juste un peu plus haut sur les limites du parsing de variables d'env
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour/.........
+ls: cannot access '/.........': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour/..
+bin  boot  cdrom  dev  etc  goinfre  home  lib	lib32  lib64  libx32  lost+found  media  mnt  opt  osquery.flags  proc	root  run  sbin  sgoinfre  snap  srv  swap.img	sys  tmp  usr  var
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $pour/...
+ls: cannot access '/...': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls src
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $poursrc
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+On dirait que c'est une histoire de certain characters
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $lolsrc
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $lolsrc ..
+essai_waiter_philo  git_minishell  maike_minishell  minishell  not_git_philo  philo  right_philo  ssh_maaike_minishell	test_philo  waiter_philo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $lo
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls 
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $lol./src
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls .src
+ls: cannot access '.src': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ./src
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $lol'.'
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $lol'src'
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  signals.c  test_ran
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ mkdir .lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ cd .lol/
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/.lol$ touch lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/.lol$ touch lol2
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/.lol$ ls
+lol  lol2
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell/.lol$ cd ..
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $lol.lol
+lol  lol2
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+et aussi :
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour.lol
+.lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour/lol
+/lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour"lol
+> 
+bash: unexpected EOF while looking for matching `"'
+bash: syntax error: unexpected end of file
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour"lol"
+lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour,lol"
+> 
+bash: unexpected EOF while looking for matching `"'
+bash: syntax error: unexpected end of file
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour,lol
+,lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour4lol
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour:lol
+:lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour-lol
+-lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour+lol
++lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour%lol
+%lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour!lol
+bash: !lol: event not found
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour#lol
+#lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour`lol
+> 
+bash: unexpected EOF while looking for matching ``'
+bash: syntax error: unexpected end of file
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour{lol
+{lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $pour>{lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls
+a.out  env_var	inc  libft  LICENSE  log  {lol	Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+/////ecrire un peu plus ce qu'ils se passe avec les character redir etc
+En fait c'est toujours la meme chose, le meme comportement que le reste, pareil si on echappe un pipe et qu
+on le met dans une var env, mais resolved le shell fera pas de pipe.
+Par contre pour le parsing c'est autre chose. Non, je pense que si je me concentrer sur le fait de ne pas repasser sur une
+var env qui a été resolved on est bon. Meme si ça sert a rien en theorie comme on pourra jamais mettre de pipe dans une variable via export
+
+
+Ouai je pense que c'est une histoire de character non alphanumérique
+
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $lol0pourquoi
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $lol0.pourquoi
+.pourquoi
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $lol0 pouquoi
+pouquoi
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $lol0*pouquoi
+*pouquoi
+
+
+
+
+Je devrais vérifier si export accept que des alphanum
+
+
+paul-f5Br3s6% bash
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export lol3=lol
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export lol.=4
+bash: export: `lol.=4': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export lol$=4
+bash: export: `lol$=4': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export lol:=4
+bash: export: `lol:=4': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export :lol=4
+bash: export: `:lol=4': not a valid identifier
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+Ouai on voit bien que le delimiter c'est bien ça
+
+Les characteres autres que alphanum c'est ce qui à l'air de delim ce que je peux parser avec ça je pense
+
+
+
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $HOMELOL
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $HOME.LOL
+/home/gbonis.LOL
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ echo $HOME+LOL
+/home/gbonis+LOL
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls  $HOME+LOL
+ls: cannot access '/home/gbonis+LOL': No such file or directory
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls  $HOM.
+a.out  env_var	inc  libft  LICENSE  log  {lol	Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls  $HOM..
+essai_waiter_philo  git_minishell  maike_minishell  minishell  not_git_philo  philo  right_philo  ssh_maaike_minishell	test_philo  waiter_philo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls  $HOM../..
+first  funcheck  second  third
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+
+Oui, on va faire comme ça, je pense que je suis bon pour le parsing maintenant, j'ai tout pour pouvoir le faire, il reste plus qu'a build.
+
+
+Mais d'abord je dois faire un résumé de tout ce que j'ai dit içi.
+
+
+
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ export LOL='.'
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls $LOL'.'
+essai_waiter_philo  git_minishell  maike_minishell  minishell  not_git_philo  philo  right_philo  ssh_maaike_minishell	test_philo  waiter_philo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ ls ..
+essai_waiter_philo  git_minishell  maike_minishell  minishell  not_git_philo  philo  right_philo  ssh_maaike_minishell	test_philo  waiter_philo
+gbonis@paul-f5Br3s6:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+Et qu'est ce qu'il se passe quand une var d'env n'existe pas, quand elle est collée a quelque chose, là ça fait rien surement, mais quand elle est
+seule est avec des espaces autour, est ce que ça fait un arg, surement pas vu comment sont parser les whitespace dans une env var
+
+
+
+
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  resum  signals.c  test_ran
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls $pour
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  resum  signals.c  test_ran
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls
+args_eval  check_match.c  envar_test  execute.c  get_path.c  get_path_utils.c  handle_cmd_str.c  list  main.c  parser.c  path_splitting.c  resum  signals.c  test_ran
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls ''
+ls: cannot access '': No such file or directory
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls ' '
+ls: cannot access ' ': No such file or directory
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Oui on voit bien ici que c'est en effet comme si yavait just rien du tout, pas d'arg vide ni rien
+
+
+
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls ..
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ ls $pour..
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ echo lol$pour..lol$pour/pourquoi
+lol..lol/pourquoi
+gbonis@made-f0Ar12s6:~/projets/third/ssh_maaike_minishell/src$ 
+
+
+Içi on voit bien que ça ne produit pas d'espace et de la meme manière que les quotes, comme ça ne produit pas d'espaces alors ce qu'il y a collé à gauche et a droite.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ export LOL="lol  $HOME    lol"
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOL
+lol /home/gbonis lol				//// meme ici on voit qu'il y a eu du cutting de whitespace
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOL'pourquoi'
+lol /home/gbonis lolpourquoi
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ export LOL='  .  '
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOL'pourquoi'
+. pourquoi
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ export LOL='  .                           '
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOL'pourquoi'
+. pourquoi
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $HOME'pourquoi'
+/home/gbonispourquoi
+
+
+
+Ouai ya un comportement étrange losrqu'on met des whitespaces dans une variable d'env, bash supprime ceux du début et en met un seul juste a la fin
+
+
+
+
+paul-f5Br4s7% bash
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ export LOL='                  .'
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOL
+.
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo -n $LOL
+.gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ ls $LOL
+a.out  env_var	inc  libft  LICENSE  log  Makefile  minishell  obj  src  test.c  to_do
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+
+
+
+Oui on voit vraiment içi que c'est dans son mécanisme de resolution de env variable, si c'était juste echo ici ls fonctionnerait pas.
+
+Mais je comprends toujours par pourquoi j'ai un espace en plus parfois après .
+
+
+PAr exemple ça c'est très bizarr
+
+
+zsh: suspended  ~/usrbin/nvim/bin/nvim lexer.c
+(pwd now: ~/projets/third/ssh_maaike_minishell)
+paul-f5Br4s7% bash
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo 'lol''lol'
+lollol
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ export LOL='      .       '
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo -n $LOL
+.gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $LOL'lol'
+. lol
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ echo $HOME'lol'
+/home/gbonislol
+gbonis@paul-f5Br4s7:~/projets/third/ssh_maaike_minishell$ 
+exit
+
+
+
+
+MAis bon on verra tout ça après pour l'instant je dois juste etre sur que je suis bon sur les singles quotes.
+
+
+
+
+Oui les single quotes ont pas l'air compliqué, c'est plutot lorsque ya des quotes dans les env var que ça va etre casse couille
