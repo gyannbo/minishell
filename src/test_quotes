@@ -333,6 +333,8 @@ ls '" pourquoi lol encore"    '
 ls '" wwwwww eee eeeeeeeeeeeeeee"     '
 ls aaa"aaaa"'    a'aaaa
 ls aaaa'     aaaaa'aaaa'    aaa'aaaaa''
+'ls' allo'allo'allo
+"ls" 'allo'allo"allo"
 
 NOT OK:
 ls aaa'aaa'aaa's's sss'sss'sss'ss'ss
@@ -1015,3 +1017,47 @@ Parce que je crois que ça devrait fonctionner quand meme sur des trucs comme ls
 
 
 ls aaaa'aaaa'aaaa'aaaa'aaa wewee'eeee'eee'eeeee'
+
+
+
+VERIFIER QUE LE TEMP DE COUNT[] EST BIEN PÉTÉ DANS LES FONCTIONS GET SIZE (LORSQUE LA QUOTE CHANGE)
+
+
+
+en fait çe serait vraiment facile pour moi de faire une fonction ou je copie le tableau pour count, car je sais d'avance la taille du tableau, et peut etre sur la dernière fonction je peux a ce moment incrémenter 
+count pour que ça reparte bien après dans la boucle de quote parsing
+
+
+
+Ouai si je dois résumer je dois rechecker toutes les fonctions ou j'utilise count, car je crois que sur count je check pas et j'incremente/decremente pas lorsque le type change
+le plus simple serait de juste copier le tableau a chaque fois que j'ai une fonction comme ça.
+
+
+
+
+
+pour résumer ou j'utilise count, dans les size c'est seulement pour inside, mais pour copy c'est les deux.
+Ce que je peux faire c'est d'utiliser les fonctions de copie de tableaux pour les 2 premiere fois, puis après j'utilise juste le tableau comme ça
+Non je peux pas faire ça parce que count c'est pas la meme chose, car j'utilise ce tableau pour avoir la position de départ dans la cmd_str_b, ça n'a rien a voir 
+avec les  count next quote. Donc cela veut dire que je suis quand meme obligé de faire une fonction ou j'incrément count avec count next count dans les types correspondants.
+
+
+ah ouai aussi pour les copy des tableaux tant que j'y pense, je peux garder dans une struct les size des tableaux pour pouvoir les malloc facilements
+
+
+
+
+
+Comme je viens de voir que l'on peut juste checker le type que l'on a pour les fonctions qui utilise count, car comme on cherche seulement la quote de départ, et bien osef des quotes de l'autre 
+type. Je pense meme que je peux peux etre faire la meme chose pour quand j'utilise count dans copy outside
+
+
+
+
+
+nouvelle erreur 
+
+minishell$ ls pourquoi'allo'lol"pourquoi"allo
+ls: cannot access 'pourquoiallololpourquoi': No such file or directory
+minishell$ ls pourquoi'allo'lol'pourquoi'allo
+celui la fonctionnait

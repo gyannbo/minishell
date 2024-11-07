@@ -47,14 +47,14 @@ size_t	get_right_pos(t_values *v, int *count, char type)
 			count[(int)type] = temp;
 			return (i);
 		}
-		if (v->cmd_str_b[i] == type)
+		if (v->cmd_str_b[i] == type)				// et pour le temps quand ça change dans un multiple quote tok ? je pense pas que je gere ça içi, et que je dois remettre temp dans le tableau
 		{
 			if (sec_q == 0)
 				sec_q = 1;
 			else
 			{
 				sec_q = 0;
-				(count[(int)type])--;
+				(count[(int)type])--;			// ah ouai en fait le seul probleme avec cette fonction c'est qu'elle est incapable de checker pour des quotes des deux types. Ah mais attends, est ce qu'il y a vraiment besoin ? comme on sait le type de la premiere quote, et comme on utilise count que pour choper la position du debut du tok dans cmd_str_b alors on peut juste checker ce type la, 
 			}
 		}
 		i++;

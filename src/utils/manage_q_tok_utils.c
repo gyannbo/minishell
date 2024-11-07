@@ -12,16 +12,15 @@
 
 #include "minishell.h"
 
-static size_t	get_next_i(t_values *v, size_t count_next_quote, size_t *calc_right_size)
+static size_t	get_next_i(t_values *v, size_t count_next_quote, size_t *calc_right_size, t_quote *q)
 {
 	size_t	i;
 	size_t	size;
 	char	type;
 	size_t	temp;
 
-	i = 0;
-//	i = get_next_				// for multiple tokens with multiple quotes
-	size = 0;
+	i = get_right_pos(v, q->count, q->type);
+	size = 0;			//normalement si je
 	type = 0;
 	while (v->cmd_str_b[i])
 	{
@@ -99,7 +98,7 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy
 			if (v->split_str[x][y] == q->type && sec_valid_q == true)
 			{
 				sec_valid_q = false;
-				i += get_next_i(v, q->count_next_quote, &calc_right_size);
+				i += get_next_i(v, q->count_next_quote, &calc_right_size, q);
 				betw_q = false;				//avant avant y++
 				if (next_pos(v, q, x, y) == -1)
 					end = true;					// probleme ici pour cas ls aaaaa'     'aaaa
