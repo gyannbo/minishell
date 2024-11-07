@@ -165,6 +165,7 @@ bool	manage_q_tok(t_values *v, t_quote *q)
 	char	*new_tok;
 	size_t	size;
 
+	q->first_type = q->type;
 	size = get_size(v, q);
 	new_tok = malloc(sizeof(char) * size);
 	if (!new_tok)
@@ -172,6 +173,8 @@ bool	manage_q_tok(t_values *v, t_quote *q)
 	ft_bzero(new_tok, size);
 	copy_in_tok(v, new_tok, q->x, q);			// pls don't change x, pass by value needed
 	manage_rest_tok(v, new_tok, q);
-	manage_count(q);				//normalement pour incrémenter count j'ai juste besoin de count next quote et je regarde dans lacmd strb, parce j'aurais deja veirf 
+	manage_count(v, q);				//normalement pour incrémenter count j'ai juste besoin de count next quote et je regarde dans lacmd strb, parce j'aurais deja veirf 
+	q->first_type = 0;
+	q->count_next_quote = 0;
 	return (true);
 }

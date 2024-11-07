@@ -139,6 +139,5 @@ void	manage_rest_tok(t_values *v, char *new_tok, t_quote *q)
 	v->split_str[q->x] = new_tok;
 	q->x = sec_q_tok - 1;
 	q->two_type = false;
-	q->count_next_quote = 0;
 	return ;
 }

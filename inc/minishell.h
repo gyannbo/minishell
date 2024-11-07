@@ -91,7 +91,7 @@ bool	check_quote(t_values *v, char *s);
 bool	if_pass_check(char c, int *tab, t_quote *q);
 int		next_pos(t_values *v, t_quote *q, int x, int y);
 size_t	get_right_pos(t_values *v, int *count, char type);
-void	manage_count(t_quote *q);
+void	manage_count(t_values *v, t_quote *q);
 
 // quote resolving //
 bool	do_quotes(t_values *values);

@@ -19,8 +19,6 @@ static size_t	get_next_i(t_values *v, size_t count_next_quote, size_t *calc_righ
 	char	type;		//peut etre je peux faire
 	size_t	temp;
 	
-	if (!q->first_type)
-		q->first_type = q->type;
 	i = get_right_pos(v, q->count, q->first_type);
 	size = 0;			//normalement si je
 	type = 0;
@@ -70,7 +68,6 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy
 	bool	betw_q;
 	bool	end;
 	bool	sec_valid_q;
-	// cannot have more than 5 variable declarations (norm)
 	int		temp;
 	char	temp_type;
 	static size_t	calc_right_size; 	//size wrong on sec pass otherwise
@@ -120,7 +117,6 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy
 	}
 	q->pos = temp;
 	q->type = temp_type;
-	q->first_type = 0;
 	calc_right_size = 0;
 	return ;
 }
