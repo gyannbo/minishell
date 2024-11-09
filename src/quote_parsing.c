@@ -61,7 +61,6 @@ bool	quote_parsing(t_values *v, int	*tab)
 			{
 				if (manage_q_tok(v, &q) == false)
 					return (false);
-//				(q.count[(int)q.type])++;
 				break ;
 			}
 			q.y++;

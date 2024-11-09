@@ -84,14 +84,13 @@ static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)		//ATTENTION J
 		quote_counter++;
 	x++;
 	res = has_type(v->split_str[x], &q->type, &quote_counter);
-	while (!res || quote_counter)  // will have to add tab check for env var (just put the value in quote counter with q->count i guess
+	while (!res || quote_counter)  // will have to add tab check for env var (just put the value in quote counter with q->count i guess   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
 	{
 		free(v->split_str[x]);
 		x++;
 		res = has_type(v->split_str[x], &q->type, &quote_counter);
 	}
 	free(v->split_str[x]);
-	(void)q;
 	return (x);
 }
 
@@ -117,7 +116,7 @@ void	manage_rest_tok(t_values *v, char *new_tok, t_quote *q)
 	char	*old_tok;
 
 	old_tok = v->split_str[q->x];
-	if (has_two_types(&old_tok[q->pos], q->type, q))		// this only needs to check with the tab (for envvar quotes), if the count in a single split token is two, i think this func is alright. Anyway dont touch this for now, well see when envvar testing multiple quotes in sinlge token and multiple tok
+	if (has_two_types(&old_tok[q->pos], q->type, q)) // je crois pas que j'ai besoin du tab ici car si ya deux quotes, je vais forcément arriver d'abord sur la euxieme plutot que arriver sur des quotes envvar
 	{
 		v->split_str[q->x] = new_tok;
 		free(old_tok);
@@ -137,7 +136,6 @@ void	manage_rest_tok(t_values *v, char *new_tok, t_quote *q)
 		last_viable_tok++;
 	}
 	v->split_str[q->x] = new_tok;
-//	q->x = sec_q_tok - 1;
 	q->two_type = false;
 	return ;
 }

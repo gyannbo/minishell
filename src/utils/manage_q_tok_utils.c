@@ -16,15 +16,15 @@ static size_t	get_next_i(t_values *v, size_t count_next_quote, size_t *calc_righ
 {
 	size_t	i;
 	size_t	size;
-	char	type;		//peut etre je peux faire
+	char	type;
 	size_t	temp;
 	
 	i = get_right_pos(v, q->count, q->first_type);
-	size = 0;			//normalement si je
+	size = 0;	
 	type = 0;
 	while (v->cmd_str_b[i])
 	{
-		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')				//normalement si je change cette boucle pour utiliser count je devrais régler mes problèmes.		// je pense que normalement je peux juste avoir count pour démarrer au début sur la bonne quote, et après on dirait que tout fonctionne. je devrais juste après checker pour count
+		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
 		{
 			if (type && type == v->cmd_str_b[i])
 			{
@@ -70,14 +70,16 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy
 	bool	sec_valid_q;
 	int		temp;
 	char	temp_type;
-	static size_t	calc_right_size; 	//size wrong on sec pass otherwise
+	int	temp_z;
+	static size_t	calc_right_size; 	//size wrong on sec pass otherwise	(static)
 
 	temp = q->pos;
+	temp_z = q->z;
 	temp_type = q->type;
 	end = false;
 	betw_q = false;
 	sec_valid_q = false;
-	i = 0;				// pls don't change this, i needs to be outside the loop
+	i = 0;
 	while (v->split_str[x])
 	{
 		y = 0;
@@ -98,16 +100,16 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy
 			{
 				sec_valid_q = false;
 				i += get_next_i(v, q->count_next_quote, &calc_right_size, q);
-				betw_q = false;				//avant avant y++
+				betw_q = false;
 				if (next_pos(v, q, x, y) == -1)
-					end = true;					// probleme ici pour cas ls aaaaa'     'aaaa
+					end = true;
 				y++;
 				continue ;
 			}
 			if (betw_q == false)
 			{
 				new_tok[i] = v->split_str[x][y];
-				i++;
+				i++;   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
 			}
 			y++;
 		}
@@ -116,6 +118,7 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy
 		x++;
 	}
 	q->pos = temp;
+	q->z = temp_z;
 	q->type = temp_type;
 	calc_right_size = 0;
 	return ;

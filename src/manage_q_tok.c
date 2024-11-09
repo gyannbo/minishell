@@ -14,14 +14,15 @@
 
 int	next_pos(t_values *v, t_quote *q, int x, int y)
 {
-	//peut etre ici je peux temp icic je peux temp les value du tab// non je pense pas, parce qu'on a besoin de pouvuoir garder l'incréentation du z, et donc on sait pas a l'avance
-	//de combien on aura besoin, autan duppliquer le tab
+	int	temp_tab_val;
+
+	temp_tab_val = q->tab[q->z];
 	y++;
 	while(v->split_str[x][y])
 	{
-		if (if_pass_check(v->split_str[x][y], &q->tab[q->z], q) == false)
+		if (if_pass_check(v->split_str[x][y], &temp_tab_val, q) == false)
 		{
-			q->pos = y;
+			q->pos = y;			// cette ligne est probablement inutile, q->pos est assigné a y dans if pas check
 			q->count_next_quote++;
 			return (0);
 		}

@@ -759,6 +759,8 @@ ls "    "'   '
 ls '     ''     '$lol'    '
 ls'   ''   '
 
+Faire des tests aussi lorsque $lol n'existepas
+
 avec lol="'aaa '"
 
 ls '   '$lol'   ' 
@@ -1074,3 +1076,77 @@ celui la fonctionnait
 ----------------------------------
 
 Oui donc verdict j'ai pas besoin de temp comme je disais le tableau de count parce que je l'utilise seulement pour aller sur le premier charactere lorsque j'en ai besoin.
+
+
+
+
+
+------------------------------
+
+Maintenant faire les env var
+
+
+
+lol="'a'
+
+ls ""''
+ls ''""
+ls '    ''    '
+ls '   ''    '   '     ''    '
+ls aaa'    '$lol'    'aaaa
+ls '     '$lol'    '
+ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa
+ls aaa'   ''   'aaa
+ls aaa"   "'   'aaa
+ls '   '"   "
+ls "    "'   '
+ls '     ''     '$lol'    '
+ls'   ''   '
+
+Faire des tests aussi lorsque $lol n'existepas
+
+avec lol="'aaa '"
+
+ls '   '$lol'   ' 
+
+
+avec lol='"aa '
+
+ls $lol'   'aaaa'    'aaaa a pas l'air de fonctionner. non ça fonctionne, c'était le deuxieme token apres ls les size javais pas compris
+
+
+
+
+
+
+
+-Le problème c'est que j'utilise tab une fois et que après je dois le réutiliser mais les valeurs ne sont plus là, et aussi probablement tab est incrémenté.
+	regarder ou j;utilise tab.
+
+tab seulement dans if pass check
+
+Et if pass check est utilisé dans les fonction outside, les deux.
+
+
+Vu la fonction next pos, et son utilisation, je vais probablement pouvoir faire quelque chose comme temp juste le moment ou j'ai besoin pour le tab. et je 
+pense que pour les questions de duplication du tableau pour ce qui viens après je pense que je pourrais faire ça quand je créer le tableau et je le met dans
+une struct que je vais utiliser pour les futurs étapes du parsing.
+
+Je pense que comme je temp deja le z dans q->pos, je peux probablement temp juste la valeur qu'il me faut dans next pos, et après incrémenter,  ou pas je sais pas, z.
+Parce que comme les valeurs restes dans le tableau c'est juste le z qui va bouger. D'ailleurs ya peut etre moyen que j'ai pas besoin de dupliquer le tableau si je fais 
+comme ça, j'aurais juste besoin de mettre le z a zéro quand je repasserais dans les tokens ou la cmd_strb
+
+Voir si je peux temp la valeur du tableau dans les deux fonctions et juste bouger avec le z
+
+
+
+
+
+
+
+////  QUEST CE QU'IL SE PASSE LORSQUE J'AI DES QUOTES DIFFÉRENTES DANS LES ENV VAR ? ENTRE LES ENVVAR ET LES VALID QUOTES ? A L'INTÉRIEUR DES ENVVAR ELLEMEMES ? COMMENT LE TAB EST INCR AVEC ÇA ?
+
+
+
+
+Par contre je dois pas oublier d'incrémenter z après tout ça, peut etre en meme temps que je manage count, quelque chose comme ça.
