@@ -14,14 +14,10 @@
 
 void	manage_tab(t_quote *q)
 {
+	q->z += q->count_next_quote;
 	q->tab[q->z] -= q->decr_tab;
 	q->decr_tab = 0;
 }
-
-
-// ON MANAGERA INCREMENTER TAB DANS DCETTE FUNC APRES
-
-
 
 void	increment_q_counter_w_tab(size_t *counter, t_quote *q)
 {

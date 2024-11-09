@@ -348,6 +348,8 @@ ls ""''
 ls ''""
 ls '    ''    '
 ls '   ''    '   '     ''    '
+
+
 lol="'a'
 ls aaa'    '$lol'    'aaaa     // lol = 'a'
 ls '     '$lol'    '
@@ -357,9 +359,13 @@ ls aaa"   "'   'aaa
 ls '   '"   "
 ls "    "'   '
 ls '     ''     '$lol'    '
+ls aa'aaa'$lol'aaa'$lol'dddd'$lol 'dddd'$lol'dddd'$lol
 ls'   ''   '
 
 NOT OK:
+
+lol="'a'"
+ls $lol'   'aa
 avec lol="'aaa '"
 
 ls '   '$lol'   ' 
@@ -1172,3 +1178,8 @@ Par contre je dois pas oublier d'incrémenter z après tout ça, peut etre en me
 
 
 ouai en fait le probleme c'est que pour le tab, je dois pouvoir décrémenter les values du tab selon ce que j'ai déjà mis dans le token valid de split
+
+
+
+
+//// VERIF CHANGEMENT DE QUOTE TABLEAU (ENVVAR)
