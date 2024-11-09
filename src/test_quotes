@@ -344,13 +344,30 @@ ls '    '    '   '  '   ''      '
 ls '   ''    '  '     ''    '
 ls '    a    ''    a   '    'dddd      '
 ls aaaaaaaaaaa'aaaaaaa'aaaaaaa aaaaaaa'aaaaaaa'aaaaaaa saaaaaaaaaaa'aaaaaaa'aaaaaaaaaa   'aaaa'a aaaaaaaaa'aaaaaaaaaaaaa' 'aaaaa' 'aaaaaaaaaa' 'aaaaaaaaaaa'
+ls ""''
+ls ''""
+ls '    ''    '
+ls '   ''    '   '     ''    '
+lol="'a'
+ls aaa'    '$lol'    'aaaa     // lol = 'a'
+ls '     '$lol'    '
+ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa
+ls aaa'   ''   'aaa
+ls aaa"   "'   'aaa
+ls '   '"   "
+ls "    "'   '
+ls '     ''     '$lol'    '
+ls'   ''   '
 
 NOT OK:
+avec lol="'aaa '"
+
+ls '   '$lol'   ' 
 
 
+avec lol='"aa '
 
-envvar  with quotes between token collé : ls 'allo'$envvarquotes'test' etc
-
+ls $lol'   'aaaa'    'aaaa a pas l'air de fonctionner. non ça fonctionne, c'était le deuxieme token apres ls les size javais pas compris
 
 
 
@@ -1145,8 +1162,13 @@ Voir si je peux temp la valeur du tableau dans les deux fonctions et juste bouge
 
 
 ////  QUEST CE QU'IL SE PASSE LORSQUE J'AI DES QUOTES DIFFÉRENTES DANS LES ENV VAR ? ENTRE LES ENVVAR ET LES VALID QUOTES ? A L'INTÉRIEUR DES ENVVAR ELLEMEMES ? COMMENT LE TAB EST INCR AVEC ÇA ?
-
+///// TESTER AUSSI AVEC LES QUOTES ENVVAR A DES ENDROITS DIFFÉRENTS
 
 
 
 Par contre je dois pas oublier d'incrémenter z après tout ça, peut etre en meme temps que je manage count, quelque chose comme ça.
+
+
+
+
+ouai en fait le probleme c'est que pour le tab, je dois pouvoir décrémenter les values du tab selon ce que j'ai déjà mis dans le token valid de split

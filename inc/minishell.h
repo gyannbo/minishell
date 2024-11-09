@@ -44,6 +44,7 @@ typedef struct s_quote
 	char	type;
 	char	first_type;
 	int		*tab;
+	int		decr_tab;
 	int	pos;
 	size_t	new_tok_size;
 	size_t	count_next_quote;	// number of multiple quotes in token not counting first ones
@@ -92,6 +93,8 @@ bool	if_pass_check(char c, int *tab, t_quote *q);
 int		next_pos(t_values *v, t_quote *q, int x, int y);
 size_t	get_right_pos(t_values *v, int *count, char type);
 void	manage_count(t_values *v, t_quote *q);
+void	increment_q_counter_w_tab(size_t *counter, t_quote *q);
+void	manage_tab(t_quote *q);
 
 // quote resolving //
 bool	do_quotes(t_values *values);

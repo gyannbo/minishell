@@ -82,6 +82,7 @@ static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)		//ATTENTION J
 		quote_counter = (q->count_next_quote * 2) + 1; // +1 because second quote of first quote, otherwise last token not freed
 	if (q->two_type)
 		quote_counter++;
+	increment_q_counter_w_tab(&quote_counter, q);
 	x++;
 	res = has_type(v->split_str[x], &q->type, &quote_counter);
 	while (!res || quote_counter)  // will have to add tab check for env var (just put the value in quote counter with q->count i guess   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
@@ -137,5 +138,4 @@ void	manage_rest_tok(t_values *v, char *new_tok, t_quote *q)
 	}
 	v->split_str[q->x] = new_tok;
 	q->two_type = false;
-	return ;
 }

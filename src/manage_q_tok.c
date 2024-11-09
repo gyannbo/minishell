@@ -174,6 +174,7 @@ bool	manage_q_tok(t_values *v, t_quote *q)
 	ft_bzero(new_tok, size);
 	copy_in_tok(v, new_tok, q->x, q);			// pls don't change x, pass by value needed
 	manage_rest_tok(v, new_tok, q);
+	manage_tab(q);
 	manage_count(v, q);				//normalement pour incrémenter count j'ai juste besoin de count next quote et je regarde dans lacmd strb, parce j'aurais deja veirf 
 	q->first_type = 0;
 	q->count_next_quote = 0;

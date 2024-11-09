@@ -12,6 +12,33 @@
 
 #include "minishell.h"
 
+void	manage_tab(t_quote *q)
+{
+	q->tab[q->z] -= q->decr_tab;
+	q->decr_tab = 0;
+}
+
+
+// ON MANAGERA INCREMENTER TAB DANS DCETTE FUNC APRES
+
+
+
+void	increment_q_counter_w_tab(size_t *counter, t_quote *q)
+{
+	size_t temp_next_quote;
+	int	z;
+
+	z = q->z;
+	temp_next_quote = q->count_next_quote;
+	while(temp_next_quote)
+	{
+		*counter += q->tab[z];
+		temp_next_quote--;
+		z++;
+	}
+	*counter += q->tab[z];
+}
+
 void	manage_count(t_values *v, t_quote *q)
 {
 	size_t i;

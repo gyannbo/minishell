@@ -108,8 +108,10 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy
 			}
 			if (betw_q == false)
 			{
+				if (end && (v->split_str[x][y] == '\'' || v->split_str[x][y] == '\"'))
+					q->decr_tab++;
 				new_tok[i] = v->split_str[x][y];
-				i++;   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
+				i++;
 			}
 			y++;
 		}
