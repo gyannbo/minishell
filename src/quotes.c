@@ -89,7 +89,7 @@ static bool	get_counter(t_values *v, int **tab)
 	{
 		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
 		{
-			quote_redpip(&v->cmd_str_b[i], &i);
+			quote_redpip(&v->cmd_str_b[i], &i);				//redpip doesnt have anything to do with this, this is just a reuse of a functionm
 			i_tab++;
 			continue ;
 		}

@@ -350,7 +350,7 @@ ls '    ''    '
 ls '   ''    '   '     ''    '
 
 
-lol="'a'
+lol="'a'"
 ls aaa'    '$lol'    'aaaa     // lol = 'a'
 ls '     '$lol'    '
 ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa
@@ -361,19 +361,20 @@ ls "    "'   '
 ls '     ''     '$lol'    '
 ls aa'aaa'$lol'aaa'$lol'dddd'$lol 'dddd'$lol'dddd'$lol
 ls'   ''   '
-
-NOT OK:
-
-lol="'a'"
 ls $lol'   'aa
-avec lol="'aaa '"
-
 ls '   '$lol'   ' 
 
 
-avec lol='"aa '
+lol = "'aa "
+ls '   '$lol'    '
+ls $lol'   'aaaa'    'aaaa
 
-ls $lol'   'aaaa'    'aaaa a pas l'air de fonctionner. non ça fonctionne, c'était le deuxieme token apres ls les size javais pas compris
+
+NOT OK:
+lol=' aa"'
+ls $lol'dddddd'dddd'    '$lol'     'dddd$lol
+
+tester tous les cas d'esspaces pour env var, quote après token, avant etc.
 
 
 
@@ -1183,3 +1184,39 @@ ouai en fait le probleme c'est que pour le tab, je dois pouvoir décrémenter le
 
 
 //// VERIF CHANGEMENT DE QUOTE TABLEAU (ENVVAR)
+ouai ya pas l'air d'avoir de problemes, jai fait lol="'a'" et bite='"b"' attaché dans une commande ls et ça fonctionnait.
+
+(on peut pas mettre deux type de quotes différentes (facilement) dans les env var sans avoir le backslash pour escaper)
+
+
+Je pense qu'on est bon pour le parsing des quotes sans expand pour les doubles.
+Je dois repasser tous les tests que j'ai fait, puis en remettre d'autre pour vraiment voir si c'est robuste. Puis passer à l'expand pour les double quotes.
+
+
+
+
+
+
+
+--------
+
+en fait je suis peutetre pas obligé de regarderpour les quotes non valide pour free les token de splir car de toute maniere elles seront collées au quote valid dans
+les tokens, alors je peux les ignorer.
+
+
+
+
+
+
+Avec tous les bugs que je viens de trouver sur les changmenet de type dans le free useless.
+Non mais en fait il suffit que j'ai le nombre de quotes, en incluant les non valides, et j'ai pas besoin de szitcher entre les types normalement. Ah ouai
+mais le probleme c'est que grace au tableau je sais pas si elle sont accrochées au token ou pas.
+Ba non en fait normalement. 
+Ba ouai alors ça voudrait dire que la meilleure faċon de faire ce serait d'ignorer les non valides ? Faudrait avoir la bonne position pour la quote valide alors
+
+
+
+Pour le fait de décrémenter ou ne pas décrémenter le tab, je pense que pour mon cas qui ne fonctionne pas je dois faire quelque chose comme temp le tab seulement lorsque
+je suis dnas le meme token split, et une fois que je suis sorti du token ça veut dire que osef. Quelque chose comme ça. Ça a l'air de fonctionner en sortie.
+
+D'abord partir sur de bonne base, avec les tests qui fonctionne, regarder git diff, et ensuite comencer a voir comment fire

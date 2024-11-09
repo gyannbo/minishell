@@ -15,7 +15,7 @@
 void	manage_tab(t_quote *q)
 {
 	q->z += q->count_next_quote;
-	q->tab[q->z] -= q->decr_tab;
+	q->tab[q->z] -= q->decr_tab;		// pourquoi j'ai besoin de decr le tab? parce que il peut rester des quote non valid dans un token après, ouai ça doit etre ça
 	q->decr_tab = 0;
 }
 
