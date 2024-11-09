@@ -361,7 +361,7 @@ ls "    "'   '
 ls '     ''     '$lol'    '
 ls aa'aaa'$lol'aaa'$lol'dddd'$lol 'dddd'$lol'dddd'$lol
 ls'   ''   '
-ls $lol'   'aa
+ls $lol'   'aa			
 ls '   '$lol'   ' 
 
 
@@ -369,6 +369,8 @@ lol = "'aa "
 ls '   '$lol'    '
 ls $lol'   'aaaa'    'aaaa
 
+lol="'aaa '"
+ls '   '$lol'   ' 		
 
 NOT OK:
 lol=' aa"'
@@ -387,9 +389,6 @@ ls '     '$lol'    '
 ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa			//demain tester tout ceux la avec env var (juste un token split avec plusierus quotes, on verra apres pour plusieurs token plusieurs quotes
 ls '     ''     '$lol'    '
 
-avec lol="'aaa '"
-
-ls '   '$lol'   ' 
 
 
 TO TEST
@@ -1220,3 +1219,69 @@ Pour le fait de décrémenter ou ne pas décrémenter le tab, je pense que pour 
 je suis dnas le meme token split, et une fois que je suis sorti du token ça veut dire que osef. Quelque chose comme ça. Ça a l'air de fonctionner en sortie.
 
 D'abord partir sur de bonne base, avec les tests qui fonctionne, regarder git diff, et ensuite comencer a voir comment fire
+
+
+
+
+
+
+
+-------------
+
+verifier que pour le problemede free j'ai bien le tableau deja, avec les valeurs, et que je peux regarder en arriere pour avoir la data si je veux. Sinon je vais devoir 
+faire un count comme pour le decrem. Ah ouai mais attends je peux faire ça dans quote parsing je mets ça dans incr etc.. je sais pas, juste pour indiquer  le nombre de if pass
+present avant la quote, comme ça j'ai pas besoin de garder la data du tableau et je pense que c'est la meilleure maniere de ne pas toucher au reste de la logique et donc de ne pas
+introduire de bug
+
+
+
+Et ensuite je devrais tester avec un grand nombre de quote, et dans tous les cas de figure, pourvoir si ça tient et que je gere l'entrée et la sortie.
+
+
+
+
+
+
+Ok, visiblement le probleme pour le cas avec ' aa"' ça vient de l'incrémentation avec le tableau qui fait que ça incrément derriere alors que la quote non valide est pas 
+dans le split token, elle est dans celui d'après.
+
+avant de regarder ça deja voir si j'ai pas explosé des cas avec l'état du code maintenant
+
+
+
+
+
+
+
+---ok en fait pour ce problemee ça a l'airdetre une histoirede type, parce si j'inverse le type dans lexempleça fonctionne (aa' au lieu de aa"
+
+ouai quand j'inverse les quotes dans la commande ç aproduit la meme erreur:wa
+
+
+
+
+Visiblement c'est a la sortie du premier token managé que je free pas les bonne chosesA
+
+
+
+
+
+
+Peut etre que l'on peut jouer sur le fait que dansune env var il y aura forcément pour minishell suelement un seul type de quote, et donc si le compte est pair dans env var on fait rien
+
+
+Mais je pense que ça va poser des problems a la sortie aussi, le programme a l'air de bien fonctionner sur les quotes non valides détachés des tokens, mais pour les changements de type
+ça parait très compliqué, car meme si le type a l'interieur d'une env var peut pas changer on peu en avoir un nombre arbitraire, a des moments aribitraire dans la strings.
+Peut etre le seul moyen serait de faire avec le tab, et construire une grosse fonction qui check tout ça
+
+
+Je pense que je dois repartir sur mon idée de préserver les values du tabs une fois que j'arrive a la fonction ou type merde. Et aussi mon idée de savoir combien j'ai de quote
+de tab au début dans le token était la bonne. Par contre pour les quotes de fin de token je ne sais pas vraiment comment faire, peut etre qu'il ne faut pas les compter dans
+les counter et que a la place je décrémente le tableau pour que quand ça revient dans quote parsing on soit bien.
+Pour faire ça, d'abord build
+
+
+tester énormément de quote invalide
+
+Ah ouai mais attends si ya deux env var avec des quote différentes collées ? c'est pas grave si je sais avec le tab de toute maniere je vais meme pas séparer les types.
+Le seul truc chiant c'est vraiment de build l'entrée et la sortie, mais je pense que ce que j'ai dis la ça va fonctionner.
