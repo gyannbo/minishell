@@ -29,3 +29,18 @@ void before_tok(t_quote *q, size_t *i, size_t *quote_counter, char *s)
 		(*i)++;
 	}
 }
+
+void	skip_non_v_quote(char *s, int *temp_value, size_t *quote_counter, size_t *i)
+{
+	(*i)++;
+	while(s[(*i)] && *temp_value)
+	{
+		if (s[(*i)] == '\'' || s[(*i)] == '\"')
+		{
+			(*temp_value)--;
+			(*quote_counter)--;
+		}
+		(*i)++;
+	}
+	(*i)--;
+}

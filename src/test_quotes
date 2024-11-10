@@ -1361,3 +1361,30 @@ au milieu des multiples couples de quotes.
 Comme on est sur que les non valid quotes sont dans les token que je vais free on peut les ignorer je pense, et le code que
 j'ai écrit la dessus ne sert a rien. Mais on a besoin de ça pour le milieu.
 Avancer de build pour le milieu je vais déjà tout retester.
+
+
+
+
+
+
+-----
+-Plus que build les middle envvar avec quote et je m'arrete la, je test pas plus, j'ai testé avec des quotes variables, plusieurs envvar avec different types de quote, et ça pete pas.
+Donc a partir de maitenenant je pas rajouter de test et je vais pas tout retester a chaque fois, je ferais ça une derniere fois quand jaurais fini les quotes. Donc pas besoin de tester les
+envvar diff type quotes multiple etc.
+
+
+
+
+
+
+
+
+
+Pour le middle des envvar, je dois d'abord chhecker si je dois temp ou pas le tableau.
+
+
+Ouai on va temp. ça me parait beaucoup plus simple.
+
+Juste içi au passage, après un call a manage quote en fait je manipule la data du tableau, jsute pour que if pass ai les bonne values, je pense que c'est pas grave de changer
+le tableau comme ça, parce que j'ai vraiment plus besoin de cette data après, et si j'ai besoin du tableau après dans le reste du parsing je peux toujours faciement le duppliquer
+lorsque je calcule le tableau.

@@ -16,24 +16,37 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 {
 	size_t	i;
 	bool	flag;
+	int temp_z;
+	int temp_value;
+	size_t temp_c_n_quote;
 
 	flag = false;
+	temp_z = q->z;
+	temp_value = q->tab[temp_z];
+	temp_c_n_quote = q->count_next_quote;
 	i = 0;
 	if (!s)				// for NULL term
 		return (-1);
 	before_tok(q, &i, quote_counter, s);
 	while (s[i])
 	{
-		if (*quote_counter % 2 == 0 && *quote_counter)						// ouai en fait je peux faire une pass au début pour q_begin_tok, ensuite selon le count next quote je vérifie le middle, et si cnout cest a zero je vais direct dnas manage end
+		if (*quote_counter % 2 == 0 && *quote_counter)
 		{
 			if (s[i] == '\'' || s[i] == '\"')
 				*type = s[i];
 		}	
-		if (s[i] == *type)
+		if (s[i] == *type)      // c'est prob ici que jedois sauter middle envvar
 		{
+			if (temp_c_n_quote && *quote_counter % 2 != 0)
+			{
+				skip_non_v_quote(s, &temp_value, quote_counter, &i);
+				temp_z++;
+				temp_value = q->tab[temp_z];		//normalement pour ça j'ai pas besoin de faire de if ou quoi que ce soit, car le seul moment ou jai besoin de switcher le z c'est quand on a completement passé les quotes de l'env var, car si c'est pas le cas normalement la fonction sarrete. et comme les variables que jutilise son auto pas besoin de gerer une sortie que peux juste les incr comme ça
+				temp_c_n_quote--;
+			}
 			flag = true;
 			if (*quote_counter)
-				(*quote_counter)--;				// faire gaffe ici a cause du type peut etre probleme si decrementé mais == 0;
+				(*quote_counter)--;
 		}
 		i++;
 	}
