@@ -41,6 +41,7 @@ static void	init_quote(t_quote *q, int *tab)
 	q->type = 0;
 	q->first_type = 0;
 	q->tab = tab;
+	q->q_before_tok = 0;
 	q->decr_tab = 0;
 	q->pos = 0;
 	q->count_next_quote = 0;
@@ -51,22 +52,36 @@ static void	init_quote(t_quote *q, int *tab)
 bool	quote_parsing(t_values *v, int	*tab)
 {
 	t_quote q;
+	int temp_val[2];
 
 	init_quote(&q, tab);
+	temp_val[0] = q.tab[0];
+	temp_val[1] = q.z;
 	while (v->split_str[q.x])
 	{
 		q.y = 0;
 		while (v->split_str[q.x][q.y])
 		{
-			if (if_pass_check(v->split_str[q.x][q.y], &tab[q.z], &q) == false)
+			if (temp_val[1] != q.z)
+			{
+				temp_val[0] = q.tab[q.z];
+				temp_val[1] = q.z;
+			}
+			if (if_pass_check(v->split_str[q.x][q.y], &temp_val[0], &q) == false)
 			{
 				if (manage_q_tok(v, &q) == false)
 					return (false);
 				break ;
 			}
+			if (v->split_str[q.x][q.y] == '\'' || v->split_str[q.x][q.y] == '\"')
+				q.q_before_tok++;
 			q.y++;
 		}
+		q.q_before_tok = 0;
 		q.x++;
 	}
 	return (true);
 }
+
+
+// peut etre que pour temp le tableau je peux juste checker si le z a changé et à ce moment là je change la value temp avec le nouveau z

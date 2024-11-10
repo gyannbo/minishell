@@ -379,6 +379,12 @@ ls $lol'dddddd'dddd'    '$lol'     'dddd$lol
 tester tous les cas d'esspaces pour env var, quote après token, avant etc.
 
 
+test:
+-quote impair same type as command line
+-quote pair same test
+-ces deux test mais avec des non valid quotes different type de command line
+-ces 4 tests mais avec des valid quotes en command line qui sont de plusieurs type
+si j'arrive a build ça je m'arrete pour le testing.
 
 OK JUSt POUR GET SIZE
 lol="'a'"
@@ -1260,7 +1266,7 @@ ouai quand j'inverse les quotes dans la commande ç aproduit la meme erreur:wa
 
 
 
-Visiblement c'est a la sortie du premier token managé que je free pas les bonne chosesA
+Visiblement c'est a la sortie du premier token managé que je free pas les bonne choses
 
 
 
@@ -1285,3 +1291,39 @@ tester énormément de quote invalide
 
 Ah ouai mais attends si ya deux env var avec des quote différentes collées ? c'est pas grave si je sais avec le tab de toute maniere je vais meme pas séparer les types.
 Le seul truc chiant c'est vraiment de build l'entrée et la sortie, mais je pense que ce que j'ai dis la ça va fonctionner.
+
+
+-------
+
+-build préserver le tableau sur tout le long du traitement des quotes.  V
+	all tests  (avoir les values sans rien en faire)        V
+-build décrémentation et incrémentation du tableau pour avoir le nombre de quote a ignorer 
+	all tests	(avoir les values sans rien en faire)
+- utiliser ces values pour fix le test qui passe pas.
+
+
+
+------
+-tester avec une variable comme "'' '" pour voir si je decremente bien 2 et pas 3.
+Oui ça fonctionne, donc sur la sortie ça va, mais je sais toujours pas si j'ai un systeme de decrementation dans la fonction
+qui merde ça peut poser probleme
+
+Oui je pense que je fais bien decr sur la sortie, mais j'utilise pas cette value sur la fonction qui merde.
+
+
+
+
+
+
+Voila maintenant on arrive au stade ou je dois fix la fonction qui merde avec les types. Je pense que je dois mettre dans la fonction sur les types aussi un moyen de checker
+lorsqu'on a une envvar entre des quotes valid (donc faire avec le tab skip des quotes quoi
+
+
+
+
+Pour la question de decrementer le tableau entre les quotes, je crois que le tab a une case entre chaque couple de valid quotes, meme si elle font partie d'un seul quote token.
+Verif ça.
+Oui.
+Ok donc ça veut dire que je dois faire une boucle ou je regarde pas le type lorsque c'est avant, au milieu, et a la fin du comptage de quotes (je rappelle je dois regarder le type 
+dans ls quotes validees pour ne pas interpréter des quotes a l'interieur de quotes valides). Mais ça veut dire que je suis obligé d'avoir un systeme qui compte combien il y a de potentiels
+"milieux" 
