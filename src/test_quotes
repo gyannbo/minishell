@@ -375,6 +375,7 @@ ls '   '$lol'   '
 NOT OK:
 lol=' aa"'
 ls $lol'dddddd'dddd'    '$lol'     'dddd$lol
+ls $lol'     'ddd$lol
 
 tester tous les cas d'esspaces pour env var, quote après token, avant etc.
 
@@ -1326,4 +1327,25 @@ Verif ça.
 Oui.
 Ok donc ça veut dire que je dois faire une boucle ou je regarde pas le type lorsque c'est avant, au milieu, et a la fin du comptage de quotes (je rappelle je dois regarder le type 
 dans ls quotes validees pour ne pas interpréter des quotes a l'interieur de quotes valides). Mais ça veut dire que je suis obligé d'avoir un systeme qui compte combien il y a de potentiels
-"milieux" 
+"milieux"
+
+
+Ah ouai mais ya un problème, je dois confirmer que la value du nombre de quotes a choper est bien wrong pour end (genre avec les trucs comme "'' '" il va compter la 3e quote en sortie 
+
+
+En fait j'ai meme pas besoin de checker pour les invalid quotes qui viennent derriere parce que de toute maniere elles seront incluse bien dans le token, et comme je produis la value pour le
+nombre de quotes invalides après les quotes valides dans le token de quote autre part on est bon je pense.
+Donc je dois:
+
+-rebuild increment tab func to not include after token potential invalid quotes
+-build pass before valid quotes
+-build middle of multiple quotes infra
+
+
+
+(je me souviens plus est ce que je compte les quotes avant les premieres valid quotes dans le increment with tab ou pas)
+Non seulement celles après. Je dois refaire cette fonction pour quelle prenne pas en compte les invalid quote après et par contre celle avant,
+mais je dois revif que le tab defonce pas la data sur les quotes avants ? non parce que cette data la est dans la variable q_begin_tok, si je 
+regarde juste le tab ça pourrait faire des erreurs.
+
+

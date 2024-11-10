@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	has_type(char *s, char *type, size_t *quote_counter)
+static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 {
 	size_t	i;
 	bool	flag;
@@ -21,9 +21,10 @@ static int	has_type(char *s, char *type, size_t *quote_counter)
 	i = 0;
 	if (!s)				// for NULL term
 		return (-1);
+	before_tok(q, &i, quote_counter, s);
 	while (s[i])
 	{
-		if (*quote_counter % 2 == 0 && *quote_counter)
+		if (*quote_counter % 2 == 0 && *quote_counter)						// ouai en fait je peux faire une pass au début pour q_begin_tok, ensuite selon le count next quote je vérifie le middle, et si cnout cest a zero je vais direct dnas manage end
 		{
 			if (s[i] == '\'' || s[i] == '\"')
 				*type = s[i];
@@ -84,12 +85,12 @@ static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)		//ATTENTION J
 		quote_counter++;
 	increment_q_counter_w_tab(&quote_counter, q);
 	x++;
-	res = has_type(v->split_str[x], &q->type, &quote_counter);
+	res = has_type(v->split_str[x], &q->type, &quote_counter, q);
 	while (!res || quote_counter)  // will have to add tab check for env var (just put the value in quote counter with q->count i guess   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
 	{
 		free(v->split_str[x]);
 		x++;
-		res = has_type(v->split_str[x], &q->type, &quote_counter);
+		res = has_type(v->split_str[x], &q->type, &quote_counter, q);
 	}
 	free(v->split_str[x]);
 	return (x);

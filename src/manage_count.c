@@ -25,6 +25,7 @@ void	increment_q_counter_w_tab(size_t *counter, t_quote *q)
 	int	z;
 
 	z = q->z;
+	*counter += q->q_before_tok;
 	temp_next_quote = q->count_next_quote;
 	while(temp_next_quote)
 	{
@@ -32,7 +33,6 @@ void	increment_q_counter_w_tab(size_t *counter, t_quote *q)
 		temp_next_quote--;
 		z++;
 	}
-	*counter += q->tab[z];
 }
 
 void	manage_count(t_values *v, t_quote *q)

@@ -96,6 +96,7 @@ size_t	get_right_pos(t_values *v, int *count, char type);
 void	manage_count(t_values *v, t_quote *q);
 void	increment_q_counter_w_tab(size_t *counter, t_quote *q);
 void	manage_tab(t_quote *q);
+void	before_tok(t_quote *q, size_t *i, size_t *quote_counter, char *s);
 
 // quote resolving //
 bool	do_quotes(t_values *values);

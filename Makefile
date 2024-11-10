@@ -77,12 +77,14 @@ SRC_NAME =	main.c \
 			utils/manage_q_tok_utils.c \
 			manage_rest_tok.c \
 			manage_count.c\
+			type_func_problem.c\
 			builtin/exec.c \
 			builtin/echo.c \
 			builtin/cd.c \
 			builtin/env.c \
 			builtin/pwd.c \
 			utils/error.c \
+			
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
 
