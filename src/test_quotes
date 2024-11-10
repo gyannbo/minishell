@@ -1349,3 +1349,15 @@ mais je dois revif que le tab defonce pas la data sur les quotes avants ? non pa
 regarde juste le tab ça pourrait faire des erreurs.
 
 
+
+
+
+---------------------------
+
+Ok verdict.
+Je pense que j'ai fix le cas, mais je pense qu'on a pas du tout besoin de checker pour les quotes invalid avant et après, par contre
+on doit decrementer en sortie le tab pour pas que ça plante après et on a besoin de checker pour une env var éventuelles
+au milieu des multiples couples de quotes.
+Comme on est sur que les non valid quotes sont dans les token que je vais free on peut les ignorer je pense, et le code que
+j'ai écrit la dessus ne sert a rien. Mais on a besoin de ça pour le milieu.
+Avancer de build pour le milieu je vais déjà tout retester.
