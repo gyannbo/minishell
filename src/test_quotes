@@ -396,7 +396,11 @@ ls $lol"        "$lol"      "$lol
 
 lol="''''" 
 ls $lol'     '$lol'    '$lol $lol'     '$lol'    '$lol
+
 NOT OK:
+
+lol=' aa"'
+ls $lol'dddddd'dddd'    '$lol'     'dddd$lol			//NON
 
 
 lol="''''"
