@@ -45,6 +45,7 @@ typedef struct s_quote
 	char	first_type;
 	int		*tab;
 	int		q_before_tok;
+	int		has_b_tok;
 	int		decr_tab;
 	int	pos;
 	size_t	new_tok_size;

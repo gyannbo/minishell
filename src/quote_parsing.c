@@ -42,6 +42,7 @@ static void	init_quote(t_quote *q, int *tab)
 	q->first_type = 0;
 	q->tab = tab;
 	q->q_before_tok = 0;
+	q->has_b_tok = 0;
 	q->decr_tab = 0;
 	q->pos = 0;
 	q->count_next_quote = 0;

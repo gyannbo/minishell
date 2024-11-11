@@ -167,6 +167,8 @@ bool	manage_q_tok(t_values *v, t_quote *q)
 	size_t	size;
 
 	q->first_type = q->type;
+	if (q->q_before_tok)
+		q->has_b_tok = 1;
 	size = get_size(v, q);
 	new_tok = malloc(sizeof(char) * size);
 	if (!new_tok)
@@ -178,5 +180,6 @@ bool	manage_q_tok(t_values *v, t_quote *q)
 	manage_count(v, q);				//normalement pour incrémenter count j'ai juste besoin de count next quote et je regarde dans lacmd strb, parce j'aurais deja veirf 
 	q->first_type = 0;
 	q->count_next_quote = 0;
+	q->has_b_tok = 0;
 	return (true);
 }
