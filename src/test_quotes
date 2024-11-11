@@ -397,14 +397,20 @@ ls $lol"        "$lol"      "$lol
 lol="''''" 
 ls $lol'     '$lol'    '$lol $lol'     '$lol'    '$lol
 
-NOT OK:
-
-lol=' aa"'
-ls $lol'dddddd'dddd'    '$lol'     'dddd$lol			//NON
-
-
 lol="''''"
 ls $lol"sssss"$lol"    "$lol
+
+
+
+NOT OK:
+
+lol="'aa"
+ls $lol'   'sss'   'ss
+
+lol="''''"
+ls $lol"sssss"$lol"    "$lol  $lol"sssss"$lol"    "$lol
+
+
 
 (jai testé avec lol juste avant, just au milieu etc.)
 
