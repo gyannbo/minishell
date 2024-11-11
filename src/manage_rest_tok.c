@@ -28,6 +28,11 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 	if (!s)				// for NULL term
 		return (-1);
 	before_tok(q, &i, quote_counter, s);
+	if (*type != s[i])
+	{
+		if (q->q_before_tok % 2 == 0)
+			*type = s[i];
+	}
 	while (s[i])
 	{
 		if (*quote_counter % 2 == 0 && *quote_counter)
@@ -48,11 +53,14 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 			if (*quote_counter)
 			{
 				(*quote_counter)--;
-//				if (s[i + 1])
-//					*type = s[i + 1];
 			}
 		}
 		i++;
+		if (*type != s[i])
+		{
+			if (q->q_before_tok % 2 == 0)
+				*type = s[i];
+		}
 	}
 	if (flag)
 		return (1);
@@ -90,12 +98,12 @@ static int	has_two_types(char *s, char type, t_quote *q)
 	return (0);
 }
 
-static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)		//ATTENTION JE DOIS CHANGER LE TYPE LORSQUE YA QUOTE COUNTER > 0 // ouai aussi faudra voir sur le changement de type en fonction des skip de tab
+static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)
 {
 	int	res;
 	size_t quote_counter;
 
-	quote_counter = 0;	
+	quote_counter = 0;
 	if (q->count_next_quote)
 		quote_counter = (q->count_next_quote * 2) + 1; // +1 because second quote of first quote, otherwise last token not freed
 	if (q->two_type)
@@ -103,7 +111,7 @@ static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)		//ATTENTION J
 	increment_q_counter_w_tab(&quote_counter, q);
 	x++;
 	res = has_type(v->split_str[x], &q->type, &quote_counter, q);
-	while ((!res || quote_counter) && v->split_str[x])  // will have to add tab check for env var (just put the value in quote counter with q->count i guess   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
+	while ((!res || quote_counter) && v->split_str[x])
 	{
 		free(v->split_str[x]);
 		x++;
@@ -121,7 +129,7 @@ static size_t	move_tokens(t_values *v, size_t x, size_t sec_q_tok)
 	x++;
 	if (!(v->split_str[x]))
 		return (x);
-	while (v->split_str[sec_q_tok])			//with multiple quote in single tok this func becomes more complicated, because between quote can be env var quotes, so i should use tab, but first build withut envar suport
+	while (v->split_str[sec_q_tok])
 	{
 		v->split_str[x] = v->split_str[sec_q_tok];
 		sec_q_tok++;
@@ -137,7 +145,7 @@ void	manage_rest_tok(t_values *v, char *new_tok, t_quote *q)
 	char	*old_tok;
 
 	old_tok = v->split_str[q->x];
-	if (has_two_types(&old_tok[q->pos], q->type, q)) // je crois pas que j'ai besoin du tab ici car si ya deux quotes, je vais forcément arriver d'abord sur la euxieme plutot que arriver sur des quotes envvar
+	if (has_two_types(&old_tok[q->pos], q->type, q))
 	{
 		v->split_str[q->x] = new_tok;
 		free(old_tok);

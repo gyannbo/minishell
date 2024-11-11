@@ -400,30 +400,10 @@ lol="''''"
 ls $lol'     '$lol'    '$lol $lol'     '$lol'    '$lol
 
 
-test:
--quote impair same type as command line
--quote pair same test
--ces deux test mais avec des non valid quotes different type de command line
--ces 4 tests mais avec des valid quotes en command line qui sont de plusieurs type
-si j'arrive a build ça je m'arrete pour le testing.
 
-OK JUSt POUR GET SIZE
-lol="'a'"
-
-ls '   ''    '   '     ''    '
-ls aaa'    '$lol'    'aaaa
-ls '     '$lol'    '
-ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa			//demain tester tout ceux la avec env var (juste un token split avec plusierus quotes, on verra apres pour plusieurs token plusieurs quotes
-ls '     ''     '$lol'    '
+Il manque encore multiple tok $lol"    "$lol"  "$lol avec lol="''''" auter que 4
 
 
-
-TO TEST
-
-env var avec des quotes dedans, collée à des quotes valables dans un seul token de split lol="'' ls $lol'../ ' normalement ça posera probleme
-env var avec quotes, collé après un split token ls 'lol'$lol avec lol="'pourquoi"
-
-ls 'lol' env_var_with_quotes "double quotes here"    //etc, test other situation like this
 
 
 
@@ -1467,3 +1447,34 @@ Sije passe les reste des tests j'arrête.
 (on va faire un truc, je vais laisser passer le programme dans mes fix seulement lorsqu'il y a des envvar, meme si je pense pas que ç afonctionne très bien sur le type de truc
 qui pete alors qu'il y a pas une variable entre chaque quote mais seullement quelque quote, tester ça et tester d'abord toutes les variables avant de build ce fix, parce que ç asert
 a rien sinon
+
+
+
+
+
+----------
+
+deuxchoses a faire,
+
+essayer de trouver un moyen de garder le fix mais de choperles tokens après, ptet avec pos de la fin (ptet avec le x), pour eviter de changer toutle code
+-si ça fonctionne pas, essayer de réparer le programme pour qu'il prenne pas en compte invalid quote débutet fin 
+
+
+
+
+
+
+
+
+
+-============================
+
+ouaui le test avec lol="" enfait ça m'a fait découvrir un bug dans les env var probablemement, juste checkerça vite fait en continuer avec le testing des quotes, mais je pense que cest joueé, tout fonctionnait jai justepas test 5 mais as de raison que ca fonctionne pas, tout rester aprèd
+
+
+
+
+
+//////////
+
+OUI, probleme avec envar, je retourne faux lorsque une envar existe mais n'a rien dedans, alors que dans bash ça renvoie pas null, c'est que si l'envvar contient 0, ouun tru comme ça ya unesubtilité. Finir le testing des quotes et aprèss'occuper de ça
