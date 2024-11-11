@@ -27,9 +27,9 @@ void before_tok(t_quote *q, size_t *i, size_t *quote_counter, char *s)
 			(*quote_counter)--;
 		}
 		(*i)++;
-		q->type = s[(*i)];
+//		q->type = s[(*i)];
 	}
-	q->type = s[(*i)];
+//	q->type = s[(*i)];
 }
 
 void	skip_non_v_quote(char *s, int *temp_value, size_t *quote_counter, size_t *i)

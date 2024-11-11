@@ -238,7 +238,7 @@ OK:
 'ls''
 'ls '
 ''
-'' ''		// prob dont work but doesnt leak
+'' ''
 ls 'a a a a a a'
 ls ' a a a a a '
 ls 'a a a a a a '
@@ -271,7 +271,7 @@ ls "" ''
 ls 'allo' 'pourquoi'
 'ls' ''
 ls ' put a tab with ctrl=v here '
-ls aaaaa'      'aaaaa					// all those cases are broken
+ls aaaaa'      'aaaaa	
 ls aaa'   'aaaaa
 ls aaa'   'aaaaa
 ls aaaaaaaaa'  'aaa
@@ -279,7 +279,7 @@ ls aa'  'aaaaaaa
 ls  aa'          'aa
 ls aaaaaa'                      'aa
 ls aa'            'aaaaaaaaa
-ls aaaaa'      'aaaaaaaaaaa (plus de a derriere que devant) faire des check avec plus de a devant , invers, et plus de espace interieur et invers
+ls aaaaa'      'aaaaaaaaaaa
 ls "" '  '
 ls '' '   '
 ls aaa'     aaa'aaa''
@@ -290,14 +290,14 @@ lsaaa'    aa'aa''
 ls  aaa''aaaa
 'ls'""''				
 'ls' ""''""'a'
-'ls' ''''''''		// je pense pas que ce genre de cas fonctionne vraiment,si ls ''''''aa a mon avis ça fonctionne pas, oui
-ls ''""					//ça a l'air de passer mais en fait ça prends en compte que un seul token pour linstant, si ls ''"'aa on voit ça bien
-ls ""''						//pareil
+'ls' ''''''''
+ls ''""		
+ls ""''			
 ls ''''aa
 ls ""''aa
 ls ''""aa
 ls aa''''aa
-ls aaa'    'bbbb'   'ccc
+ls aaa'    'bbbb'   'ccc	
 ls aaa'   ''   'ccc
 ls '    ''    '
 ls aaa'   ''   'aaa
@@ -307,12 +307,12 @@ ls "    "'   '
 ls'   ''   '
 ls '     ''     ''      '
 ls '     '"      "'     '"      "
-ls '     'aaa'      'aa'     'aa
-ls '     'aaa"     "aa'    'aa
+ls '     'aaa'      'aa'     'aa	
+ls '     'aaa"     "aa'    'aa	
 ls 'allo''pourquoi''lol'
 l's''lol'
 l's'"    lol"
-l's''    lol'
+l's''    lol'	
 ls '      ''lol'
 ls '../''     '
 ls '      ''..'
@@ -358,7 +358,7 @@ ls aaa'   ''   'aaa
 ls aaa"   "'   'aaa
 ls '   '"   "
 ls "    "'   '
-ls '     ''     '$lol'    '
+ls '     ''     '$lol'    '		
 ls aa'aaa'$lol'aaa'$lol'dddd'$lol 'dddd'$lol'dddd'$lol
 ls'   ''   '
 ls $lol'   'aa			
@@ -383,17 +383,22 @@ ls $lol'pourquoi'$lol'allo'$lol
 ls $lol'       '$lol'       '$lol
 etc.. quote vides etc..
 
-NOT OK:
-lol="''''"
-ls $lol"        "$lol"      "$lol
-tester tous les cas d'esspaces pour env var, quote après token, avant etc.
-
-
-lol="''''"   / "'''" / "''" / "'"  /"'''''"
+lol="''''" 
 ls $lol'     '$lol'    '$lol
 ls $lol"     "$lol"     "$lol
 ls $lol'     '$lol"     "$lol
 ls $lol'    '$pourquoi'      '$lol avec pourquoi ave des diff type quotes
+
+lol="'a'"
+ls $lol'   'aaaa'    'aaaa		
+lol="''''"
+ls $lol"        "$lol"      "$lol
+
+NOT OK:
+
+lol="''''" 
+ls $lol'     '$lol'    '$lol $lol'     '$lol'    '$lol
+
 
 test:
 -quote impair same type as command line
@@ -1453,3 +1458,12 @@ juste tester ce que je faisais mais avec quelque chose dans les quotes.
 
 C'est bon ça passe les tests avec les quotes pleins. 
 Sije passe les reste des tests j'arrête.
+
+
+
+
+
+
+(on va faire un truc, je vais laisser passer le programme dans mes fix seulement lorsqu'il y a des envvar, meme si je pense pas que ç afonctionne très bien sur le type de truc
+qui pete alors qu'il y a pas une variable entre chaque quote mais seullement quelque quote, tester ça et tester d'abord toutes les variables avant de build ce fix, parce que ç asert
+a rien sinon

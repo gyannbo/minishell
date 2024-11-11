@@ -48,8 +48,8 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 			if (*quote_counter)
 			{
 				(*quote_counter)--;
-				if (s[i + 1])
-					*type = s[i + 1];
+//				if (s[i + 1])
+//					*type = s[i + 1];
 			}
 		}
 		i++;
@@ -103,12 +103,14 @@ static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)		//ATTENTION J
 	increment_q_counter_w_tab(&quote_counter, q);
 	x++;
 	res = has_type(v->split_str[x], &q->type, &quote_counter, q);
-	while (!res || quote_counter)  // will have to add tab check for env var (just put the value in quote counter with q->count i guess   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
+	while ((!res || quote_counter) && v->split_str[x])  // will have to add tab check for env var (just put the value in quote counter with q->count i guess   // pas bete, mais je dois verif que le z est toujours au bon endroit après copy
 	{
 		free(v->split_str[x]);
 		x++;
 		res = has_type(v->split_str[x], &q->type, &quote_counter, q);
 	}
+	if (!v->split_str[x] && quote_counter)
+		return (x - 1);
 	free(v->split_str[x]);
 	return (x);
 }
