@@ -371,14 +371,29 @@ ls $lol'   'aaaa'    'aaaa
 
 lol="'aaa '"
 ls '   '$lol'   ' 		
-
-NOT OK:
 lol=' aa"'
 ls $lol'dddddd'dddd'    '$lol'     'dddd$lol
 ls $lol'     'ddd$lol
 
+lol="''''"
+ls $lol'pourquoi'$lol'allo'
+ls $lol"pourquoi"$lol"allo"
+ls $lol'pourquoi'$lol"allo"
+ls $lol'pourquoi'$lol'allo'$lol
+ls $lol'       '$lol'       '$lol
+etc.. quote vides etc..
+
+NOT OK:
+lol="''''"
+ls $lol"        "$lol"      "$lol
 tester tous les cas d'esspaces pour env var, quote après token, avant etc.
 
+
+lol="''''"   / "'''" / "''" / "'"  /"'''''"
+ls $lol'     '$lol'    '$lol
+ls $lol"     "$lol"     "$lol
+ls $lol'     '$lol"     "$lol
+ls $lol'    '$pourquoi'      '$lol avec pourquoi ave des diff type quotes
 
 test:
 -quote impair same type as command line
@@ -1388,3 +1403,53 @@ Ouai on va temp. ça me parait beaucoup plus simple.
 Juste içi au passage, après un call a manage quote en fait je manipule la data du tableau, jsute pour que if pass ai les bonne values, je pense que c'est pas grave de changer
 le tableau comme ça, parce que j'ai vraiment plus besoin de cette data après, et si j'ai besoin du tableau après dans le reste du parsing je peux toujours faciement le duppliquer
 lorsque je calcule le tableau.
+
+
+Ouai, je vais pas m'enmerder a interpoler les test entre espaces, différents types dans non valid, différent type dans valid. je vais juste noter les tests que je viens de faire et qui fonctionnait pas et puis voila.
+
+
+
+
+
+// je comprends pas encore pourquoi ls $lol"      "$lol"    "$lol fonctionne pas, quand je regarde mon code tout est bizarre, on est pas dans les bons token, mais le nombre de count quote est comme si on etait dans le bon
+etc..  mais le state du program la est celui qui passe le plus de test
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+
+mettre ()&& v->split_str[x] dans la boucle while de free_uselees_tok ça repare un peu mais ya toujours une erreur valgrind, c'est juste un pansement ce moyen la, je dois regarder pourquoi le programme incrémente trop
+
+
+
+
+
+
+---------------------------
+
+
+Ok, le programme a l'air de fonctionner très bien lorsque toutes les quotes sont du meme types, c'est juste que le type est changé dans le cas avec plusieurs types et donc ça merde après. Peut etre je peux faire
+quelque chose a la place comme le resultat du modulo est une variable que je set selon le nombre d'env var quote ?
+
+
+
+
+
+-------
+
+ok ça `a l'air de focntionner, j'ai essayer avec des quotes de 1 a 5, avec les inverses, avec 2 variables avec les quotes differnetes dedans, avec des quotes valides differentes, etc.. 
+Si je passe tous les autres test je m'arrete la.
+
+juste tester ce que je faisais mais avec quelque chose dans les quotes.
+
+C'est bon ça passe les tests avec les quotes pleins. 
+Sije passe les reste des tests j'arrête.

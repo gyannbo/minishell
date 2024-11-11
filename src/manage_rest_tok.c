@@ -35,7 +35,7 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 			if (s[i] == '\'' || s[i] == '\"')
 				*type = s[i];
 		}	
-		if (s[i] == *type)      // c'est prob ici que jedois sauter middle envvar
+		if (s[i] == *type)   // apparemment ici c'est quand on est sur la deuxieme quote directement que je dois passer la, jsp pk je suis pas dessus avec les espaces
 		{
 			if (temp_c_n_quote && *quote_counter % 2 != 0)
 			{
@@ -46,7 +46,11 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 			}
 			flag = true;
 			if (*quote_counter)
+			{
 				(*quote_counter)--;
+				if (s[i + 1])
+					*type = s[i + 1];
+			}
 		}
 		i++;
 	}
