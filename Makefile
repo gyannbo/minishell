@@ -131,7 +131,7 @@ fclean:		clean
 	@$(RM) $(NAME)
 	@$(MAKE) fclean -C $(LIBPATH)
 
-re:			fclean all
+re:			all fclean 
 
 valgrind:
 	valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all --log-file=log ./minishell

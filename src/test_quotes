@@ -350,8 +350,7 @@ ls '    ''    '
 ls '   ''    '   '     ''    '
 
 
-lol="'a'
-"
+lol="'a'"
 ls aaa'    '$lol'    'aaaa     // lol = 'a'
 ls '     '$lol'    '
 ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa
@@ -404,13 +403,13 @@ ls $lol"sssss"$lol"    "$lol
 lol="'aa"
 ls $lol'   'sss'   'ss
 
+lol="''''"
+ls $lol"sssss"$lol"    "$lol  $lol"sssss"$lol"    "$lol
 
 NOT OK:
 
 //////ATTENTION J'AI UN GROS BLINDSPOT SUR MES TESTS, J'AI QUASIEMENT AUCUNE VARIATION SUR LE PREMIER TOKEN (COMMANDE) /////
 
-lol="''''"
-ls $lol"sssss"$lol"    "$lol  $lol"sssss"$lol"    "$lol
 
 
 
@@ -1477,3 +1476,16 @@ essayer de trouver un moyen de garder le fix mais de choperles tokens après, pt
 -============================
 
 ouaui le test avec lol="" enfait ça m'a fait découvrir un bug dans les env var probablemement, juste checkerça vite fait en continuer avec le testing des quotes, mais je pense que cest joueé, tout fonctionnait jai justepas test 5 mais as de raison que ca fonctionne pas, tout rester aprèd
+
+
+
+
+
+
+minishell$ ls"    "'   '
+
+
+
+
+
+
