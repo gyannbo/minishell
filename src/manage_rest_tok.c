@@ -30,7 +30,7 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 	before_tok(q, &i, quote_counter, s);
 	if (*type != s[i])
 	{
-		if (q->q_before_tok % 2 == 0 && q->has_b_tok)
+		if ((q->q_before_tok % 2 == 0 && q->has_b_tok) && (s[i] == '\'' || s[i] == '\"'))
 			*type = s[i];
 	}
 	while (s[i])
