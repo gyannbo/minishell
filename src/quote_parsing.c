@@ -48,6 +48,7 @@ static void	init_quote(t_quote *q, int *tab)
 	q->count_next_quote = 0;
 	q->count['\''] = 0;
 	q->count['\"'] = 0;
+	q->temp_c_n_quote = 0;
 }
 
 bool	quote_parsing(t_values *v, int	*tab)

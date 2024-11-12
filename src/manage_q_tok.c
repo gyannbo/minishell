@@ -181,5 +181,6 @@ bool	manage_q_tok(t_values *v, t_quote *q)
 	q->first_type = 0;
 	q->count_next_quote = 0;
 	q->has_b_tok = 0;
+	q->temp_c_n_quote = -1;
 	return (true);
 }

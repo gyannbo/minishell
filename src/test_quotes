@@ -350,7 +350,8 @@ ls '    ''    '
 ls '   ''    '   '     ''    '
 
 
-lol="'a'"
+lol="'a'
+"
 ls aaa'    '$lol'    'aaaa     // lol = 'a'
 ls '     '$lol'    '
 ls aaaa'    $lol'   'aaa'     '$lol'    'aaaa
@@ -400,12 +401,13 @@ ls $lol'     '$lol'    '$lol $lol'     '$lol'    '$lol
 lol="''''"
 ls $lol"sssss"$lol"    "$lol
 
+lol="'aa"
+ls $lol'   'sss'   'ss
 
 
 NOT OK:
 
-lol="'aa"
-ls $lol'   'sss'   'ss
+//////ATTENTION J'AI UN GROS BLINDSPOT SUR MES TESTS, J'AI QUASIEMENT AUCUNE VARIATION SUR LE PREMIER TOKEN (COMMANDE) /////
 
 lol="''''"
 ls $lol"sssss"$lol"    "$lol  $lol"sssss"$lol"    "$lol
@@ -1417,7 +1419,7 @@ etc..  mais le state du program la est celui qui passe le plus de test
 
 -------------------------------
 
-mettre ()&& v->split_str[x] dans la boucle while de free_uselees_tok ça repare un peu mais ya toujours une erreur valgrind, c'est juste un pansement ce moyen la, je dois regarder pourquoi le programme incrémente trop
+mettre ()&& v->split_str[x] dans la boucle while de  ça repare un peu mais ya toujours une erreur valgrind, c'est juste un pansement ce moyen la, je dois regarder pourquoi le programme incrémente trop
 
 
 

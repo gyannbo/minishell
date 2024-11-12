@@ -12,18 +12,18 @@
 
 #include "minishell.h"
 
-static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
+static int	has_type(char *s, char *type, int *quote_counter, t_quote *q)
 {
 	size_t	i;
 	bool	flag;
 	int temp_z;
 	int temp_value;
-	size_t temp_c_n_quote;
 
 	flag = false;
 	temp_z = q->z;
 	temp_value = q->tab[temp_z];
-	temp_c_n_quote = q->count_next_quote;
+	if (q->temp_c_n_quote == -1)						// temp dans q car plus facile pour set a 0 la var entre les calls
+		q->temp_c_n_quote = q->count_next_quote;
 	i = 0;
 	if (!s)				// for NULL term
 		return (-1);
@@ -42,12 +42,12 @@ static int	has_type(char *s, char *type, size_t *quote_counter, t_quote *q)
 		}	
 		if (s[i] == *type)   // apparemment ici c'est quand on est sur la deuxieme quote directement que je dois passer la, jsp pk je suis pas dessus avec les espaces
 		{
-			if (temp_c_n_quote && *quote_counter % 2 != 0)
+			if (q->temp_c_n_quote && *quote_counter % 2 != 0)
 			{
 				skip_non_v_quote(s, &temp_value, quote_counter, &i);
 				temp_z++;
 				temp_value = q->tab[temp_z];		//normalement pour ça j'ai pas besoin de faire de if ou quoi que ce soit, car le seul moment ou jai besoin de switcher le z c'est quand on a completement passé les quotes de l'env var, car si c'est pas le cas normalement la fonction sarrete. et comme les variables que jutilise son auto pas besoin de gerer une sortie que peux juste les incr comme ça
-				temp_c_n_quote--;
+				q->temp_c_n_quote--;
 			}
 			flag = true;
 			if (*quote_counter)
@@ -101,7 +101,7 @@ static int	has_two_types(char *s, char type, t_quote *q)
 static size_t	free_useless_tok(t_values *v, size_t x, t_quote *q)
 {
 	int	res;
-	size_t quote_counter;
+	int	quote_counter;
 
 	quote_counter = 0;
 	if (q->count_next_quote)

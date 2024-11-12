@@ -19,9 +19,9 @@ void	manage_tab(t_quote *q)
 	q->decr_tab = 0;
 }
 
-void	increment_q_counter_w_tab(size_t *counter, t_quote *q)
+void	increment_q_counter_w_tab(int *counter, t_quote *q)
 {
-	size_t temp_next_quote;
+	int	temp_next_quote;
 	int	z;
 
 	z = q->z;
