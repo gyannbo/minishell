@@ -36,7 +36,7 @@ char	*get_abs_path(t_values *values)
 	char	*dir;
 
 	paths = split_env_path();					// no protection here, because still need to go to search dir func, protection is there	// keep this right until eval, i will forget why i did this otherwise
-	dir = search_for_dir(values, paths, *values->split_str);
+	dir = search_for_dir(values, paths, *values->split_s);
 	if (!dir)
 	{
 		ft_free_2d((void ***)&paths, ft_2d_size((const void **)paths));

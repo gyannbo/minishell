@@ -32,7 +32,7 @@ bool	if_pass_check(char c, int *tab, t_quote *q)
 	return (true);
 }
 
-static void	init_quote(t_quote *q, int *tab)
+static void	init_quote(t_quote *q, int *tab, int *tmp_val)
 {
 	q->x = 0;
 	q->y = 0;
@@ -49,33 +49,36 @@ static void	init_quote(t_quote *q, int *tab)
 	q->count['\''] = 0;
 	q->count['\"'] = 0;
 	q->temp_c_n_quote = 0;
+	tmp_val[0] = q->tab[0];
+	tmp_val[1] = q->z;
+}
+
+void	set_tmp_tab_val(int *tmp_val, t_quote *q)
+{
+	tmp_val[0] = q->tab[q->z];
+	tmp_val[1] = q->z;
 }
 
 bool	quote_parsing(t_values *v, int	*tab)
 {
-	t_quote q;
-	int temp_val[2];
+	t_quote	q;
+	int		tmp_val[2];
 
-	init_quote(&q, tab);
-	temp_val[0] = q.tab[0];
-	temp_val[1] = q.z;
-	while (v->split_str[q.x])
+	init_quote(&q, tab, tmp_val);
+	while (v->split_s[q.x])
 	{
 		q.y = 0;
-		while (v->split_str[q.x][q.y])
+		while (v->split_s[q.x][q.y])
 		{
-			if (temp_val[1] != q.z)
-			{
-				temp_val[0] = q.tab[q.z];
-				temp_val[1] = q.z;
-			}
-			if (if_pass_check(v->split_str[q.x][q.y], &temp_val[0], &q) == false)
+			if (tmp_val[1] != q.z)
+				set_tmp_tab_val(tmp_val, &q);
+			if (if_pass_check(v->split_s[q.x][q.y], &tmp_val[0], &q) == false)
 			{
 				if (manage_q_tok(v, &q) == false)
 					return (false);
 				break ;
 			}
-			if (v->split_str[q.x][q.y] == '\'' || v->split_str[q.x][q.y] == '\"')
+			if (v->split_s[q.x][q.y] == '\'' || v->split_s[q.x][q.y] == '\"')
 				q.q_before_tok++;
 			q.y++;
 		}
@@ -84,6 +87,3 @@ bool	quote_parsing(t_values *v, int	*tab)
 	}
 	return (true);
 }
-
-
-// peut etre que pour temp le tableau je peux juste checker si le z a changé et à ce moment là je change la value temp avec le nouveau z

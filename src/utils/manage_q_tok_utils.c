@@ -12,46 +12,32 @@
 
 #include "minishell.h"
 
-static size_t	get_next_i(t_values *v, size_t count_next_quote, size_t *calc_right_size, t_quote *q)
+size_t	get_next_i(t_values *v, size_t c_nxt_q, size_t *cal_r_s, t_quote *q)
 {
-	size_t	i;
-	size_t	size;
-	char	type;
-	size_t	temp;
-	
-	i = get_right_pos(v, q->count, q->first_type);
-	size = 0;	
-	type = 0;
-	while (v->cmd_str_b[i])
+	t_next_i	data;
+
+	init_struct_next_i(v, &data, q);
+	while (v->cmd_str_b[data.i])
 	{
-		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
+		if (v->cmd_str_b[data.i] == '\'' || v->cmd_str_b[data.i] == '\"')
 		{
-			if (type && type == v->cmd_str_b[i])
-			{
-				if (!count_next_quote)
-				{
-					temp = size;
-					size -= *calc_right_size;
-					*calc_right_size = temp;
-					return (size);
-				}
-				count_next_quote--;
-				type = 0;
-				i++;
+			data.ret = if_type_is_i(v, &data, &c_nxt_q, cal_r_s);
+			if (data.ret > 0)
+				return (data.ret);
+			if (data.ret < 0)
 				continue ;
-			}
-			if (!type)
+			if (!data.type)
 			{
-				type = v->cmd_str_b[i];
-				i++;
+				data.type = v->cmd_str_b[data.i];
+				data.i++;
 				continue ;
 			}
 		}
-		if (type)
-			size++;
-		i++;
+		if (data.type)
+			data.size++;
+		data.i++;
 	}
-	return (size + 1);
+	return (data.size + 1);
 }
 
 static void	skip_char(char *new_tok, size_t *i)
@@ -61,68 +47,31 @@ static void	skip_char(char *new_tok, size_t *i)
 	return ;
 }
 
-static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)		// copy_outside
+static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)
 {
-	size_t	i;
-	int		y;
-	bool	betw_q;
-	bool	end;
-	bool	sec_valid_q;
-	int		temp;
-	char	temp_type;
-	int	temp_z;
-	static size_t	calc_right_size; 	//size wrong on sec pass otherwise	(static)
+	static size_t	calc_right_size;
+	t_copy_outside	data;
 
-	temp = q->pos;
-	temp_z = q->z;
-	temp_type = q->type;
-	end = false;
-	betw_q = false;
-	sec_valid_q = false;
-	i = 0;
-	while (v->split_str[x])
+	init_struct(&data, q, new_tok, x);
+	while (v->split_s[x])
 	{
-		y = 0;
-		while (v->split_str[x][y])
+		data.y = 0;
+		while (v->split_s[x][data.y])
 		{
-			if (y == q->pos)
+			if (if_pos(q, &data))
+				continue ;
+			if (v->split_s[x][data.y] == q->type && data.sec_valid_q == true)
 			{
-				sec_valid_q = true;
-				q->pos = -1;
-				if (betw_q == false)
-				{
-					betw_q = true;
-					y++;
-					continue ;
-				}
-			}
-			if (v->split_str[x][y] == q->type && sec_valid_q == true)
-			{
-				sec_valid_q = false;
-				i += get_next_i(v, q->count_next_quote, &calc_right_size, q);
-				betw_q = false;
-				if (next_pos(v, q, x, y) == -1)
-					end = true;
-				y++;
+				if_type_sec_valid(v, q, &data, &calc_right_size);
 				continue ;
 			}
-			if (betw_q == false)
-			{
-				if (end && (v->split_str[x][y] == '\'' || v->split_str[x][y] == '\"'))
-					q->decr_tab++;
-				new_tok[i] = v->split_str[x][y];
-				i++;
-			}
-			y++;
+			if_betw_q_false(v, q, &data);
 		}
-		if (end)
+		if (data.end)
 			break ;
 		x++;
 	}
-	q->pos = temp;
-	q->z = temp_z;
-	q->type = temp_type;
-	calc_right_size = 0;
+	untemp_at_exit(q, &data, &calc_right_size);
 	return ;
 }
 
@@ -143,12 +92,7 @@ static void	copy_inside(t_values *v, int *count, t_quote *q, char *new_tok)
 	{
 		if (v->cmd_str_b[i] == type && q->count_next_quote)
 		{
-			i++;
-			while (v->cmd_str_b[i] != '\'' && v->cmd_str_b[i] != '\"')
-				i++;
-			type = v->cmd_str_b[i];
-			i++;
-			q->count_next_quote--;
+			eq_type_n_next_q(v, q, &type, &i);
 			skip_char(new_tok, &y);
 			continue ;
 		}
@@ -156,7 +100,7 @@ static void	copy_inside(t_values *v, int *count, t_quote *q, char *new_tok)
 		y++;
 		i++;
 	}
-	q->count_next_quote = tmp;		//dont know if it is a good idea, but the tmp here is to use in exit manage tok (free and increment), could set it up in a struct
+	q->count_next_quote = tmp;
 	return ;
 }
 

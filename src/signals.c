@@ -33,35 +33,35 @@ char	*new_str(char *s)
 
 void	sig_int(int x)
 {
-	extern int	sig;
+	extern int	g_sig;
 
 	(void)x;
-	if (sig == -2)		//minishell in minishell signals
+	if (g_sig == -2)		//minishell in minishell signals
 		return ;
-	if (sig == -1)		// everything sig == -1 is to handle signal while a bin is running in a child process, sig -1 is set in execute()
+	if (g_sig == -1)		// everything sig == -1 is to handle signal while a bin is running in a child process, sig -1 is set in execute()
 	{
 		rl_replace_line("\n", 1);
 		rl_on_new_line();
 		rl_redisplay();
 		rl_erase_empty_line = 0;
-		sig = 1;
+		g_sig = 1;
 		return ;
 	}
 	rl_done = 1;		// do nothing except returning readline (and print ^C in previous line, as in bash)
-	sig = 1;
+	g_sig = 1;
 }
 
 void	sig_quit(int x)
 {
-	extern int	sig;
+	extern int	g_sig;
 	char		*temp;
 	char		*new;
 
 	(void)x;
-	if (sig == -2)				//minishell in minishell signals
+	if (g_sig == -2)				//minishell in minishell signals
 		return ;
 	rl_erase_empty_line = 1;
-	if (sig == -1)
+	if (g_sig == -1)
 	{
 		rl_replace_line("\n", 1);
 		new = NULL;
@@ -76,10 +76,10 @@ void	sig_quit(int x)
 	rl_on_new_line();
 	rl_redisplay();
 	rl_erase_empty_line = 0;
-	if (sig != -1)
+	if (g_sig != -1)
 		rl_line_buffer[ft_strlen(temp) - 2] = 0;	// hack to have a clean buffer in the history
 	rl_end -= 2;				// without this, buffer contains "  "
-	sig = 2;
+	g_sig = 2;
 }
 
 int	set_sig_handler(void)

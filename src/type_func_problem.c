@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void before_tok(t_quote *q, size_t *i, int *quote_counter, char *s)
+void	before_tok(t_quote *q, size_t *i, int *quote_counter, char *s)
 {
 	if (!q->count_next_quote)
 	{
@@ -30,15 +30,15 @@ void before_tok(t_quote *q, size_t *i, int *quote_counter, char *s)
 	}
 }
 
-void	skip_non_v_quote(char *s, int *temp_value, int *quote_counter, size_t *i)
+void	skip_non_v_quote(char *s, int *temp_value, int *q_counter, size_t *i)
 {
 	(*i)++;
-	while(s[(*i)] && *temp_value)
+	while (s[(*i)] && *temp_value)
 	{
 		if (s[(*i)] == '\'' || s[(*i)] == '\"')
 		{
 			(*temp_value)--;
-			(*quote_counter)--;
+			(*q_counter)--;
 		}
 		(*i)++;
 	}

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int sig;		// use of a global only to manage one edge case: write viable command and then ^C, bash will not execute.
+int g_sig;		// use of a global only to manage one edge case: write viable command and then ^C, bash will not execute.
 
 static bool	copy_cmd_str(t_values *values)
 {

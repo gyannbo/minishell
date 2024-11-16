@@ -34,6 +34,14 @@
 # include <sys/stat.h>
 # include <sysexits.h>
 
+typedef struct s_other
+{
+	size_t	i;
+	bool	end;
+	bool	betw_q;
+	int		y;
+}t_other;
+
 typedef struct s_quote
 {
 	int		x;
@@ -47,7 +55,7 @@ typedef struct s_quote
 	int		q_before_tok;
 	int		has_b_tok;
 	int		decr_tab;
-	int	pos;
+	int		pos;
 	size_t	new_tok_size;
 	int		count_next_quote;	// number of multiple quotes in token not counting first ones
 	int		temp_c_n_quote;
@@ -60,11 +68,52 @@ typedef struct s_values
 	char	*cmd_str;
 	char	*cmd_str_b;
 	char	*abs_path_bin;
-	char	**split_str;
+	char	**split_s;
 	char	**tokenized_str;
 	int		prev_ret_val;
 	int		redpip_counter;
 }t_values;
+
+typedef struct s_var
+{
+	bool		sec_valid_q;
+	int			temp;
+	char		temp_type;
+	int			temp_z;
+	t_values	*v;
+}t_var;
+
+typedef struct s_has_type
+{
+	size_t	i;
+	bool	flag;
+	int		temp_z;
+	int		temp_value;
+	int		*q_cnter;	
+}t_has_type;
+
+typedef struct s_copy_outside
+{
+	size_t	i;
+	int		y;
+	bool	betw_q;
+	bool	end;
+	bool	sec_valid_q;
+	int		temp;
+	char	temp_type;
+	int		temp_z;
+	int		x;
+	char	*new_tok;
+}t_copy_outside;
+
+typedef struct s_next_i
+{
+	size_t	i;
+	size_t	size;
+	char	type;
+	size_t	temp;
+	int		ret;
+}t_next_i;
 
 // parsing //
 bool	handle_cmd_str(t_values *values);
@@ -95,11 +144,12 @@ bool	check_quote(t_values *v, char *s);
 bool	if_pass_check(char c, int *tab, t_quote *q);
 int		next_pos(t_values *v, t_quote *q, int x, int y);
 size_t	get_right_pos(t_values *v, int *count, char type);
+size_t	get_next_i(t_values *v, size_t c_nxt_q, size_t *cal_r_s, t_quote *q);
 void	manage_count(t_values *v, t_quote *q);
 void	increment_q_counter_w_tab(int *counter, t_quote *q);
 void	manage_tab(t_quote *q);
 void	before_tok(t_quote *q, size_t *i, int *quote_counter, char *s);
-void	skip_non_v_quote(char *s, int *temp_value, int *quote_counter, size_t *i);
+void	skip_non_v_quote(char *s, int *tmp_value, int *q_counter, size_t *i);
 
 // quote resolving //
 bool	do_quotes(t_values *values);
@@ -138,5 +188,28 @@ int		pwd(void);
 
 // error_msg //
 void	error(const char *err_src, const char *msg);
+
+// norm //
+int		next_q_exist(t_quote *q);
+int		y_eq_pos(t_quote *q, t_var *var, t_other *other);
+int		next_pos(t_values *v, t_quote *q, int x, int y);
+int		at_begin(t_quote *q, char *s);
+int		if_pos(t_quote *q, t_copy_outside *data);
+int		if_type_is_i(t_values *v, t_next_i *data, size_t *c_nxt_q, size_t *cal_r_s);
+void	set_variables(t_values *v, t_quote *q, t_var *var, t_other *other);
+void	when_eq_type(char type, size_t *sec_q, int *count);
+void	temp_at_return(t_quote *q, t_var *var);
+void	type_n_sec_valid_true(t_quote *q, t_var *var, t_other *other, int x);
+void	do_loop(t_quote *q, t_var *var, t_other *other, int x);
+void	at_exit_free_useless(t_values *v, t_quote *q, int last_viable_tok, char *new_tok);
+void	set_struct(t_has_type *data, t_quote *q, int *q_cnter);
+void	if_type(t_quote *q, char *s, size_t i, char *type);
+void	do_loop_has_type(t_quote *q, t_has_type *data, char *s, char *type);
+void	eq_type_n_next_q(t_values *v, t_quote *q, char *type, size_t *i);
+void	init_struct(t_copy_outside *data, t_quote *q, char *new_tok, int x);
+void	untemp_at_exit(t_quote *q, t_copy_outside *data, size_t *calc_right_size);
+void	if_betw_q_false(t_values *v, t_quote *q, t_copy_outside *data);
+void	if_type_sec_valid(t_values *v, t_quote *q, t_copy_outside *data, size_t *calc_right_size);
+void	init_struct_next_i(t_values *v, t_next_i *data, t_quote *q);
 
 #endif

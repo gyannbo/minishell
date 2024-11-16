@@ -57,6 +57,4 @@ char	*is_dir(t_values *values, char *path)
 	values->prev_ret_val = 127;
 	return (NULL);
 }
-
 // should just check if return 126 on /./././././ and 127 on no existing file
-

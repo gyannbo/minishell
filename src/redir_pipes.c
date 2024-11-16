@@ -68,7 +68,7 @@ bool	is_redir(t_values *v, char *s, size_t *step)
 				return (false);
 			return (true);
 		}
-		if (s[0] == '>' && s[1]== '|')
+		if (s[0] == '>' && s[1] == '|')
 		{
 			if (redir_case_r_n_s(v, s, step) == false)
 				return (false);

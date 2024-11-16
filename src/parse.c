@@ -16,7 +16,7 @@ static bool	other_quote(t_values *v, char *s, char type)
 {
 	size_t	i;
 
-	i = 1;				// one here because otherwise it is on the quote if it found it
+	i = 1;
 	while (s[i])
 	{
 		if (s[i] == type)
@@ -44,7 +44,7 @@ bool	check_quote(t_values *v, char *s)
 		{
 			if (other_quote(v, &s[i], s[i]) == true)
 				return (true);
-			return (false);			// careful this false return is only for testing  // IMPORTANT: if I kept comments like this it is because I didnt check thoroughly enough and planned to do it later
+			return (false);
 		}
 		i++;
 	}
@@ -53,24 +53,24 @@ bool	check_quote(t_values *v, char *s)
 
 bool	parse(t_values *values)
 {
-	char	**split_str;
+	char	**split_s;
 
 	values->isquote = 0;
-	if (check_quote(values, values->cmd_str) == false)	// this function check if quotes are valid or not in the whole cmd_str
+	if (check_quote(values, values->cmd_str) == false)
 		return (false);
 	if (redpip_token_counter(values) == false)
 		return (false);
 	if (expand(values) == false)
 		return (false);
-	split_str = ft_split_whitespace(values->cmd_str);
-	if (!split_str || !split_str[0])		// !split[0] otherwise segfault if cmd_str is only spaces
+	split_s = ft_split_whitespace(values->cmd_str);
+	if (!split_s || !split_s[0])		// !split[0] otherwise segfault if cmd_str is only spaces
 	{
 		free(values->cmd_str);
-		if (split_str)
-			free(split_str);
+		if (split_s)
+			free(split_s);
 		return (false);
 	}
-	values->split_str = split_str;
+	values->split_s = split_s;
 	if (do_quotes(values) == false)
 		return (false);
 //	if (tokenise_redpip(values) == false)

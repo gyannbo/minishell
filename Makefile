@@ -84,6 +84,12 @@ SRC_NAME =	main.c \
 			builtin/env.c \
 			builtin/pwd.c \
 			utils/error.c \
+			norm_get_right_pos.c\
+			norm_get_right_pos_second.c\
+			norm_manage_rest_tok.c\
+			norm_has_type.c\
+			norm_manage_q_tok_utils.c\
+			norm_manage_q_tok_utils_second.c\
 			
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))

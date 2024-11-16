@@ -118,4 +118,3 @@ bool	do_quotes(t_values *values)
 	values->isquote = 0;
 	return (true);
 }
-
