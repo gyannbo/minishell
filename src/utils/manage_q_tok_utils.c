@@ -26,6 +26,20 @@ size_t	get_next_i(t_values *v, size_t c_nxt_q, size_t *cal_r_s, t_quote *q)
 				return (data.ret);
 			if (data.ret < 0)
 				continue ;
+//			if (data.type && data.type == v->cmd_str_b[data.i])
+//			{
+//				if (!c_nxt_q)
+//				{
+//					data.temp = data.size;
+//					data.size -= *cal_r_s;
+//					*cal_r_s = data.temp;
+//					return (data.size);
+//				}
+//				c_nxt_q--;
+//				data.type = 0;
+//				data.i++;
+//				continue ;
+//			}
 			if (!data.type)
 			{
 				data.type = v->cmd_str_b[data.i];
