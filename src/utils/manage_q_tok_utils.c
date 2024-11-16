@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 15:31:31 by gbonis            #+#    #+#             */
-/*   Updated: 2024/11/05 17:32:14 by msloot           ###   ########.fr       */
+/*   Updated: 2024/11/16 23:25:19 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ size_t	get_next_i(t_values *v, size_t c_nxt_q, size_t *cal_r_s, t_quote *q)
 		{
 			data.ret = if_type_is_i(v, &data, &c_nxt_q, cal_r_s);
 			if (data.ret > 0)
-				return (data.ret);
+				return (data.size);
 			if (data.ret < 0)
 				continue ;
 			if (!data.type)

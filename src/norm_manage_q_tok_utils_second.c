@@ -45,7 +45,7 @@ int	if_type_is_i(t_values *v, t_next_i *data, size_t *c_nxt_q, size_t *cal_r_s)
 			data->temp = data->size;
 			data->size -= *cal_r_s;
 			*cal_r_s = data->temp;
-			return (data->size);
+			return (1);
 		}
 		(*c_nxt_q)--;
 		data->type = 0;
