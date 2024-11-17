@@ -48,7 +48,7 @@ bool	separate(char ***result, char *executable, int temp)
 	if (!(*result)[0])
 		return (false);
 	(*result)[0][temp + 1] = 0;
-	(*result)[1] = ft_strdup(executable + (temp + 1));		// do not change this, this is pointer arithm
+	(*result)[1] = ft_strdup(executable + (temp + 1));
 	if (!result[1])
 	{
 		free((*result)[0]);

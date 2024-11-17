@@ -44,7 +44,7 @@ char	*is_dir(t_values *values, char *path)
 		values->prev_ret_val = 127;
 		return (NULL);
 	}
-	if (S_ISREG(s_stat.st_mode))				// need to have this when ./a.out ad no perm to have right $?
+	if (S_ISREG(s_stat.st_mode))
 	{
 		values->prev_ret_val = 126;
 		return (NULL);
@@ -57,4 +57,3 @@ char	*is_dir(t_values *values, char *path)
 	values->prev_ret_val = 127;
 	return (NULL);
 }
-// should just check if return 126 on /./././././ and 127 on no existing file

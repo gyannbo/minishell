@@ -35,12 +35,12 @@ void	init_struct(t_copy_outside *data, t_quote *q, char *new_tok, int x)
 	data->x = x;
 }
 
-void untemp_at_exit(t_quote *q, t_copy_outside *data, size_t *calc_right_size)
+void	untemp_at_exit(t_quote *q, t_copy_outside *data, size_t *c_right_size)
 {
 	q->pos = data->temp;
 	q->z = data->temp_z;
 	q->type = data->temp_type;
-	*calc_right_size = 0;
+	*c_right_size = 0;
 }
 
 void	if_betw_q_false(t_values *v, t_quote *q, t_copy_outside *data)
@@ -56,12 +56,14 @@ void	if_betw_q_false(t_values *v, t_quote *q, t_copy_outside *data)
 	data->y++;
 }
 
-void	if_type_sec_valid(t_values *v, t_quote *q, t_copy_outside *data, size_t *calc_right_size)
+void	if_t_sec_valid(t_values *v, t_quote *q, t_copy_outside *d, size_t *c)
 {
-	data->sec_valid_q = false;
-	data->i += get_next_i(v, q->count_next_quote, calc_right_size, q);
-	data->betw_q = false;
-	if (next_pos(v, q, data->x, data->y) == -1)
-		data->end = true;
-	data->y++;
+	d->sec_valid_q = false;
+	d->i += get_next_i(v, q->count_next_quote, c, q);
+	d->betw_q = false;
+	if (next_pos(v, q, d->x, d->y) == -1)
+		d->end = true;
+	d->y++;
 }
+
+/// for type sec valid le dernier arg c'est calc right size

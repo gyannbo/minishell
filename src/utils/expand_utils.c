@@ -53,7 +53,7 @@ static void	copy_end(char *dest, char *from)
 	{
 		dest[i] = from[i];
 		i++;
-	}	// put \0 here is better
+	}
 }
 
 static void	copy_until(char *dest, char *from, size_t pos)

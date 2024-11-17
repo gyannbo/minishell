@@ -12,12 +12,12 @@
 
 #include "minishell.h"
 
-void	at_exit_free_useless(t_values *v, t_quote *q, int last_viable_tok, char *new_tok)
+void	at_exit_free_useless(t_values *v, t_quote *q, int l_v_t, char *new_tok)
 {
-	while (v->split_s[last_viable_tok])
+	while (v->split_s[l_v_t])
 	{
-		free(v->split_s[last_viable_tok]);
-		last_viable_tok++;
+		free(v->split_s[l_v_t]);
+		l_v_t++;
 	}
 	v->split_s[q->x] = new_tok;
 	q->two_type = false;
@@ -33,3 +33,4 @@ int	next_q_exist(t_quote *q)
 	}
 	return (0);
 }
+// at exit free l v t c'est last viable tok

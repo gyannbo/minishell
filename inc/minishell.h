@@ -48,7 +48,7 @@ typedef struct s_quote
 	int		y;
 	int		z;
 	bool	two_type;
-	int		count[50];		// at wich quote to start in cmd_str_b	(or how many to skip)
+	int		count[50];
 	char	type;
 	char	first_type;
 	int		*tab;
@@ -57,7 +57,7 @@ typedef struct s_quote
 	int		decr_tab;
 	int		pos;
 	size_t	new_tok_size;
-	int		count_next_quote;	// number of multiple quotes in token not counting first ones
+	int		count_next_quote;
 	int		temp_c_n_quote;
 }t_quote;
 
@@ -195,21 +195,21 @@ int		y_eq_pos(t_quote *q, t_var *var, t_other *other);
 int		next_pos(t_values *v, t_quote *q, int x, int y);
 int		at_begin(t_quote *q, char *s);
 int		if_pos(t_quote *q, t_copy_outside *data);
-int		if_type_is_i(t_values *v, t_next_i *data, size_t *c_nxt_q, size_t *cal_r_s);
+int		if_type_is_i(t_values *v, t_next_i *d, size_t *c_n_q, size_t *c_r_s);
 void	set_variables(t_values *v, t_quote *q, t_var *var, t_other *other);
 void	when_eq_type(char type, size_t *sec_q, int *count);
 void	temp_at_return(t_quote *q, t_var *var);
 void	type_n_sec_valid_true(t_quote *q, t_var *var, t_other *other, int x);
 void	do_loop(t_quote *q, t_var *var, t_other *other, int x);
-void	at_exit_free_useless(t_values *v, t_quote *q, int last_viable_tok, char *new_tok);
+void	at_exit_free_useless(t_values *v, t_quote *q, int l_v_t, char *n_tok);
 void	set_struct(t_has_type *data, t_quote *q, int *q_cnter);
 void	if_type(t_quote *q, char *s, size_t i, char *type);
 void	do_loop_has_type(t_quote *q, t_has_type *data, char *s, char *type);
 void	eq_type_n_next_q(t_values *v, t_quote *q, char *type, size_t *i);
 void	init_struct(t_copy_outside *data, t_quote *q, char *new_tok, int x);
-void	untemp_at_exit(t_quote *q, t_copy_outside *data, size_t *calc_right_size);
+void	untemp_at_exit(t_quote *q, t_copy_outside *d, size_t *c_right_size);
 void	if_betw_q_false(t_values *v, t_quote *q, t_copy_outside *data);
-void	if_type_sec_valid(t_values *v, t_quote *q, t_copy_outside *data, size_t *calc_right_size);
+void	if_t_sec_valid(t_values *v, t_quote *q, t_copy_outside *d, size_t *c);
 void	init_struct_next_i(t_values *v, t_next_i *data, t_quote *q);
 
 #endif

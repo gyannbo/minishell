@@ -21,7 +21,7 @@ static char	*append_exec_to_path(char *exec_dir, char *executable)
 	size_t	size_dir;
 	size_t	size_exec;
 
-	if (!ft_strcmp(".", executable))		// special case, . is a builtin (source), just return this otherwise segfault (won't have the same $? as in bash but this is not required)
+	if (!ft_strcmp(".", executable))
 		return (executable);
 	size_dir = ft_strlen(exec_dir);
 	size_exec = ft_strlen(executable);
@@ -90,7 +90,7 @@ static char	*search_abs_path(t_values *values, char *executable)
 		dirent = readdir(directory);
 	}
 	free_cut_n_close_dir(cut, directory);
-	return (is_dir(values, executable));					/// problem with /././././././ i should somehow use the check func
+	return (is_dir(values, executable));
 }
 
 static char	*search_relative_path(char **env_pths, char *executable)
@@ -133,9 +133,9 @@ char	*search_for_dir(t_values *values, char	**env_pths, char	*executable)
 	{
 		if (!ft_strcmp("/", executable))
 			return (check(values, executable));
-		exec_dir = search_abs_path(values, executable);		// here exec_dir is actually the abs path
+		exec_dir = search_abs_path(values, executable);
 		if (exec_dir == NULL)
-			return (is_dir(values, executable));				//func here in the return
+			return (is_dir(values, executable));
 		return (exec_dir);
 	}
 	else
@@ -144,8 +144,8 @@ char	*search_for_dir(t_values *values, char	**env_pths, char	*executable)
 			return (NULL);
 		exec_dir = search_relative_path(env_pths, executable);
 		if (exec_dir == NULL)
-			return (set_ret_val(values));			// func here in the return to gain some lines ?
-		append = append_exec_to_path(exec_dir, executable);					// mettre check ici
+			return (set_ret_val(values));
+		append = append_exec_to_path(exec_dir, executable);
 		if (!check(values, append))				// append is protected in check
 			return (NULL);
 		return (append);

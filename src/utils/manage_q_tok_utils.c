@@ -60,9 +60,10 @@ static void	copy_outside(t_values *v, int x, t_quote *q, char *new_tok)
 		{
 			if (if_pos(q, &data))
 				continue ;
-			if (v->split_s[data.x][data.y] == q->type && data.sec_valid_q == true)
+			if (v->split_s[data.x][data.y]
+				== q->type && data.sec_valid_q == true)
 			{
-				if_type_sec_valid(v, q, &data, &calc_right_size);
+				if_t_sec_valid(v, q, &data, &calc_right_size);
 				continue ;
 			}
 			if_betw_q_false(v, q, &data);
