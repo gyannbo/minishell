@@ -40,7 +40,7 @@ void untemp_at_exit(t_quote *q, t_copy_outside *data, size_t *calc_right_size)
 	q->pos = data->temp;
 	q->z = data->temp_z;
 	q->type = data->temp_type;
-	calc_right_size = 0;
+	*calc_right_size = 0;
 }
 
 void	if_betw_q_false(t_values *v, t_quote *q, t_copy_outside *data)

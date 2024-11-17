@@ -1489,3 +1489,37 @@ minishell$ ls"    "'   '
 
 
 
+
+
+
+PROBLEME:
+
+
+made-f0Ar10s12% make valgrind 
+minishell$ lsdddddddddddddddddd'        'dddddddddddddddddddddddddddddddddddddddddddd
+minishell$ ls dddddddddddddddddd'        'dddddddddddddddddddddddddddddddddddddddddddd
+ls: cannot access 'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd        ': No such file or directory
+minishell$ 
+make: *** [Makefile:143: valgrind] Error 2
+made-f0Ar10s12% nvim log
+made-f0Ar10s12% make valgrind
+minishell$ ls dddddddddddddddddd'        'dddddddddddddddddddddddddddddddddddddddddddd
+ls: cannot access 'dddddddddddddddddd        dddddddddddddddddddddddddddddddddddddddddddd': No such file or directory
+minishell$ ls dddddddddddddddddd'        'dddddddddddddddddddddddddddddddddddddddddddd
+ls: cannot access 'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd        ': No such file or directory
+minishell$ 
+make: *** [Makefile:143: valgrind] Error 2
+made-f0Ar10s12% nvi
+
+
+il doit y avoir une valeure que j'oublie de remettre a zéro ou quelque chose comme ça
+
+
+ouai :
+
+
+minishell$ ls dd'     'dddddd
+ls: cannot access 'dd     dddddd': No such file or directory
+minishell$ ls s'       'sssssss
+ls: cannot access 's       ss': No such file or directory
+minishell$ 
