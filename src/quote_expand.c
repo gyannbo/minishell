@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quotes.c                                           :+:      :+:    :+:   */
+/*   quote_expand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/17 15:28:34 by gbonis            #+#    #+#             */
-/*   Updated: 2024/10/25 16:12:57 by msloot           ###   ########.fr       */
+/*   Created: 2024/11/19 11:19:24 by gbonis            #+#    #+#             */
+/*   Updated: 2024/11/19 11:19:25 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static size_t	count_q_expand(char *s)
+static size_t	d_count_q_expand(char *s)
 {
 	int	i;
 	int	count;
@@ -21,14 +21,14 @@ static size_t	count_q_expand(char *s)
 	count = 0;
 	while (s[i])
 	{
-		if (s[i] == '\'' || s[i] == '\"')
+		if (s[i] == '$')
 			count++;
 		i++;
 	}
 	return (count);
 }
 
-static bool	put_in_counter(t_values *v, char *s, size_t *i, int *tab)
+bool	d_put_in_counter(t_values *v, char *s, size_t *i, int *tab)
 {
 	char	*var;
 	size_t	index;
@@ -38,20 +38,20 @@ static bool	put_in_counter(t_values *v, char *s, size_t *i, int *tab)
 	var = get_var(&s[1], &name_size);
 	if (!var)
 		return (false);
-	if (check_var_exist(v, var, &index) == false)				//ouai pour $lol$"pourquoi" l'erreur est la je pense, il faut pas renvoyer false  // NON c'est juste un cas special quabd ya des quotes après
+	if (check_var_exist(v, var, &index) == false)
 	{
 		(*i)++;
-		return (true);		// return false only for malloc fail
+		return (true);
 	}
 	expand = get_expand(v->env[index]);
 	if (!expand)
 		return (false);
-	*tab += count_q_expand(expand);
+	*tab += d_count_q_expand(expand);
 	free (expand);
 	return (true);
 }
 
-static bool	allocate_tab(t_values *v, int **tab)
+bool	d_allocate_tab(t_values *v, int **tab)
 {
 	size_t	i;
 	size_t	tab_amt;
@@ -60,7 +60,7 @@ static bool	allocate_tab(t_values *v, int **tab)
 	tab_amt = 1;
 	while (v->cmd_str_b[i])
 	{
-		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
+		if (v->cmd_str_b[i] == '\"')
 		{
 			quote_redpip(&v->cmd_str_b[i], &i);
 			tab_amt++;
@@ -76,26 +76,25 @@ static bool	allocate_tab(t_values *v, int **tab)
 	return (true);
 }
 
-static bool	get_counter(t_values *v, int **tab)
+static bool	d_get_counter(t_values *v, int **tab)
 {
 	size_t	i;
 	size_t	i_tab;
 
 	i = 0;
 	i_tab = 0;
-	if (allocate_tab(v, tab) == false)
+	if (d_allocate_tab(v, tab) == false)
 		return (false);
 	while (v->cmd_str_b[i])
 	{
 		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
 		{
-			quote_redpip(&v->cmd_str_b[i], &i);				//redpip doesnt have anything to do with this, this is just a reuse of a functionm
-			i_tab++;
+			d_manage_quote(v, &i, &(*tab)[i_tab], &i_tab);
 			continue ;
 		}
 		if (v->cmd_str_b[i] == '$')
 		{
-			if (!put_in_counter(v, &v->cmd_str_b[i], &i, &(*tab)[i_tab]))
+			if (!d_put_in_counter(v, &v->cmd_str_b[i], &i, &(*tab)[i_tab]))
 				return (false);
 		}
 		i++;
@@ -103,20 +102,13 @@ static bool	get_counter(t_values *v, int **tab)
 	return (true);
 }
 
-bool	do_quotes(t_values *values)
+bool	quote_expand(t_values *v)
 {
 	int	*tab;
 
 	tab = NULL;
-	if (values->isquote == 0)
-		return (true);
-	if (get_counter(values, &tab) == false)
-		return (false);
-	if (quote_parsing(values, tab) == false)			// tab is unusable after this
-		return (false);
-	if (!quote_expand(values))
+	if (!d_get_counter(v, &tab))
 		return (false);
 	free(tab);
-	values->isquote = 0;
 	return (true);
 }

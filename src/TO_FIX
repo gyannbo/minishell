@@ -2,3 +2,20 @@
 
 
 -faire fonctionner le make -j re (et tout le reste accessoirement)
+
+
+
+- fix le truc avec les variables avec rien dedans ou quoi
+
+
+- fix le cas ls $lol$"pourqoi" avec lol='$HOME' mais je crois que ça pete avec nimporte quel var env
+-> ls $nothing v ls $"" or ls $   pour comprendre le bug
+
+
+
+- je me souviens plus aussi mais je crois que dans le deuxieme tableau pour lexpand des doubles quotes je dsoi incrementer
+i de la taile du nome de la var (non je pense pas car je peux juste regarder sur les $ et on est bon
+
+
+
+LOL

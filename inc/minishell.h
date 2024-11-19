@@ -157,6 +157,11 @@ bool	manage_q_tok(t_values *v, t_quote *q);
 void	copy_in_tok(t_values *v, char *s, int x, t_quote *q);
 void	manage_rest_tok(t_values *v, char *new_tok, t_quote *q);
 
+// quote expand //
+bool	quote_expand(t_values *v);
+void	check_for_invalid_envvar(t_values *v, size_t *i, int *tab_val);
+int		d_manage_quote(t_values *v, size_t *i, int *tab_val, size_t *i_tab);
+
 //directory functions //
 char	*search_for_dir(t_values *values, char	**env_paths, char *executable);
 char	*check(t_values *values, char *path);

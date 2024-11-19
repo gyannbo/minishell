@@ -17,7 +17,7 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 	char	*expand;
 	size_t	index;
 
-	if (check_var_exist(v, var, &index) == false)
+	if ((v, var, &index) == false)
 	{
 		if (put_in_string(&v->cmd_str, "", i, size_name_var) == false)
 			return (false);

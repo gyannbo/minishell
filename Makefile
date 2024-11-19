@@ -90,6 +90,8 @@ SRC_NAME =	main.c \
 			norm_has_type.c\
 			norm_manage_q_tok_utils.c\
 			norm_manage_q_tok_utils_second.c\
+			quote_expand.c\
+			norm_quote_expand.c\
 			
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
