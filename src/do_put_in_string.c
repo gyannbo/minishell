@@ -58,6 +58,10 @@ bool	cut_dollar(t_values *v, size_t *i)
 		z++;
 	}
 	free(v->cmd_str);
+	free(v->cmd_str_b);
 	v->cmd_str = new;
+	v->cmd_str_b = ft_strdup(new);
+	if (!v->cmd_str_b)
+		return (false);
 	return (true);
 }

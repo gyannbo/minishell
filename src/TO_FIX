@@ -8,8 +8,8 @@
 //- fix le truc avec les variables avec rien dedans ou quoi
 
 
-- fix le cas ls $lol$"pourqoi" avec lol='$HOME' mais je crois que ça pete avec nimporte quel var env
--> ls $nothing v ls $"" or ls $   pour comprendre le bug
+//- fix le cas ls $lol$"pourqoi" avec lol='$HOME' mais je crois que ça pete avec nimporte quel var env
+//-> ls $nothing v ls $"" or ls $   pour comprendre le bug
 
 
 
