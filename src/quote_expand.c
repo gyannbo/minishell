@@ -40,7 +40,7 @@ bool	d_put_in_counter(t_values *v, char *s, size_t *i, int *tab)
 		return (false);
 	if (check_var_exist(v, var, &index) == false)
 	{
-		(*i)++;
+		check_special_char(v, i, tab);
 		return (true);
 	}
 	expand = get_expand(v->env[index]);
@@ -109,6 +109,11 @@ bool	quote_expand(t_values *v)
 	tab = NULL;
 	if (!d_get_counter(v, &tab))
 		return (false);
+	if (do_quote_expand(v, tab) == false)    // gerer la protection
+	{
+		free(tab);
+		return (false);
+	}
 	free(tab);
 	return (true);
 }

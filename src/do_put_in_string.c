@@ -35,9 +35,16 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 	return (true);
 }
 
+void	do_at_exit(char *new, t_values *v)
+{
+	free(v->cmd_str);
+	free(v->cmd_str_b);
+	v->cmd_str = new;
+}
+
 bool	cut_dollar(t_values *v, size_t *i)
 {
-	char *new;
+	char	*new;
 	size_t	y;
 	size_t	z;
 
@@ -51,15 +58,13 @@ bool	cut_dollar(t_values *v, size_t *i)
 		if (z == *i)
 		{
 			z++;
-			continue;
+			continue ;
 		}
 		new[y] = v->cmd_str[z];
 		y++;
 		z++;
 	}
-	free(v->cmd_str);
-	free(v->cmd_str_b);
-	v->cmd_str = new;
+	do_at_exit(new, v);
 	v->cmd_str_b = ft_strdup(new);
 	if (!v->cmd_str_b)
 		return (false);

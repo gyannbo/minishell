@@ -35,3 +35,12 @@ int	d_manage_quote(t_values *v, size_t *i, int *tab_val, size_t *i_tab)
 	(*i_tab)++;
 	return (0);
 }
+
+void	check_special_char(t_values *v, size_t *i, int *tab)
+{
+	int	x;
+
+	x = *i;
+	if (!ft_isalnum(v->cmd_str_b[x + 1]) && v->cmd_str_b[x + 1] != '_')
+		(*tab)++;
+}

@@ -1,0 +1,37 @@
+
+
+Je ne me souviens plus très bien mais je crois que le tableau est nécessaire parce que je dois pouvoir sauter des quotes invalides ? mais de toute maniere
+les single je m'en fou, je dois juste regarder dans les  env var valide ? (donc pas $HOME dans des single, de toute maniere je peux sauter des singles,
+a ouai mais yaura les env var expandé de toute maniere, donc ça veut dire que si j'arrive a pouvoir détecter les single quotes viables.
+Ah mais non je me souviens, ya plus de quote à ce moment là, donc la seule chose que je dois regarder c'est la validité des $, et là j'aurais plus rien
+et je serais obligé de regarder dansla str_cmd_b et voir si ya a la fois des $ dans les env var et  dans les single quotes
+
+Verifier que dans les env var dans les env var l'expand ne se fait pas.
+Oui.
+
+
+
+
+
+
+Ouai ya un probleme en fait c'est si ya $$$$$ ou $xistepas ou $,,lol a chaque fois dans le tab il faudra mettre des choses differentes.
+
+
+
+
+Check si le tableau fonctionne avec juste un dollar
+
+
+Faire des test avec des variables d'env qui sont inexistante, normalement pour le calcul du tableau c'est bon mais je suis pas sur
+
+
+
+
+
+
+
+
+
+Maintenant que je suis vraiment dans l'eexpand dans les doubles, je me demande du coup si l'expand fonctionne de maniere similaire ou pas, genre sur les whitespace,
+probablement que non et que du coup je peux les laisser dans le meme token de split.
+Non c'est pas le cas, logique.
