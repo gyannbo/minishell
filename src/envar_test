@@ -902,4 +902,113 @@ Oui les single quotes ont pas l'air compliqué, c'est plutot lorsque ya des quot
 
 
 
-LOL
+
+
+-----------------------------
+
+
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $,,pourquoi
+ls: cannot access '$,,pourquoi': No such file or directory
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $"pourquoi"
+ls: cannot access 'pourquoi': No such file or directory
+gbonis@made-f0Ar12s12:~/gits/minishell$ 
+
+
+
+
+en fait pour ça peut etre que c;est un cas sp'ecial pour les quotes (un peu comme dans mon cas ou je pars du principe que les quotes c'est viable
+qunad jarrive au moment de les gerer, alors que pas forcément si lenv var cut une qutoe etc, faire des tests)
+
+
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $..pourquoi
+ls: cannot access '$..pourquoi': No such file or directory
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $'pourquoi
+> 
+bash: unexpected EOF while looking for matching `''
+bash: syntax error: unexpected end of file
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $'pourquoi'
+ls: cannot access 'pourquoi': No such file or directory
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $pourquoi
+inc  libft  log  Makefile  minishell  obj  src  src_anto
+gbonis@made-f0Ar12s12:~/gits/minishell$ 
+
+ouai on voit bien ici que d'une maniere il "attend" la res des quotes pour faire l'expand, et donc il fait un peu comme si yavait juste $, ou non je sais plus
+mais en tout cas il supprime le $
+
+
+
+Ouai, en gros ce que je dois faire, c'est que comme on ne doit pas gérer lorsque les quotes ne sont pas fermées, je peux juste faire comme $..pouquoi. quand
+il y a des quotes, ah ouai mais non parce que après la gestion des quotes passera dessus.
+Peut etre je peux garder en memoire la valeur (nombre de quote non valable, et la push dans le tableau des quotes a skip une fois que je serais dans la gestion des
+quotes ?)
+Mais ça voudrait dire que je dois skipper le comptage des quotes valides si jamais ya quelque chose comme $''lol' dans la string de base ?
+(en ensuite push dans le tableau des quotes a skipper)
+
+ouai je pense qu'on peut partir la dessus,
+mais avant ça deja tester pour voir si il y a pas d'autre trucs qui petent.
+C'est bon.
+
+
+Ouai, le programme fonctionne déjà en laissant tout en place lorsque ya quelque chose comme $,,lol,, etc..
+
+Par contre quand ya pas le bon nombres de quotes ça va meme pas jusque la, je dois changer tout ça
+
+Ah oui je me rappelle pourquoi je vérifiais ça, c'est parce que lorsque les quotes sont pas bonne (impairs dans le token de env var, je vais juste laisser le token
+tel quel pour faire comme lorsque c'est autre chose qu'une quote dans le token ex $,,lol,  par contre je devrais bien mettre dans le tableau pour ignorer les quotes
+a ce moment la (d'ailleurs je peux etre déclarer le tableau super tot et pouvoir y accéder dès maintenant et pouvoir commencer a ajouter dedans.
+
+Par contre du coup comme les quotes 
+
+
+
+
+
+
+// faire en sorte que le checker pour les quotes ne regarder pas dans les envar et attends un whitespace ?
+
+
+
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $,,'pourquoi lol'
+ls: cannot access '$,,pourquoi lol': No such file or directory
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $,,pourquoi lol 
+ls: cannot access '$,,pourquoi': No such file or directory
+ls: cannot access 'lol': No such file or directory
+gbonis@made-f0Ar12s12:~/gits/minishell$ 
+
+
+Non ça fonctionne pas, pour regarder les whitespaces on doit avoir un mécanisme pour savoir
+
+Ouai parce que si jamais ya des quotes dans le token d'env var et
+
+essayer $,,'lol  ' pour voir si le $ disparait ou pas
+
+
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $,,'   lol  '
+ls: cannot access '$,,   lol  ': No such file or directory
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls $'   lol  '
+ls: cannot access '   lol  ': No such file or directory
+
+Ouai c'set vraiment quand les quotes sont directement derriere le $ qu'il faut supprimer le dollar.
+
+
+En fait je peux peut etre rejeter quand ya pas le bon nombre de quote comme dans ls $,,'''lol et juste pas interpreter
+la string ? et on s'en fout de l'output dans ce cas là, comme de tout maniere quand on fait  ça dans bash il accept la single quote  ?
+Ouai car de toute manière il gèrerais meme pas le dollar, il le laisse comme ça.
+
+Ouai je pense que je peux laisser comme ça et juste rejeter lorsque les quotes sont impairs
+
+
+(il se passe quoi si ya des quotes impairs dans une env var ?)
+(ya un probleme sur les quotes dans les env var, il faut qu'elles puissent fonctionner, mais quand ellees sont impairs ça produit pas de warning)
+
+Non en fait les quotes dans les env var se comportent comme je le pensais, je me suis juste planté sur mon export que je faisais dans zsh
+
+
+
+Oui, donc si je résume, la seule chose que je dois faire c'est supprimer le dollar lorsque y des quotes valides juste après le dollar. Oui  c'est ça.
+
+
+
+
+Ce que je vais faire c'est lorsqu'il y a une quote directement après le dollar je refais la string en supprimant le dollar et puis voila. Faut juste voir
+pour la sortie ou est ce que je met le curseur.

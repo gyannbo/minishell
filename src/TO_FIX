@@ -5,7 +5,7 @@
 
 
 
-- fix le truc avec les variables avec rien dedans ou quoi
+//- fix le truc avec les variables avec rien dedans ou quoi
 
 
 - fix le cas ls $lol$"pourqoi" avec lol='$HOME' mais je crois que ça pete avec nimporte quel var env
@@ -18,4 +18,3 @@ i de la taile du nome de la var (non je pense pas car je peux juste regarder sur
 
 
 
-LOL

@@ -129,6 +129,7 @@ int		do_retval(t_values *v, char *s, size_t *i);
 bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var);
 char	*get_expand(char *s);
 bool	check_var_exist(t_values *v, char *var, size_t *index);
+bool	cut_dollar(t_values *v, size_t *i);
 
 // redir and pipes //
 bool	redpip_token_counter(t_values *values);

@@ -406,6 +406,12 @@ ls $lol'   'sss'   'ss
 lol="''''"
 ls $lol"sssss"$lol"    "$lol  $lol"sssss"$lol"    "$lol
 
+
+lol='' ou lol=
+
+ls $lol pourquoi
+ls $lol
+
 NOT OK:
 
 //////ATTENTION J'AI UN GROS BLINDSPOT SUR MES TESTS, J'AI QUASIEMENT AUCUNE VARIATION SUR LE PREMIER TOKEN (COMMANDE) /////

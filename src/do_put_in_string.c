@@ -17,7 +17,7 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 	char	*expand;
 	size_t	index;
 
-	if ((v, var, &index) == false)
+	if (check_var_exist(v, var, &index) == false)
 	{
 		if (put_in_string(&v->cmd_str, "", i, size_name_var) == false)
 			return (false);
@@ -32,5 +32,32 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 		return (false);
 	}
 	free(expand);
+	return (true);
+}
+
+bool	cut_dollar(t_values *v, size_t *i)
+{
+	char *new;
+	size_t	y;
+	size_t	z;
+
+	y = 0;
+	z = 0;
+	new = malloc(sizeof(char) * ft_strlen(v->cmd_str));
+	if (!new)
+		return (false);
+	while (v->cmd_str[y])
+	{
+		if (z == *i)
+		{
+			z++;
+			continue;
+		}
+		new[y] = v->cmd_str[z];
+		y++;
+		z++;
+	}
+	free(v->cmd_str);
+	v->cmd_str = new;
 	return (true);
 }

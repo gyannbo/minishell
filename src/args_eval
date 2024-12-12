@@ -103,3 +103,8 @@ capable de savoir pourquoi et d'expliquer ou reproduire le bug sur bash.
 Oui je viens de savoir pourquoi, c'est quand on fait un ctrl-s, mais j'ai l'impression que ca fait la meme chose sur bash comme sur minishell, donc peut etre pas besoin de
 register un sighandler ou quelque chose comme ça. Je vais regarder quel sig ca genere.
 Oui, ça genere le stop characteres, donc il faut faire le start character pour que tout reprenne, ou un signal i guess.
+
+
+
+- pour l'histoire avec les $'allo' et lorsqu'il y a des quotes impairs comme $,,''' etc.., on décide de juste pas gérer dès que ya des quotes impairs, sauf quand c'est dans les
+env var parce ces quotes la sont ignorées.
