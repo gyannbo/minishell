@@ -28,7 +28,7 @@ static size_t	count_q_expand(char *s)
 	return (count);
 }
 
-static bool	put_in_counter(t_values *v, char *s, size_t *i, int *tab)
+bool	put_in_counter(t_values *v, char *s, size_t *i, int *tab)
 {
 	char	*var;
 	size_t	index;
@@ -38,7 +38,7 @@ static bool	put_in_counter(t_values *v, char *s, size_t *i, int *tab)
 	var = get_var(&s[1], &name_size);
 	if (!var)
 		return (false);
-	if (check_var_exist(v, var, &index) == false)				//ouai pour $lol$"pourquoi" l'erreur est la je pense, il faut pas renvoyer false  // NON c'est juste un cas special quabd ya des quotes après
+	if (check_var_exist(v, var, &index) == false)
 	{
 		(*i)++;
 		return (true);		// return false only for malloc fail
@@ -89,7 +89,7 @@ static bool	get_counter(t_values *v, int **tab)
 	{
 		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
 		{
-			quote_redpip(&v->cmd_str_b[i], &i);				//redpip doesnt have anything to do with this, this is just a reuse of a functionm
+			quote_redpip(&v->cmd_str_b[i], &i);
 			i_tab++;
 			continue ;
 		}
@@ -112,9 +112,9 @@ bool	do_quotes(t_values *values)
 		return (true);
 	if (get_counter(values, &tab) == false)
 		return (false);
-	if (quote_parsing(values, tab) == false)			// tab is unusable after this
+	if (quote_parsing(values, tab) == false)
 		return (false);
-	if (!quote_expand(values))
+	if (quote_expand(values) == false)
 		return (false);
 	free(tab);
 	values->isquote = 0;

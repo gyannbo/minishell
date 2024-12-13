@@ -19,7 +19,7 @@ char	*get_var(char *s, size_t *size)
 	size_t	y;
 
 	i = 0;
-	while (ft_isalnum(s[i]))
+	while (ft_isalnum(s[i]) || s[i] == '_')
 		i++;
 	if (ft_isdigit(s[0]))
 		i = 1;

@@ -162,8 +162,8 @@ void	manage_rest_tok(t_values *v, char *new_tok, t_quote *q);
 
 // quote expand //
 bool	quote_expand(t_values *v);
-void	check_for_invalid_envvar(t_values *v, size_t *i, int *tab_val);
-int		d_manage_quote(t_values *v, size_t *i, int *tab_val, size_t *i_tab);
+void	check_for_invalid_envvar(t_values *v, size_t *i, size_t *i_tab);
+int		d_manage_quote(t_values *v, size_t *i, size_t *i_tab);
 void	check_special_char(t_values *v, size_t *i, int *tab);
 bool	do_quote_expand(t_values *v, int *tab);
 void	quote_redpip_tab_amt(char *s, size_t *index, size_t *tab_amt);

@@ -13,28 +13,15 @@
 
 
 
-- je me souviens plus aussi mais je crois que dans le deuxieme tableau pour lexpand des doubles quotes je dsoi incrementer
-i de la taile du nome de la var (non je pense pas car je peux juste regarder sur les $ et on est bon
 
 
 
-- vérifier si export prends en compte underscore, char alphanum etc.. (celui d'anto)
 
 
 -regarder pour la gestion de la data de l'env
 
 
-
-- mettre dans le code  de l'expand l'acceptation de l'underscore
-
-
-
-
-deux probleme
-	underscore dans expand
-	pourquoi i est a 2
-
-
-
-
 - voir pour les protections malloc, voir si je free convenablement les choses si malloc fail
+
+
+- norm

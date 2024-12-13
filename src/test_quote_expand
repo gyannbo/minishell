@@ -42,13 +42,15 @@ ls "$HOM"
 ls "$?$?$?"
 lol="$HOME"
 ls $lol"$lol"$lol
-
-DOESNT WORK
-lol="$HOME"
 ls $lol"$lol$lol"$lol
 
+ls $_non"$_non"$_non
+ls $?"$?"$?
 
-tester les cas avec use of le tableau (lol="$HOME")
+DOESNT WORK
+
+ls '$?$?$?'
+
 
 
 le tableau a pas l'air de fonctionner comme je pensais, c'est a dire que pour un token comme "$?$?$?" pour lui c'est comme une instance.
