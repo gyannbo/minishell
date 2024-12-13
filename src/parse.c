@@ -56,6 +56,7 @@ bool	parse(t_values *values)
 	char	**split_s;
 
 	values->isquote = 0;
+	values->expand_pointer = &values->cmd_str;
 	if (check_quote(values, values->cmd_str) == false)
 		return (false);
 	if (redpip_token_counter(values) == false)

@@ -21,7 +21,7 @@ int	do_retval(t_values *v, char *s, size_t *i)
 		c_retval = ft_itoa(v->prev_ret_val);
 		if (!c_retval)
 			return (false);
-		if (put_in_string(&v->cmd_str, c_retval, i, 1) == false)
+		if (put_in_string(v->expand_pointer, c_retval, i, 1) == false)
 		{
 			free(c_retval);
 			return (-1);

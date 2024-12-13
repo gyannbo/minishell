@@ -62,8 +62,7 @@ bool	d_allocate_tab(t_values *v, int **tab)
 	{
 		if (v->cmd_str_b[i] == '\"')
 		{
-			quote_redpip(&v->cmd_str_b[i], &i);
-			tab_amt++;
+			quote_redpip_tab_amt(&v->cmd_str_b[i], &i, &tab_amt);
 			continue ;
 		}
 		i++;
@@ -112,8 +111,10 @@ bool	quote_expand(t_values *v)
 	if (do_quote_expand(v, tab) == false)    // gerer la protection
 	{
 		free(tab);
+		v->expand_pointer = NULL;
 		return (false);
 	}
+	v->expand_pointer = NULL;
 	free(tab);
 	return (true);
 }

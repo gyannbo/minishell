@@ -68,6 +68,7 @@ typedef struct s_values
 	char	*cmd_str;
 	char	*cmd_str_b;
 	char	*abs_path_bin;
+	char	**expand_pointer;
 	char	**split_s;
 	char	**tokenized_str;
 	int		prev_ret_val;
@@ -130,6 +131,7 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var);
 char	*get_expand(char *s);
 bool	check_var_exist(t_values *v, char *var, size_t *index);
 bool	cut_dollar(t_values *v, size_t *i);
+bool	do_expand(t_values *v, char *s, size_t *i);
 
 // redir and pipes //
 bool	redpip_token_counter(t_values *values);
@@ -164,6 +166,7 @@ void	check_for_invalid_envvar(t_values *v, size_t *i, int *tab_val);
 int		d_manage_quote(t_values *v, size_t *i, int *tab_val, size_t *i_tab);
 void	check_special_char(t_values *v, size_t *i, int *tab);
 bool	do_quote_expand(t_values *v, int *tab);
+void	quote_redpip_tab_amt(char *s, size_t *index, size_t *tab_amt);
 
 //directory functions //
 char	*search_for_dir(t_values *values, char	**env_paths, char *executable);

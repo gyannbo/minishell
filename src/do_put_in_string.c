@@ -19,14 +19,14 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 
 	if (check_var_exist(v, var, &index) == false)
 	{
-		if (put_in_string(&v->cmd_str, "", i, size_name_var) == false)
+		if (put_in_string(v->expand_pointer, "", i, size_name_var) == false)
 			return (false);
 		return (true);
 	}
 	expand = get_expand(v->env[index]);
 	if (!expand)
 		return (false);
-	if (put_in_string(&v->cmd_str, expand, i, size_name_var) == false)
+	if (put_in_string(v->expand_pointer, expand, i, size_name_var) == false)
 	{
 		free(expand);
 		return (false);

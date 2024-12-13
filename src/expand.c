@@ -81,7 +81,7 @@ char	*get_expand(char *s)
 	return (temp);
 }
 
-static bool	do_expand(t_values *v, char *s, size_t *i)
+bool	do_expand(t_values *v, char *s, size_t *i)
 {
 	char	*var;
 	size_t	size_name_var;
@@ -90,7 +90,7 @@ static bool	do_expand(t_values *v, char *s, size_t *i)
 	{
 		if (cut_dollar(v, i) == false)
 			return (false);
-		return(true);			// pour le i je pense que je peux faire comme pour $,,home,  c'est a dire juste (*i)++ et voila
+		return(true);
 	}
 	var = get_var(&s[1], &size_name_var);
 	if (!var)

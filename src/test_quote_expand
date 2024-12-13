@@ -35,3 +35,31 @@ Faire des test avec des variables d'env qui sont inexistante, normalement pour l
 Maintenant que je suis vraiment dans l'eexpand dans les doubles, je me demande du coup si l'expand fonctionne de maniere similaire ou pas, genre sur les whitespace,
 probablement que non et que du coup je peux les laisser dans le meme token de split.
 Non c'est pas le cas, logique.
+
+
+WORKS
+ls "$HOM"
+
+DOESNT WORK
+
+ls "$?$?$?"
+
+tester les cas avec use of le tableau (lol="$HOME")
+
+
+le tableau a pas l'air de fonctionner comme je pensais, c'est a dire que pour un token comme "$?$?$?" pour lui c'est comme une instance.
+Je dois regarder si c'est la meme chose pour les quote ou pas, auquel cas ça voudrait dire que si j'ai des quotes  comme ça '   ''   ''   '
+ce sera compté comme une instance alors que il pourrait y avoir des env var non valide dedans.
+Pour tester ça simplemement juste mettre '  ''   ''   '  et voir combien de case a le tableau, après il faudrait plutot tester avec des 
+envvar pour voir si ça ignore.
+Si tout fonctionne sauf le quote expand je peux toujours revoir ma boucle et incrémenter le i seulement quand je change de x.
+Non ça à l'air de fonctionner pour les quotes, je dois probablement juste revoir ma boucle pour les quotes expands.
+
+
+Ouai en fait c'est plus compliqué que prévu le tab pour les quote expand. En fait pas tellement c'est juste que j'ai besoin de savoir quand
+est ce que je peux repasser sur les case du tableau, parce que meme si en théorie j'ai pas besoin de savoir ce qu'il se passe entre les
+expand dans une double quote, car meme si ya un dollar dedans normalement je skip après donc je repasse jamais dessus.
+Ouai la cause du problème c'est que j'ai plus les quotes après pour checker alors comme je suis dans le vide je dois savoir combien de $
+je dois skipper quand ils sont valides.
+
+

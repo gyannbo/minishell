@@ -51,7 +51,7 @@ static bool	put_in_counter(t_values *v, char *s, size_t *i, int *tab)
 	return (true);
 }
 
-static bool	allocate_tab(t_values *v, int **tab)
+bool	allocate_tab(t_values *v, int **tab)
 {
 	size_t	i;
 	size_t	tab_amt;
