@@ -40,3 +40,18 @@ void	check_special_char(t_values *v, size_t *i, int *tab)
 	if (!ft_isalnum(a) && a != '_' && a != '?')
 		(*tab)++;
 }
+
+void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab)
+{
+	if (v->cmd_str_b[(*i)] == '\'')
+	{
+		(*i)++;
+		while (v->cmd_str_b[(*i)] != '\'')
+		{
+			if (v->cmd_str_b[(*i)] == '$')
+				(*tab[(*i_tab)])++;
+			(*i)++;
+		}
+	}
+	
+}	

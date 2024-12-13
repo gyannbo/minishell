@@ -91,6 +91,7 @@ static bool	d_get_counter(t_values *v, int **tab)
 			d_manage_quote(v, &i, &i_tab);
 			continue ;
 		}
+		check_for_singles(v, &i, &i_tab, tab);
 		if (v->cmd_str_b[i] == '$')
 		{
 			if (!d_put_in_counter(v, &v->cmd_str_b[i], &i, &(*tab)[i_tab]))

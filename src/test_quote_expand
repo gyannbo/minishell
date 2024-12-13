@@ -46,10 +46,10 @@ ls $lol"$lol$lol"$lol
 
 ls $_non"$_non"$_non
 ls $?"$?"$?
+ls '$?$?$?'
 
 DOESNT WORK
 
-ls '$?$?$?'
 
 
 
