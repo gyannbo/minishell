@@ -53,4 +53,26 @@ void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab)
 			(*i)++;
 		}
 	}
-}	
+}
+
+char	*get_prev_name(t_values *v)
+{
+	int	i;
+	bool	betw_quotes;
+	int	count;
+
+	i = 0;
+	count = v->db_var_count;
+	betw_quotes = false;
+	while(v->cmd_str_b[i])
+	{
+		if (v->cmd_str_b[i] == '"')
+			betw_quotes = !betw_quotes;
+		if (v->cmd_str_b[i] == '$' && !count && betw_quotes)
+			return (&v->cmd_str_b[i]);
+		else if (v->cmd_str_b[i] == '$' && count && betw_quotes)
+			count--;
+		i++;
+	}
+	return (NULL);
+}

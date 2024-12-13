@@ -30,7 +30,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_values	values;
 
-	values.env = envp;
+	values.env = envp;			// this cannot stay
 	values.prev_ret_val = 0;
 	(void)argc;
 	(void)argv;

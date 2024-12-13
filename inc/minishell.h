@@ -73,6 +73,7 @@ typedef struct s_values
 	char	**tokenized_str;
 	int		prev_ret_val;
 	int		redpip_counter;
+	int		db_var_count;
 }t_values;
 
 typedef struct s_var
@@ -168,6 +169,7 @@ void	check_special_char(t_values *v, size_t *i, int *tab);
 bool	do_quote_expand(t_values *v, int *tab);
 void	quote_redpip_tab_amt(char *s, size_t *index, size_t *tab_amt);
 void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab);
+char	*get_prev_name(t_values *v);
 
 //directory functions //
 char	*search_for_dir(t_values *values, char	**env_paths, char *executable);

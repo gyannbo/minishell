@@ -107,15 +107,21 @@ bool	quote_expand(t_values *v)
 	int	*tab;
 
 	tab = NULL;
+	v->db_var_count = 0;
 	if (!d_get_counter(v, &tab))
+	{
+		v->db_var_count = 0;
 		return (false);
+	}
 	if (do_quote_expand(v, tab) == false)    // gerer la protection
 	{
 		free(tab);
 		v->expand_pointer = NULL;
+		v->db_var_count = 0;
 		return (false);
 	}
 	v->expand_pointer = NULL;
 	free(tab);
+	v->db_var_count = 0;
 	return (true);
 }

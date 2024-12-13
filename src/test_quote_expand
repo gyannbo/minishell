@@ -61,6 +61,9 @@ Peut etre que je peux substituer au nom de la variable dans les token processed 
 dans les doubles dans lesquels je suis ?
 Ouai normalement c'est bon comme principe, je dois juste passer aux bonnes fonctions les bons arguments et tout devrait aller.
 
+Ouai normalement la fonction qui va manipuler la data des strings c'est via le expand_pointer, donc je dois juste passer le bon nom dans la cmd_str_b de la variable
+et normalement c'est bon.
+
 
 le tableau a pas l'air de fonctionner comme je pensais, c'est a dire que pour un token comme "$?$?$?" pour lui c'est comme une instance.
 Je dois regarder si c'est la meme chose pour les quote ou pas, auquel cas ça voudrait dire que si j'ai des quotes  comme ça '   ''   ''   '
