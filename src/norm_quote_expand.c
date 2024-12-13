@@ -49,9 +49,8 @@ void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab)
 		while (v->cmd_str_b[(*i)] != '\'')
 		{
 			if (v->cmd_str_b[(*i)] == '$')
-				(*tab[(*i_tab)])++;
+				((*tab)[(*i_tab)])++;
 			(*i)++;
 		}
 	}
-	
 }	
