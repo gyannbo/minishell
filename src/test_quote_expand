@@ -39,10 +39,14 @@ Non c'est pas le cas, logique.
 
 WORKS
 ls "$HOM"
+ls "$?$?$?"
+lol="$HOME"
+ls $lol"$lol"$lol
 
 DOESNT WORK
+lol="$HOME"
+ls $lol"$lol$lol"$lol
 
-ls "$?$?$?"
 
 tester les cas avec use of le tableau (lol="$HOME")
 

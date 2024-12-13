@@ -86,11 +86,11 @@ static bool	d_get_counter(t_values *v, int **tab)
 		return (false);
 	while (v->cmd_str_b[i])
 	{
-		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
-		{
-			d_manage_quote(v, &i, &(*tab)[i_tab], &i_tab);
-			continue ;
-		}
+//		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')		// j'ai pas besoin de ça non ?
+//		{
+//			d_manage_quote(v, &i, &(*tab)[i_tab], &i_tab);
+//			continue ;
+//		}
 		if (v->cmd_str_b[i] == '$')
 		{
 			if (!d_put_in_counter(v, &v->cmd_str_b[i], &i, &(*tab)[i_tab]))

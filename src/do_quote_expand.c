@@ -65,7 +65,10 @@ bool	do_quote_expand(t_values *v, int *tab)
 			if (v->split_s[x][y] == '$')
 			{
 				if (tab[i])
+				{
+					y++;
 					tab[i]--;
+				}
 				else if (change_spl_tok(v, x, &y, &i) == false)
 					return (false);
 				continue ;
