@@ -36,6 +36,7 @@ void	quote_redpip_tab_amt(char *s, size_t *index, size_t *tab_amt)
 bool	change_spl_tok(t_values *v, size_t x, size_t *y, int *i)
 {
 	int	status;
+	static int	db_envvar_count;  // j;ai meme pas besoin de le mettre la en static, juste dans la struct c'est bon
 
 	(*i)++;
 	v->expand_pointer = &v->split_s[x];
@@ -77,5 +78,5 @@ bool	do_quote_expand(t_values *v, int *tab)
 		}
 		x++;
 	}
-	return (true);
+	return (true);			// remettre le count  a zero
 }

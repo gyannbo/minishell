@@ -48,11 +48,18 @@ ls $_non"$_non"$_non
 ls $?"$?"$?
 ls '$?$?$?'
 
-DOESNT WORK
 lol='$HOME'
 ls $HOME"$lol$_non$?$?$?$?" '$?$?$?$$'
 ls "$?$?$?$?" '$?$?$?$?'
 
+DOESNT WORK
+ls "$HOME$HOME"'$HOME$HOME'"$HOME$HOME"$?$?$?
+
+(ici le probleme c'est que sur le dernier $HOME la string est $HOME000 par exemple et donc comme il trouve pas le nom de l'envvar dans l'env il va pas plus loin.
+je pense que je peux remier au probleme avec le fait de checker dans la cmd_str_b le véritable nom de la variable.
+Peut etre que je peux substituer au nom de la variable dans les token processed ce qu'il y a dans la cmdd_str_b en ayant un compteur pour le nombre de var
+dans les doubles dans lesquels je suis ?
+Ouai normalement c'est bon comme principe, je dois juste passer aux bonnes fonctions les bons arguments et tout devrait aller.
 
 
 le tableau a pas l'air de fonctionner comme je pensais, c'est a dire que pour un token comme "$?$?$?" pour lui c'est comme une instance.
