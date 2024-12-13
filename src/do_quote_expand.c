@@ -73,10 +73,6 @@ bool	do_quote_expand(t_values *v, int *tab)
 			{
 				if (tab[i])
 					norm_manage_tab(tab, i, &y);
-//				{
-//					y++;
-//					tab[i]--;
-//				}
 				else if (change_spl_tok(v, x, &y, &i) == false)
 					return (false);
 				continue ;
