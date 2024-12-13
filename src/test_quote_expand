@@ -52,8 +52,8 @@ lol='$HOME'
 ls $HOME"$lol$_non$?$?$?$?" '$?$?$?$$'
 ls "$?$?$?$?" '$?$?$?$?'
 
-DOESNT WORK
 ls "$HOME$HOME"'$HOME$HOME'"$HOME$HOME"$?$?$?
+DOESNT WORK
 
 (ici le probleme c'est que sur le dernier $HOME la string est $HOME000 par exemple et donc comme il trouve pas le nom de l'envvar dans l'env il va pas plus loin.
 je pense que je peux remier au probleme avec le fait de checker dans la cmd_str_b le véritable nom de la variable.

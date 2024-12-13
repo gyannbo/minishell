@@ -12,6 +12,12 @@
 
 #include "minishell.h"
 
+void	norm_manage_tab(int *tab, int i, size_t *y)
+{
+	(*y)++;
+	tab[i]--;
+}
+
 void	quote_redpip_tab_amt(char *s, size_t *index, size_t *tab_amt)
 {
 	char	type;
@@ -44,8 +50,7 @@ bool	change_spl_tok(t_values *v, size_t x, size_t *y, int *i)
 		return (true);
 	if (status == -1)
 		return (false);
-//	else if (do_expand(v, &v->split_s[x][(*y)], y) == false)			// placer juste une fonction içi sur le 2e arg ça suffit ?
-	else if (do_expand(v, get_prev_name(v), y) == false)			// placer juste une fonction içi sur le 2e arg ça suffit ?l
+	else if (do_expand(v, get_prev_name(v), y) == false)
 		return (false);
 	v->db_var_count++;
 	return (true);
@@ -53,24 +58,25 @@ bool	change_spl_tok(t_values *v, size_t x, size_t *y, int *i)
 
 bool	do_quote_expand(t_values *v, int *tab)
 {
-	size_t x;
-	size_t y;
-	int	i;
+	size_t	x;
+	size_t	y;
+	int		i;
 
 	x = 0;
 	i = 0;
-	while(v->split_s[x])
+	while (v->split_s[x])
 	{
 		y = 0;
-		while(v->split_s[x][y])
+		while (v->split_s[x][y])
 		{
 			if (v->split_s[x][y] == '$')
 			{
 				if (tab[i])
-				{
-					y++;
-					tab[i]--;
-				}
+					norm_manage_tab(tab, i, &y);
+//				{
+//					y++;
+//					tab[i]--;
+//				}
 				else if (change_spl_tok(v, x, &y, &i) == false)
 					return (false);
 				continue ;
@@ -79,5 +85,5 @@ bool	do_quote_expand(t_values *v, int *tab)
 		}
 		x++;
 	}
-	return (true);			// remettre le count  a zero
+	return (true);
 }

@@ -90,7 +90,7 @@ bool	do_expand(t_values *v, char *s, size_t *i)
 	{
 		if (cut_dollar(v, i) == false)
 			return (false);
-		return(true);
+		return (true);
 	}
 	var = get_var(&s[1], &size_name_var);
 	if (!var)

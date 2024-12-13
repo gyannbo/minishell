@@ -32,8 +32,8 @@ int	d_manage_quote(t_values *v, size_t *i, size_t *i_tab)
 
 void	check_special_char(t_values *v, size_t *i, int *tab)
 {
-	int	x;
-	char a;
+	int		x;
+	char	a;
 
 	x = *i;
 	a = v->cmd_str_b[x + 1];
@@ -57,14 +57,14 @@ void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab)
 
 char	*get_prev_name(t_values *v)
 {
-	int	i;
+	int		i;
 	bool	betw_quotes;
-	int	count;
+	int		count;
 
 	i = 0;
 	count = v->db_var_count;
 	betw_quotes = false;
-	while(v->cmd_str_b[i])
+	while (v->cmd_str_b[i])
 	{
 		if (v->cmd_str_b[i] == '"')
 			betw_quotes = !betw_quotes;
