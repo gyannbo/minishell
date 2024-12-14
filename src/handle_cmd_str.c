@@ -50,6 +50,7 @@ bool	handle_cmd_str(t_values *v)
 		handle_sig(&g_sig, v);
 		return (false);				// return here because if given "ls ^C" ls will be executed, when it shouldnt be
 	}
+	v->redpip_counter = 0;
 	if (!parse(v))
 		return (false);
 	if (!exec_builtin(v))

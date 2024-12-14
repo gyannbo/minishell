@@ -34,6 +34,12 @@
 # include <sys/stat.h>
 # include <sysexits.h>
 
+typedef struct s_skip_tok
+{
+	bool	skip;
+	char	*s;
+}t_skip_tok;
+
 typedef struct s_other
 {
 	size_t	i;
@@ -64,6 +70,7 @@ typedef struct s_quote
 typedef struct s_values
 {
 	int		isquote;
+	int		redpip_counter;
 	char	**env;
 	char	*cmd_str;
 	char	*cmd_str_b;
@@ -72,7 +79,6 @@ typedef struct s_values
 	char	**split_s;
 	char	**tokenized_str;
 	int		prev_ret_val;
-	int		redpip_counter;
 	int		db_var_count;
 }t_values;
 
@@ -171,6 +177,9 @@ void	quote_redpip_tab_amt(char *s, size_t *index, size_t *tab_amt);
 void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab);
 char	*get_prev_name(t_values *v);
 
+// tokenise redpip //
+bool tokenise_redpip(t_values *v);
+
 //directory functions //
 char	*search_for_dir(t_values *values, char	**env_paths, char *executable);
 char	*check(t_values *values, char *path);
@@ -225,5 +234,5 @@ void	untemp_at_exit(t_quote *q, t_copy_outside *d, size_t *c_right_size);
 void	if_betw_q_false(t_values *v, t_quote *q, t_copy_outside *data);
 void	if_t_sec_valid(t_values *v, t_quote *q, t_copy_outside *d, size_t *c);
 void	init_struct_next_i(t_values *v, t_next_i *data, t_quote *q);
-
 #endif
+

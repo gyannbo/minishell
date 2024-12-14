@@ -40,7 +40,7 @@ Non c'est pas le cas, logique.
 WORKS
 ls "$HOM"
 ls "$?$?$?"
-lol="$HOME"
+lol='$HOME'
 ls $lol"$lol"$lol
 ls $lol"$lol$lol"$lol
 

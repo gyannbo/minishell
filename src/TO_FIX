@@ -24,4 +24,8 @@
 - voir pour les protections malloc, voir si je free convenablement les choses si malloc fail
 
 
-- norm
+
+------------------
+
+
+-do tokenised strings

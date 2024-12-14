@@ -74,7 +74,7 @@ bool	parse(t_values *values)
 	values->split_s = split_s;
 	if (do_quotes(values) == false)
 		return (false);
-//	if (tokenise_redpip(values) == false)
-//		return (false);
+	if (tokenise_redpip(values) == false)
+		return (false);
 	return (true);
 }

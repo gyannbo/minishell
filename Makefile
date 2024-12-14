@@ -93,7 +93,7 @@ SRC_NAME =	main.c \
 			quote_expand.c\
 			norm_quote_expand.c\
 			do_quote_expand.c\
-			
+			tokenise_redpip.c\
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
 

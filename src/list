@@ -1342,10 +1342,10 @@ lol/home/gbonislol
 	Oui et puis de toute manière j'ai les deux, si je veux faire du parsing sur la string original je l'ai de toute manière.
 	Ouai je pense que c'est pas trop compliqué si jamais ya des quotes ce que je peux faire c'est juste traiter le split comme du storage et juste free les split et les remplacer par des bonnes
 	strings, puis mettre a zéro la fin du char **, et free le reste, comme le split c'est un tableau de pointer terminé par un void * = 0;
-	Mais pout finir 
 
-	(mais a ce propos la qu'en est t il de l'exec, vis a vis de la manip de la tokenised strings et du cahr ** que l'on doit passer a execve (aussi checker sur execve que je peux passer l'abspath
+	Mais pout finir 
 	en nom de prog dans le cahr ** des args ce sera plus simple), ainsi que les redirections, quest ce qui serait le plus simple de faire.
+	(mais a ce propos la qu'en est t il de l'exec, vis a vis de la manip de la tokenised strings et du cahr ** que l'on doit passer a execve (aussi checker sur execve que je peux passer l'abspath
 	Je pense que je dois déjà build 
 	Ouai parce que par exemple cat fichier|wc -l ça fonctionne. Ça veut dire que pour cet exemple la split aurait pas malloc assez de place pour tous les tokens. Mais comme j'ai aucune idée de comment
 	on fait pour les redir ou les pipes je peux pas dire a quoi va ressembler l'exec, mais je pense que je peux deja build une tokenised string. 

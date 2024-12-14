@@ -1,0 +1,43 @@
+
+
+Je démarre le travail sur les redpip
+Je pense que j'ai déjà fait le boulot pour que les token soit valide si on arrive a tokenised redpip, mais vérifier ça maintenant avant de commencer quand meme.
+
+Ensuite je devrais build une fonction qui reconnait les différents types de token de redpip afin de pouvoir les cutter convenablement
+
+
+
+tests to run:
+
+-verif globalement si acceptation/comptage des redpip token fonctionne
+-verif comment je gere le || que j'ai découvert tard que je dois pas gérer
+(je vais rejetter dès que ya || ou | |
+
+-buld get_token func (reconnaissance de token)
+-build tab pour les tokens invalides dans les quotes ou envvar
+-buid tokenised char * tab
+
+-faire une liste des token possible pour le parser
+
+
+Aussi autre chose c'est que il faudra rejeter à des moments lors de l'exec si les redpip tok sont valides mais les objets autour ne le sont pas valides.
+
+
+Ouai j'ai vachement bosser sur le redpip counter, c'est quasiment deja du parsing de redpip ce que j'ai  fait la, je pense que je ferais mieux de faire confiance
+a ce code pour faire le tableau grace au counter plutot que essayer de le refaire, si je fais ça j'ai plus de chance de péter quelque chose que l;inverse.
+
+
+
+
+
+
+
+
+
+
+EDGE CASES
+
+
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls |> pourquoi
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls
+inc  libft  log  Makefile  minishell  obj  pourquoi  src  src_anto
