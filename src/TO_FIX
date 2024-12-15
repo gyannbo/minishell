@@ -29,3 +29,7 @@
 
 
 -do tokenised strings
+
+
+
+- at one point i will need to manage malloc fail free apropriatly, but also i will need to build some error messages, at least i think one message for each case of retval i guess, and one for syntax error for invalid quotes or redpip i guess

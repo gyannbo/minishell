@@ -34,11 +34,19 @@
 # include <sys/stat.h>
 # include <sysexits.h>
 
+
 typedef struct s_skip_tok
 {
 	bool	skip;
 	char	*s;
 }t_skip_tok;
+
+typedef struct s_tab_redpip
+{
+	int			i;
+	bool	valid;
+	t_skip_tok *tab;
+}t_tab_redpip;
 
 typedef struct s_other
 {
@@ -178,7 +186,11 @@ void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab);
 char	*get_prev_name(t_values *v);
 
 // tokenise redpip //
-bool tokenise_redpip(t_values *v);
+bool	tokenise_redpip(t_values *v);
+bool	tab_redir_case_equal(t_values *v, char*s, size_t *step);
+bool	tab_redir_case_r_n_s(t_values *v, char *s, size_t *step);
+void	tab_quote_redpip(char *s, size_t *index, t_tab_redpip *tab_redpip);
+int		tab_is_redpip_valid(t_values *v, char *s, size_t *step, t_tab_redpip *tab_redpip);
 
 //directory functions //
 char	*search_for_dir(t_values *values, char	**env_paths, char *executable);
@@ -234,5 +246,5 @@ void	untemp_at_exit(t_quote *q, t_copy_outside *d, size_t *c_right_size);
 void	if_betw_q_false(t_values *v, t_quote *q, t_copy_outside *data);
 void	if_t_sec_valid(t_values *v, t_quote *q, t_copy_outside *d, size_t *c);
 void	init_struct_next_i(t_values *v, t_next_i *data, t_quote *q);
-#endif
 
+#endif

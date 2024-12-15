@@ -12,34 +12,63 @@
 
 #include "minishell.h"
 
-bool	data_in_tab(t_values *v, t_skip_tok *tab)
+void	init_tab_structs(t_tab_redpip *tab_redpip)
 {
-	(void)v;
-	(void)tab;
+}
+
+bool	data_in_tab(t_values *v, t_tab_redpip *tab_redpip)
+{
+	size_t	i;
+	size_t	step;
+
+	i = 0;
+	while (v->cmd_str_b[i])
+	{
+		step = 0;
+		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')					// j'ai plus qu'a rajouter dans cette boucle le check pour les envar
+		{
+			tab_quote_redpip(&v->cmd_str_b[i], &i);			// attention si jamais cette fonctione return false il faut mettre redpip counter a zero (comme je vais devoir changer les choses pour que on check aussi dans cette fonctionne les redpip, et donc malloc de la string si jamais il y en a
+			continue ;
+		}
+		if (is_redpip(v->cmd_str_b[i]))
+		{
+			if (tab_is_redpip_valid(v, &v->cmd_str_b[i], &step, tab_redpip) != -1)
+			{
+				i += step;
+				continue ;
+			}
+			v->redpip_counter = 0;
+			return (false);
+		}
+		i++;
+	}
 	return (true);
 }
 
-bool	build_tab(t_values *v, t_skip_tok **tab)
+bool	build_tab(t_values *v, t_tab_redpip *tab_redpip)
 {
-	*tab = malloc(sizeof(t_skip_tok) * (v->redpip_counter * 2 + 1));
-	if (!(*tab))
+	tab_redpip->tab = malloc(sizeof(t_skip_tok) * (v->redpip_counter * 2 + 1));
+	if (!(*tab_redpip->tab))
 		return (false);
-	ft_bzero(*tab, sizeof(t_skip_tok) * (v->redpip_counter * 2 + 1));
-	if (data_in_tab(v, *tab) == false)
+	ft_bzero(*tab_redpip->tab, sizeof(t_skip_tok) * (v->redpip_counter * 2 + 1));
+	if (data_in_tab(v, tab_redpip) == false)												// faudrait a un endroit prendre en charge les free potentiels quand ça fail (peut etre dans parse plutot qu'avoir des return on donne des codes pour call une ou des fonctions qui s'occupe de tout (non on peut pas parce que sinon on perd les pointeurs des structs alloués dans tokenize par ex, ou alors on met ça dans values
 		return (false);
 	return (true);
 }
 
 bool tokenise_redpip(t_values *v)
 {
-	t_skip_tok *tab;
+	t_tab_redpip tab_redpip;
 
+	tab_redpip.i = 0;
+	tab_redpip.valid = false;
 	if (!v->redpip_counter)
 		return (true);
 	v->abs_path_bin = NULL;
 	v->db_var_count = 0;
-	build_tab(v, &tab);
+	build_tab(v, &tab_redpip);
 	free(tab);
+	//some function to free the char * in the structs
 	return (true);
 }
 
@@ -74,3 +103,75 @@ bool tokenise_redpip(t_values *v)
 
 // ah ouai par contre ya un autre probleme c'est comment je sais que je dois skipper ou prendre en compte pour la génération de token, je pourrais mettre une valeur avant les strings de char, mais ya peutetre 
 // une méthode plus simple. pas vraiment chatgpt dit de faire une struct avec un bool, pas bete mais ça va pas changer grand chose.
+
+
+
+
+//--------------------------------
+
+
+// Donc la maintenant en gros pour faire le tableau je vais devoir avoir un parser de redpip
+// je rappelle, on part du postulat que si ça va jusqu'a la fonction tokenize redpip c'est que les redpip tok sont valide (oui, ceux dans les quotes ou envvar ne bloqueront pas le programme si ils sont invalides)
+
+
+
+
+// je pense que je peux très probablement reprendre totalement le code de mon parsing pour le redpip counter, en changeant juste pour qu'il remplisse le tab et en plus qu'il check aussi les envvar pour des characteres de token
+// (je vais devoir faire des counter de redpip char pour les envvar, et globalement aussi pour les quotes, enfin tout ce qui est redpip invalide, afin de pouvoir malloc les strings.
+
+
+// ce serati pas une bonne idée de faire pas en mode fosse commune pour les invalides ? Non je pense que ce sera pas trop difficile d'avoir deux indices, un peu la cmd_str_b et un autre pour la strings dans le tab.
+// Non je pense que c'est pas mal de fonctionner comme ça parce que je pourrais skipper les chars des invalides, par contre quand ça sera un valid normalement ce sera déjà parsé, ouai et puis je pense que c'est pas
+// mal de malloc le tab comme ça, plutot que d'aller voir si ya ou pas des invalides entre les valides.
+
+// en fiat je viens de me dire que comme ça j'ai meme pas besoin vraiment de mettre le contenu des valides ? je peux juste mettre pas skip et faire confiance à la fonction qui va parser ? Après honnêtement c'est pas
+// mal d'avoir les strings déjà prête comme ça je peux direct mettre les pointeurs dans la tokenised strings sans remalloc quelque chose.
+
+// ouai je pense que c'est pas mal de fonctionner comme ça, j'aurais pas besoin de faire un "cehcksum" des viables contrairement aux non viables car je ferais confiance au parser. Comme j'aurais le parser pour incrémenter
+// ainsi que le fait que pour les valides j'aurais une case par token contrairement aux invalides.
+
+
+
+
+// TO DO
+
+// regarder si je peux réutiliser les fonctions pour le redpip counter
+// si c'est le cas build pour checker les envvar aussi, puis changer les fonctions pour mettre dans le tab plutot que incrémenter le redpip counter, et il faudra aussi changer les fonctions sur les quotes pour pas qu'eller
+// skip totalement mais regarder dedans pour les redpip char eventuels
+
+
+
+
+
+
+
+
+// ah ouai mais il y a un probleme, si jamais il y a des redpip non valide avantdes valides par exemple dans des quotes, puis après dans une envvar, puis après des valides, ça veut dire que je vais devoir realloc la string
+// si ya déjà quelque chose dedans ?
+// ouai comme je dois checker pour deux choses différentes, l'intérieur des env var ainsi que dans les quotes (d'ailleurs quand on est dans les quotes je dois pas checker l'interieur si ya des envvar, mais si en fait merde,
+// parce que si ya une envvar dans une double ça va se retrouver dans les token de split mais il faudra pas que je l'interprête ? Donc je dois faire une fonction spéciale dans les double quotes ? normalement je peux utiliser
+// les fonctions de check pour les envar normalement et puis voila, mais par contre je vais toujours devoir avoir une fonction qui check si ya deja quelque chose dans la string et donc calculer la size et realloc tout ça etc..
+
+
+
+// pour manipuler les tab je peux peutetre faire une structure qui enveloppe tout et qui posséde aussi les indices qu'on utilise pour accéder à la structure aussi, juste pour gagner de la place sur les arguments pour la norme.
+// J'allais dire que j'ai pas besoin d'indice, car si jamais je dois refaire une string pour mettre des non valides j'ai pas besoin d'indice je dois juste faire size. Par contre je dois avoir un indice pour savoir ou je suis 
+// dans le tableau.
+// J'allais dire que j'ai pas besoin d'indice, car si jamais je dois refaire une string pour mettre des non valides j'ai pas besoin d'indice je dois juste faire size. Par contre je dois avoir un indice pour savoir ou je suis 
+// dans le tableau.
+
+
+
+
+// dans allocate string je devrais probalement avoir un booleen qui me dit c'est une skippable ou pas afin de savoir dans quelle case du tableau je mets les choses.
+
+
+
+// en fait pour parler de comment je vais incrémenter l'indice du tableau, je pense que simplement dès que j'arrive sur un redpip tok valid, j'incrémente avant et puis après sur la sortie une fois que j'ai fait le travail.
+// Ouai, je pense que faire comme ça ça va fonctionner.
+
+
+
+
+
+// VERIFIER QUE LE BZERO SET BIEN TOUT A ZERO UNE FOIS QUE LE PROGRAMME POURRA COMPILER CETTE PARTIE.

@@ -31,7 +31,7 @@ void	quote_redpip(char *s, size_t *index)
 	return ;
 }
 
-static int	is_pip(t_values *v, char *s, size_t *step)
+int	is_pip(t_values *v, char *s, size_t *step)
 {
 	if (s[0] == '|')
 	{
@@ -85,7 +85,7 @@ bool	is_redir(t_values *v, char *s, size_t *step)
 	return (true);
 }
 
-static ssize_t	is_redpip_valid(t_values *v, char *s, size_t *step)
+int	is_redpip_valid(t_values *v, char *s, size_t *step)
 {
 	int	status;
 

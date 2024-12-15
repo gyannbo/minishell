@@ -41,3 +41,16 @@ EDGE CASES
 gbonis@made-f0Ar12s12:~/gits/minishell$ ls |> pourquoi
 gbonis@made-f0Ar12s12:~/gits/minishell$ ls
 inc  libft  log  Makefile  minishell  obj  pourquoi  src  src_anto
+
+
+pareil 
+
+
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls |<|
+bash: syntax error near unexpected token `|'
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls |>|
+bash: syntax error near unexpected token `newline'
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls |>| lol
+gbonis@made-f0Ar12s12:~/gits/minishell$ ls
+inc  libft  log  lol  Makefile  minishell  obj  src  src_anto
+gbonis@made-f0Ar12s12:~/gits/minishell$ rm lol
