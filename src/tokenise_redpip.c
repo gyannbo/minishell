@@ -6,14 +6,25 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 13:37:15 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/14 13:37:16 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/16 21:52:39 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	init_tab_structs(t_tab_redpip *tab_redpip)
+bool	expand_for_redpip()
 {
+	int	status;
+
+	status = do_retval(v, &v->cmd_str[i], &i);				// ah ouai mais ca etre casse couille parce que la sur retval je regarde pas pour lesredpip,mais peutetre c'est pas grave vu que je sais qu'il y en aura pas je peux laisser le code comme ça
+	if (status == 1)
+		continue ;
+	if (status == -1)
+		return (false);
+	else if (do_expand(v, &v->cmd_str[i], &i) == false)
+		return (false);
+	continue ;
+	return (true);
 }
 
 bool	data_in_tab(t_values *v, t_tab_redpip *tab_redpip)
@@ -25,20 +36,26 @@ bool	data_in_tab(t_values *v, t_tab_redpip *tab_redpip)
 	while (v->cmd_str_b[i])
 	{
 		step = 0;
-		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')					// j'ai plus qu'a rajouter dans cette boucle le check pour les envar
+		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
 		{
-			tab_quote_redpip(&v->cmd_str_b[i], &i);			// attention si jamais cette fonctione return false il faut mettre redpip counter a zero (comme je vais devoir changer les choses pour que on check aussi dans cette fonctionne les redpip, et donc malloc de la string si jamais il y en a
+			if (tab_quote_redpip(v, &v->cmd_str_b[i], &i, tab_redpip) == false)
+				return (false);
 			continue ;
 		}
 		if (is_redpip(v->cmd_str_b[i]))
 		{
-			if (tab_is_redpip_valid(v, &v->cmd_str_b[i], &step, tab_redpip) != -1)
+			if (tab_is_redpip_valid(&v->cmd_str_b[i], &step, tab_redpip) != -1)
 			{
 				i += step;
 				continue ;
 			}
 			v->redpip_counter = 0;
 			return (false);
+		}
+		if(v->cmd_str_b[i] == '$')
+		{
+			if (expand_for_redpip(v->cmd_str_b[i], &i, tab_redpip) == false)
+				return (false);
 		}
 		i++;
 	}
@@ -47,11 +64,12 @@ bool	data_in_tab(t_values *v, t_tab_redpip *tab_redpip)
 
 bool	build_tab(t_values *v, t_tab_redpip *tab_redpip)
 {
-	tab_redpip->tab = malloc(sizeof(t_skip_tok) * (v->redpip_counter * 2 + 1));
-	if (!(*tab_redpip->tab))
+	tab_redpip->tab = malloc(sizeof(t_skip_tok) * (v->redpip_counter * 2 + 2));		// + 2 c'est pour allouer le end après la dernière "case"
+	if (!(tab_redpip->tab))
 		return (false);
-	ft_bzero(*tab_redpip->tab, sizeof(t_skip_tok) * (v->redpip_counter * 2 + 1));
-	if (data_in_tab(v, tab_redpip) == false)												// faudrait a un endroit prendre en charge les free potentiels quand ça fail (peut etre dans parse plutot qu'avoir des return on donne des codes pour call une ou des fonctions qui s'occupe de tout (non on peut pas parce que sinon on perd les pointeurs des structs alloués dans tokenize par ex, ou alors on met ça dans values
+	ft_bzero(tab_redpip->tab, sizeof(t_skip_tok) * (v->redpip_counter * 2 + 2));
+	tab_redpip->tab[v->redpip_counter * 2 + 1].end = true;
+	if (data_in_tab(v, tab_redpip) == false)
 		return (false);
 	return (true);
 }
@@ -62,12 +80,10 @@ bool tokenise_redpip(t_values *v)
 
 	tab_redpip.i = 0;
 	tab_redpip.valid = false;
-	if (!v->redpip_counter)
-		return (true);
 	v->abs_path_bin = NULL;
 	v->db_var_count = 0;
 	build_tab(v, &tab_redpip);
-	free(tab);
+	//free(tab_redpip);
 	//some function to free the char * in the structs
 	return (true);
 }

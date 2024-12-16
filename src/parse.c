@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 15:46:48 by msloot            #+#    #+#             */
-/*   Updated: 2024/10/25 17:20:26 by msloot           ###   ########.fr       */
+/*   Updated: 2024/12/16 22:12:32 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ bool	parse(t_values *values)
 	values->split_s = split_s;
 	if (do_quotes(values) == false)
 		return (false);
-	if (tokenise_redpip(values) == false)
-		return (false);
+//	if (tokenise_redpip(values) == false)
+//		return (false);
 	return (true);
 }

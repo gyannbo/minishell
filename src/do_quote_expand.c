@@ -6,7 +6,7 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 18:52:11 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/12 18:52:21 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/16 22:41:17 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ bool	change_spl_tok(t_values *v, size_t x, size_t *y, int *i)
 		return (true);
 	if (status == -1)
 		return (false);
-	else if (do_expand(v, get_prev_name(v), y) == false)
+	else if (do_expand(v, get_prev_name(v), y) == false)			// attention ici peut etreque do expand peut recevoir un NULL // normalement non car le retour NULL c'est vraiment pour les warnins, ç apasse jamais par la si ya pas de bugs
 		return (false);
 	v->db_var_count++;
 	return (true);

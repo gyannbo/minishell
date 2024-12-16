@@ -6,7 +6,7 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 13:17:33 by gbonis            #+#    #+#             */
-/*   Updated: 2024/11/19 13:17:38 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/16 22:41:33 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	check_for_singles(t_values *v, size_t *i, size_t *i_tab, int **tab)
 	}
 }
 
-char	*get_prev_name(t_values *v)
+char	*get_prev_name(t_values *v)				// ici c'est previous name car a ce stade la du parsing ya plus de noms de variable donc je suis obligé d'aller chercher danscmd_str_b 
 {
 	int		i;
 	bool	betw_quotes;

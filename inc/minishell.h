@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 17:18:41 by msloot            #+#    #+#             */
-/*   Updated: 2024/11/05 11:19:07 by msloot           ###   ########.fr       */
+/*   Updated: 2024/12/16 21:12:02 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@
 
 typedef struct s_skip_tok
 {
+	bool	end;
 	bool	skip;
 	char	*s;
 }t_skip_tok;
@@ -187,10 +188,12 @@ char	*get_prev_name(t_values *v);
 
 // tokenise redpip //
 bool	tokenise_redpip(t_values *v);
-bool	tab_redir_case_equal(t_values *v, char*s, size_t *step);
-bool	tab_redir_case_r_n_s(t_values *v, char *s, size_t *step);
-void	tab_quote_redpip(char *s, size_t *index, t_tab_redpip *tab_redpip);
-int		tab_is_redpip_valid(t_values *v, char *s, size_t *step, t_tab_redpip *tab_redpip);
+bool	tab_redir_case_equal(char*s, size_t *step, t_tab_redpip *tab_redpip);
+bool	tab_redir_case_r_n_s(char *s, size_t *step, t_tab_redpip *tab_redpip);
+bool	tab_quote_redpip(t_values *v, char *s, size_t *index, t_tab_redpip *tab_redpip);
+int		tab_is_redpip_valid(char *s, size_t *step, t_tab_redpip *tab_redpip);
+bool	allocate_string(char *s, int amount, t_tab_redpip *tab_redpip);
+bool	tab_is_redir(char *s, size_t *step, t_tab_redpip *tab_redpip);
 
 //directory functions //
 char	*search_for_dir(t_values *values, char	**env_paths, char *executable);

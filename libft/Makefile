@@ -6,7 +6,7 @@
 #    By: msloot <msloot@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/21 17:15:16 by msloot            #+#    #+#              #
-#    Updated: 2024/06/19 22:05:30 by msloot           ###   ########.fr        #
+#    Updated: 2024/12/16 19:01:43 by gbonis           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,20 +23,8 @@ CFLAGS =	-Wall -Werror -Wextra
 # **************************************************************************** #
 #	MAKEFILE	#
 
-MAKEFLAGS += --silent
 
 SHELL := bash
-
-B =		$(shell tput bold)
-BLA =	$(shell tput setaf 0)
-RED =	$(shell tput setaf 1)
-GRE =	$(shell tput setaf 2)
-YEL =	$(shell tput setaf 3)
-BLU =	$(shell tput setaf 4)
-MAG =	$(shell tput setaf 5)
-CYA =	$(shell tput setaf 6)
-WHI =	$(shell tput setaf 7)
-D =		$(shell tput sgr0)
 
 # **************************************************************************** #
 #	SOURCE		#
@@ -84,25 +72,12 @@ SRC =				$(addprefix $(SRC_PATH), $(SRC_NAME))
 OBJ_NAME =			$(SRC_NAME:.c=.o)
 OBJ =				$(addprefix $(OBJ_PATH), $(OBJ_NAME))
 
-# *************************************************************************** #
-
-define	progress_bar
-	@i=0
-	@while [[ $$i -le $(words $(SRC)) ]] ; do \
-		printf " " ; \
-		((i = i + 1)) ; \
-	done
-	@printf "$(B)]\r[$(D)"
-endef
 
 # *************************************************************************** #
 #	RULES		#
 
-all:		launch $(NAME)
-	@printf "\n$(B)$(MAG)$(NAME) compiled$(D)\n"
+all:		$(NAME)
 
-launch:
-	$(call progress_bar)
 
 $(NAME):	$(OBJ)
 	$(AR) $(NAME) $(OBJ)
@@ -110,7 +85,6 @@ $(NAME):	$(OBJ)
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -I$(INC) -c $< -o $@
-	@printf "$(B)$(GRE)█$(D)"
 
 clean:
 	@$(RM) $(OBJ_PATH)

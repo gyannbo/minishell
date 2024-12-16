@@ -53,6 +53,8 @@ ls $HOME"$lol$_non$?$?$?$?" '$?$?$?$$'
 ls "$?$?$?$?" '$?$?$?$?'
 
 ls "$HOME$HOME"'$HOME$HOME'"$HOME$HOME"$?$?$?
+ls "$'lol'"
+
 DOESNT WORK
 
 (ici le probleme c'est que sur le dernier $HOME la string est $HOME000 par exemple et donc comme il trouve pas le nom de l'envvar dans l'env il va pas plus loin.

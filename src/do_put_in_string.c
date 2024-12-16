@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 17:42:07 by gbonis            #+#    #+#             */
-/*   Updated: 2024/10/25 17:11:33 by msloot           ###   ########.fr       */
+/*   Updated: 2024/12/16 22:31:59 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,15 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 	expand = get_expand(v->env[index]);
 	if (!expand)
 		return (false);
+//	if (v->just_a_check)
+//	{
+//		// ici il faut le code pour le tab de ?? ça parait vachement éloigné comme code path, et en plus je vais etre obligé de passer les pointeurss via values
+//		// ouai je peux mettre vite fait dans values tab_repip avant tout ça et set just a check c'est pas trop dangereux je pense
+//		// ouai je pense que c'est une bonne solution, j'ai qu'à rediriger le code sur le set de just a check
+//		// non, c'est plus compliqué que ça, parce que avant ya le truc avec expand_pointer qui peut faire merder les choses
+//		free(expand);
+//		return (true);		// check with this early return to see if no prob, dont forget to initialise this flag to false before parsing, normalement pas de prob sur early return et les free
+//	}
 	if (put_in_string(v->expand_pointer, expand, i, size_name_var) == false)
 	{
 		free(expand);
@@ -50,6 +59,11 @@ bool	cut_dollar(t_values *v, size_t *i)
 
 	y = 0;
 	z = 0;
+	if (*v->expand_pointer != v->cmd_str)
+	{
+		(*i)++;
+		return (true);
+	}
 	new = malloc(sizeof(char) * ft_strlen(v->cmd_str));
 	if (!new)
 		return (false);

@@ -54,3 +54,27 @@ gbonis@made-f0Ar12s12:~/gits/minishell$ ls |>| lol
 gbonis@made-f0Ar12s12:~/gits/minishell$ ls
 inc  libft  log  lol  Makefile  minishell  obj  src  src_anto
 gbonis@made-f0Ar12s12:~/gits/minishell$ rm lol
+
+
+
+
+
+
+
+
+
+TO DO
+
+-verif initialisation de tout ce qui est dans le tableau de struc
+-faire la bonne manière d'incrémenter dans le tableau ainsi que le set des flags de skip. Normalement je dois incrḿenter le tableau 
+
+-verfi si j'ai null ou -1 terminé le tableau
+
+-j'ai un peu oublié mais je crois que pour le tab j'avais prévu d'utiliser une valeur dans tab_redpip pour indiquer si il fallait incŕementer ou pas dans les tabs, probablement que c'est la fonction 
+allocate qui va gérer ça.
+
+-build infra check envar dans double quote (oui c'est des tok non valide mais je dois quand meme les mettre dans le tableau)
+(d'abord build le code pour les envvar et ensuite je pourrais call ce code la depuis cette partie du code)
+-build envar pas dans quote
+
+-TESTER SI J'AI BIEN OUBLIÉ DE METTRE EXPAND POINTER DANS CUT DOLLAR
