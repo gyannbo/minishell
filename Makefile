@@ -6,7 +6,7 @@
 #    By: msloot <msloot@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/14 19:19:04 by msloot            #+#    #+#              #
-#    Updated: 2024/12/16 22:12:12 by gbonis           ###   ########.fr        #
+#    Updated: 2024/12/16 22:51:22 by gbonis           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,10 +78,10 @@ SRC_NAME =	main.c \
 			quote_expand.c\
 			norm_quote_expand.c\
 			do_quote_expand.c\
-#			tokenise_redpip.c\
-#			redpip_tab_utils.c\
-#			redpip_tab_utils2.c\
-#			string_allocation_redpip.c\
+			tokenise_redpip.c\
+			redpip_tab_utils.c\
+			redpip_tab_utils2.c\
+			string_allocation_redpip.c\
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
 

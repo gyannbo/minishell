@@ -77,4 +77,4 @@ allocate qui va gérer ça.
 (d'abord build le code pour les envvar et ensuite je pourrais call ce code la depuis cette partie du code)
 -build envar pas dans quote
 
--TESTER SI J'AI BIEN OUBLIÉ DE METTRE EXPAND POINTER DANS CUT DOLLAR
+-NE PAS OUBLIER D'INITIALISER DANS TOUS LES CAS LE FLAG JUST A CHECK, PARCE QUE LE CODE VA TOUT LE TEMPS CHECK CE FLAG LÀ DÉS QUE QUELQUE CHOSE CHECK LES ENVAR

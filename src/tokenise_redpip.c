@@ -6,24 +6,43 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 13:37:15 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/16 21:52:39 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/16 23:44:06 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	expand_for_redpip()
+bool	expand_for_redpip(t_values *v, size_t *i, t_tab_redpip *tab_redpip)
 {
 	int	status;
 
-	status = do_retval(v, &v->cmd_str[i], &i);				// ah ouai mais ca etre casse couille parce que la sur retval je regarde pas pour lesredpip,mais peutetre c'est pas grave vu que je sais qu'il y en aura pas je peux laisser le code comme ça
+	v->tab_redpip = tab_redpip;		// DO NOT FORGET TO SET TO NULL AT EXIT ?  // je pense que c'est pas grave comme c'est set a chaque fois ici, normalement ya pas de risque quon utilise du bullshit
+	v->just_a_check = true;
+	v->expand_pointer = NULL;
+	status = do_retval(v, &v->cmd_str[i], &i);
 	if (status == 1)
-		continue ;
+	{
+		v->just_a_check = false;
+		return (true);			//verifier / test
+	}
 	if (status == -1)
+	{
+		v->just_a_check = false;
 		return (false);
-	else if (do_expand(v, &v->cmd_str[i], &i) == false)
-		return (false);
-	continue ;
+	}
+	else 
+	{
+	//	prob ici je vais devoir set les flags comme just a check et aussimettre dans v redpip je pense
+	// JE VAIS  PROB DEVOIR AUSSI METTRE L"INDICE DANS VALUES	// oui, je pense que si je mets l'indice, en détectant le flag je peux ensuite utiliser la cmd_str_b et l'indice pour donner les bon arg aux fonction du tab redpip
+		v->indice_redpip = i;
+		if (do_expand(v, &v->cmd_str[i], &i) == false)
+		{
+			v->just_a_check = false;
+			return (false);
+		}
+		return (true);
+	}
+	v->just_a_check = false;
 	return (true);
 }
 
@@ -56,6 +75,7 @@ bool	data_in_tab(t_values *v, t_tab_redpip *tab_redpip)
 		{
 			if (expand_for_redpip(v->cmd_str_b[i], &i, tab_redpip) == false)
 				return (false);
+			continue ;			// c'est bon ici ?
 		}
 		i++;
 	}

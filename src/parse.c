@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 15:46:48 by msloot            #+#    #+#             */
-/*   Updated: 2024/12/16 22:12:32 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/16 23:02:24 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ bool	check_quote(t_values *v, char *s)
 	size_t	i;
 
 	i = 0;
+	v->just_a_check = false;
 	while (s[i])
 	{
 		if (s[i] == '\'' || s[i] == '\"')
@@ -74,7 +75,7 @@ bool	parse(t_values *values)
 	values->split_s = split_s;
 	if (do_quotes(values) == false)
 		return (false);
-//	if (tokenise_redpip(values) == false)
-//		return (false);
+	if (tokenise_redpip(values) == false)
+		return (false);
 	return (true);
 }

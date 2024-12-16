@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 17:18:41 by msloot            #+#    #+#             */
-/*   Updated: 2024/12/16 21:12:02 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/16 23:01:11 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ typedef struct s_values
 	char	**tokenized_str;
 	int		prev_ret_val;
 	int		db_var_count;
+	bool	just_a_check;
 }t_values;
 
 typedef struct s_var
