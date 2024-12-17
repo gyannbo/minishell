@@ -6,13 +6,13 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 15:46:48 by msloot            #+#    #+#             */
-/*   Updated: 2024/12/16 23:02:24 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/17 17:50:47 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static bool	other_quote(t_values *v, char *s, char type)
+bool	other_quote(t_values *v, char *s, char type)
 {
 	size_t	i;
 
@@ -38,7 +38,7 @@ bool	check_quote(t_values *v, char *s)
 	size_t	i;
 
 	i = 0;
-	v->just_a_check = false;
+	v->just_a_check = false;		// içi c'est juste pour une histoire de norm, car je dois initialiser ce flag tot sinon dans l'expand ça va tout péter
 	while (s[i])
 	{
 		if (s[i] == '\'' || s[i] == '\"')

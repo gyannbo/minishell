@@ -6,11 +6,35 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 17:42:07 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/16 23:52:19 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/17 22:25:50 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+bool	redpip_expand_check(t_values *v, char *s, t_tab_redpip *tab_redpip)
+{
+	size_t	y;
+	size_t	step;
+
+	y = 0;
+	step = 0;
+	while (s[y])
+	{
+		if (is_redpip(s[y]))
+		{
+			if (tab_is_redpip_valid(&s[y], &step, tab_redpip) != -1)
+			{
+				y += step;
+				continue ;
+			}
+			v->redpip_counter = 0;
+			return (false);
+		}
+		y++;
+	}
+	return (true);
+}
 
 bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 {
@@ -28,9 +52,9 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 		return (false);
 	if (v->just_a_check)
 	{
-		
-		// ATTENTION ICI JE DOIS MANAGER L'INCREMENTATION DU I SUR LA SIZE DU NOM DE LA VAR // probablement ce sera quelque chose comme size_var + 1 (pour aller après la size var parce que j'utilise jamais cette valeur pour une incrementation cest tj pour dautre chose (acces tableaux etc) afin d'avoir le i sur le charactere apres la var (attenation a pas s'emmeler les pinceaux entre ce qui est la avant et ce qui serala après lorsque le parsing des quotes est terminé
-		// ici je peux peut etre réutiliser le code du tableau, je devrais pouvoir, le seul truc c'est de mettre redpip_tab dans v pour communiquer entre les code path
+		if (redpip_expand_check(v, var, v->tab_redpip) == false)			// protec ?
+			return (false);
+		(*i) += size_name_var + 1;   // verif ça
 		free(expand);
 		return (true);		// check with this early return to see if no prob, dont forget to initialise this flag to false before parsing, normalement pas de prob sur early return et les free
 	}
@@ -58,7 +82,7 @@ bool	cut_dollar(t_values *v, size_t *i)
 
 	y = 0;
 	z = 0;
-	if (*v->expand_pointer != v->cmd_str)
+	if (*v->expand_pointer != v->cmd_str)				// noter ça quelque part. Dans ce cas la il n'y a que lors de l'expand normal que je dois faire quelque chose, pour les doubles quote je ne dois pas le faire, et pour le tab redpip bien sur je ne dois changer aucune string
 	{
 		(*i)++;
 		return (true);

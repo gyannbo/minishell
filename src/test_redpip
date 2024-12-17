@@ -66,7 +66,8 @@ gbonis@made-f0Ar12s12:~/gits/minishell$ rm lol
 TO DO
 
 -verif initialisation de tout ce qui est dans le tableau de struc
--faire la bonne manière d'incrémenter dans le tableau ainsi que le set des flags de skip. Normalement je dois incrḿenter le tableau 
+
+-FAIRE LA BONNE MANIÈRE D'INCRÉMENTER DANS LE TABLEAU AINSI QUE LE SET DES FLAGS DE SKIP. NORMALEMENT JE DOIS INCRḾENTER LE TABLEAU 
 
 -verfi si j'ai null ou -1 terminé le tableau
 
@@ -78,3 +79,53 @@ allocate qui va gérer ça.
 -build envar pas dans quote
 
 -NE PAS OUBLIER D'INITIALISER DANS TOUS LES CAS LE FLAG JUST A CHECK, PARCE QUE LE CODE VA TOUT LE TEMPS CHECK CE FLAG LÀ DÉS QUE QUELQUE CHOSE CHECK LES ENVAR
+
+
+
+
+
+
+
+ouai donc probablement le truc avec l'indice que j'utilise pour le tab redpip c'est probablement très en amont que je dois le set, genre dès que ça par soit dans le code des envar ou quote ou redpip on split tok.
+Ah ouai d'ailleurs je me souviens que je devais aussi gerer les envar dans les double quotes, ah ouai mais j'avais décidé
+
+(OUI PARCE QUE LES ENVAR DANS LES DOUBLES QUOTES, SI YA DES REDPIP DEDANS JE PEUX PAS JUSTE LES CHECKER DANS LES SPLIT TOKEN CAR CE SONT DES NON VALIDES DONC JE DOIS CHECKER VIA LA CMD STR B
+
+
+
+
+------------
+
+verifier que dans le code poru les quotes si je peux utiliser le i comme dans le code des envar on split tok
+
+Je sais pas, j'ai une sous string, je pense pas que ce soit bon avec le code de envvar
+Ah mais j'ai le i original, c'est la varable index, je peux probablement  utiliser quelque chose comme index + i ou quoi
+
+
+
+
+faire les incrémentation du tableau en fonction de si il faut skip ou pas. Pour rappel le fonctionnement du tableau est qu'il y a des case comme ça   . | . | .  chaque | est un redpip token valide, et chaque . est une 
+string avec tous les char redpip non valid les uns a la suite des autres. Et aussi dans chaque case du tableau on a une valeur pour après que je tokenise le tout pour savoir si je dois tokeniser ou skipper les redpip char
+ou pas.
+
+ah ouai ça y est je me rapelle pourquoi j'ai mis valid dans values, c'est pour indiquer au fonction quoi mettre dans le tab, mais le hic c'est que je pense que j'ai pas vraiment besoin d'un flag, je peux directement assigner
+dans le tab comme ça je pense
+
+
+
+je peux pas set l'indice au debut avant de partir dans les fonctions correspondantes (dans la grande boucle), je dois incrémenter le tableau beaucoup plus bas dans le code je pense, d'ou l'utilité du flag dans values je pense.
+Ah non j'ai dit de la merde c'est dans tab_redpip le flag, c'est pas dans values.
+
+
+
+
+
+
+Build initialization of the skip flag ou alors je fais dans l'autre sens, non en fait je pense que c'est juste le premier qui est pas set.
+
+
+
+
+
+
+free les trucs.

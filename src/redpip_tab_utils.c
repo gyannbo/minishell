@@ -6,7 +6,7 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 18:37:41 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/16 21:35:41 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/17 23:01:05 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,13 @@ bool	tab_quote_redpip(t_values *v, char *s, size_t *index, t_tab_redpip *tab_red
 		{
 			*index += i + 1;
 			return true;
+		}
+		if (type == '"' && s[i] == '$')
+		{
+			(*index) += i;		// icic je dois faire ç apour le code d'après sur l'envvar, normalement l'incrémentation se fait auto donc je dois juste "continue" après
+			if (expand_for_redpip(v, index, tab_redpip) == false)   // verif ici de l'arythmetic de index + i
+				return (false);
+			continue ;
 		}
 		if (is_redpip(s[i]))
 		{

@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 17:18:41 by msloot            #+#    #+#             */
-/*   Updated: 2024/12/16 23:01:11 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/17 23:44:54 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,18 +78,20 @@ typedef struct s_quote
 
 typedef struct s_values
 {
-	int		isquote;
-	int		redpip_counter;
-	char	**env;
-	char	*cmd_str;
-	char	*cmd_str_b;
-	char	*abs_path_bin;
-	char	**expand_pointer;
-	char	**split_s;
-	char	**tokenized_str;
-	int		prev_ret_val;
-	int		db_var_count;
-	bool	just_a_check;
+	int				isquote;
+	int				redpip_counter;
+	char			**env;
+	char			*cmd_str;
+	char			*cmd_str_b;
+	char			*abs_path_bin;
+	char			**expand_pointer;
+	char			**split_s;
+	char			**tokenized_str;
+	int				prev_ret_val;
+	int				db_var_count;
+	bool			just_a_check;
+	t_tab_redpip	*tab_redpip;
+	size_t			*indice_redpip;
 }t_values;
 
 typedef struct s_var
@@ -195,6 +197,7 @@ bool	tab_quote_redpip(t_values *v, char *s, size_t *index, t_tab_redpip *tab_red
 int		tab_is_redpip_valid(char *s, size_t *step, t_tab_redpip *tab_redpip);
 bool	allocate_string(char *s, int amount, t_tab_redpip *tab_redpip);
 bool	tab_is_redir(char *s, size_t *step, t_tab_redpip *tab_redpip);
+bool	expand_for_redpip(t_values *v, size_t *i, t_tab_redpip *tab_redpip);
 
 //directory functions //
 char	*search_for_dir(t_values *values, char	**env_paths, char *executable);

@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 16:56:31 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/16 23:30:01 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/17 17:56:40 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ int	do_retval(t_values *v, char *s, size_t *i)
 
 	if (s[1] == '?')
 	{
-		if (!v->expand_pointer)			// tester ça
+		if (!v->expand_pointer)			// tester ça   // ce truc là c'est pour éviter de manipuler des strings lorsqu'on build le tableau, et comme je suis sur qu'il n'y a pas de redpip char je return
 		{
 			(*i)++;
-			return (1)
+			return (1);
 		}
 		c_retval = ft_itoa(v->prev_ret_val);
 		if (!c_retval)

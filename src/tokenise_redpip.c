@@ -6,7 +6,7 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 13:37:15 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/16 23:44:06 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/18 00:02:24 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	expand_for_redpip(t_values *v, size_t *i, t_tab_redpip *tab_redpip)
 	v->tab_redpip = tab_redpip;		// DO NOT FORGET TO SET TO NULL AT EXIT ?  // je pense que c'est pas grave comme c'est set a chaque fois ici, normalement ya pas de risque quon utilise du bullshit
 	v->just_a_check = true;
 	v->expand_pointer = NULL;
-	status = do_retval(v, &v->cmd_str[i], &i);
+	status = do_retval(v, &v->cmd_str[(*i)], i);
 	if (status == 1)
 	{
 		v->just_a_check = false;
@@ -35,7 +35,7 @@ bool	expand_for_redpip(t_values *v, size_t *i, t_tab_redpip *tab_redpip)
 	//	prob ici je vais devoir set les flags comme just a check et aussimettre dans v redpip je pense
 	// JE VAIS  PROB DEVOIR AUSSI METTRE L"INDICE DANS VALUES	// oui, je pense que si je mets l'indice, en détectant le flag je peux ensuite utiliser la cmd_str_b et l'indice pour donner les bon arg aux fonction du tab redpip
 		v->indice_redpip = i;
-		if (do_expand(v, &v->cmd_str[i], &i) == false)
+		if (do_expand(v, &v->cmd_str[(*i)], i) == false)
 		{
 			v->just_a_check = false;
 			return (false);
@@ -57,12 +57,14 @@ bool	data_in_tab(t_values *v, t_tab_redpip *tab_redpip)
 		step = 0;
 		if (v->cmd_str_b[i] == '\'' || v->cmd_str_b[i] == '\"')
 		{
+			tab_redpip->valid = false;
 			if (tab_quote_redpip(v, &v->cmd_str_b[i], &i, tab_redpip) == false)
 				return (false);
 			continue ;
 		}
 		if (is_redpip(v->cmd_str_b[i]))
 		{
+			tab_redpip->valid = true;
 			if (tab_is_redpip_valid(&v->cmd_str_b[i], &step, tab_redpip) != -1)
 			{
 				i += step;
@@ -73,7 +75,8 @@ bool	data_in_tab(t_values *v, t_tab_redpip *tab_redpip)
 		}
 		if(v->cmd_str_b[i] == '$')
 		{
-			if (expand_for_redpip(v->cmd_str_b[i], &i, tab_redpip) == false)
+			tab_redpip->valid = false;
+			if (expand_for_redpip(v, &i, tab_redpip) == false)
 				return (false);
 			continue ;			// c'est bon ici ?
 		}
@@ -89,6 +92,7 @@ bool	build_tab(t_values *v, t_tab_redpip *tab_redpip)
 		return (false);
 	ft_bzero(tab_redpip->tab, sizeof(t_skip_tok) * (v->redpip_counter * 2 + 2));
 	tab_redpip->tab[v->redpip_counter * 2 + 1].end = true;
+	tab_redpip->tab[0].skip = true;
 	if (data_in_tab(v, tab_redpip) == false)
 		return (false);
 	return (true);
@@ -99,7 +103,7 @@ bool tokenise_redpip(t_values *v)
 	t_tab_redpip tab_redpip;
 
 	tab_redpip.i = 0;
-	tab_redpip.valid = false;
+	tab_redpip.valid = false;	// prob pas besoin de ça
 	v->abs_path_bin = NULL;
 	v->db_var_count = 0;
 	build_tab(v, &tab_redpip);
@@ -154,7 +158,6 @@ bool tokenise_redpip(t_values *v)
 
 // je pense que je peux très probablement reprendre totalement le code de mon parsing pour le redpip counter, en changeant juste pour qu'il remplisse le tab et en plus qu'il check aussi les envvar pour des characteres de token
 // (je vais devoir faire des counter de redpip char pour les envvar, et globalement aussi pour les quotes, enfin tout ce qui est redpip invalide, afin de pouvoir malloc les strings.
-
 
 // ce serati pas une bonne idée de faire pas en mode fosse commune pour les invalides ? Non je pense que ce sera pas trop difficile d'avoir deux indices, un peu la cmd_str_b et un autre pour la strings dans le tab.
 // Non je pense que c'est pas mal de fonctionner comme ça parce que je pourrais skipper les chars des invalides, par contre quand ça sera un valid normalement ce sera déjà parsé, ouai et puis je pense que c'est pas
