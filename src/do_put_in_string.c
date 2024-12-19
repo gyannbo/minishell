@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 17:42:07 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/17 22:25:50 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/19 23:34:06 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,13 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 
 	if (check_var_exist(v, var, &index) == false)
 	{
-		if (put_in_string(v->expand_pointer, "", i, size_name_var) == false)
-			return (false);
+		if (v->just_a_check == false)
+		{
+			if (put_in_string(v->expand_pointer, "", i, size_name_var) == false)
+				return (false);
+			return (true);
+		}
+		(*i)++;
 		return (true);
 	}
 	expand = get_expand(v->env[index]);
@@ -52,9 +57,9 @@ bool	do_put_in_string(t_values *v, char *var, size_t *i, int size_name_var)
 		return (false);
 	if (v->just_a_check)
 	{
-		if (redpip_expand_check(v, var, v->tab_redpip) == false)			// protec ?
+		if (redpip_expand_check(v, expand, v->tab_redpip) == false)			// protec ?
 			return (false);
-		(*i) += size_name_var + 1;   // verif ça
+		(*i)++;
 		free(expand);
 		return (true);		// check with this early return to see if no prob, dont forget to initialise this flag to false before parsing, normalement pas de prob sur early return et les free
 	}

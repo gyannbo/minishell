@@ -126,6 +126,45 @@ Build initialization of the skip flag ou alors je fais dans l'autre sens, non en
 
 
 
+------------
+
+-free les trucs.
+-tester toutes les codes path, par exemple quand les variables existe pas etc..
+$"lol"
+$.lol
 
 
-free les trucs.
+
+
+
+
+
+------------
+
+
+
+verifier que dans le test ls > > lol les dernières case du tableau sont intialisé a skip=true, on sait jamais
+
+
+
+
+
+TAB TESTS
+
+OK:
+ls > > lol
+lol='>'
+ls $lol pouquoi $lol
+ls $dontexist pourqoui $DONTEXIST
+
+NOT OK:
+
+
+
+
+
+
+
+
+
+->FREE LES CHOSES
