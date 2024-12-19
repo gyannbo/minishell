@@ -6,7 +6,7 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 13:37:15 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/19 23:42:27 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/19 23:53:17 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,9 @@ bool	build_tab(t_values *v, t_tab_redpip *tab_redpip)
 bool tokenise_redpip(t_values *v)
 {
 	t_tab_redpip tab_redpip;
+	size_t	i;
 
+	i = 0;
 	if (!v->redpip_counter)
 		return (true);
 	tab_redpip.i = 0;
@@ -106,8 +108,14 @@ bool tokenise_redpip(t_values *v)
 	v->abs_path_bin = NULL;
 	v->db_var_count = 0;
 	build_tab(v, &tab_redpip);
-	//free(tab_redpip);
-	//some function to free the char * in the structs
+//	tokeniser();
+	while (tab_redpip.tab[i].end != true)
+	{
+		if (tab_redpip.tab[i].s)
+			free(tab_redpip.tab[i].s);
+		i++;
+	}
+	free(tab_redpip.tab);
 	return (true);
 }
 
