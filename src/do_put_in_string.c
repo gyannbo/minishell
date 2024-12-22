@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 17:42:07 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/23 00:10:24 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/23 00:25:57 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,22 +49,6 @@ bool	redpip_expand_check(t_values *v, char *s, t_tab_redpip *tab_redpip)
 	if (allocate_string(temp_str, counter, tab_redpip) == false)
 		return (false);
 	free(temp_str);
-	return (true);
-	
-//	while (s[y])
-//	{
-//		if (is_redpip(s[y]))
-//		{
-//			if (tab_is_redpip_valid(&s[y], &step, tab_redpip) != -1)
-//			{
-//				y += step;
-//				continue ;
-//			}
-//			v->redpip_counter = 0;
-//			return (false);
-//		}
-//		y++;
-//	}
 	return (true);
 }
 
