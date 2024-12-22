@@ -6,7 +6,7 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/15 18:36:27 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/18 19:32:09 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/23 00:09:43 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ bool	allocate_string(char *s, int amount, t_tab_redpip *tab_redpip)
 			return (false);
 		ft_memcpy(tab_redpip->tab[tab_redpip->i].s, s, amount);
 		tab_redpip->tab[tab_redpip->i].s[amount] = 0;
-		(tab_redpip->i)++;
+		if (tab_redpip->valid)
+			(tab_redpip->i)++;	// attention c'est faux ici je pense il faut incr seulement quand tab_redpip
 		return (true);
 	}
 	size = ft_strlen(tab_redpip->tab[tab_redpip->i].s);

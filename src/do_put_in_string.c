@@ -6,7 +6,7 @@
 /*   By: msloot <msloot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 17:42:07 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/19 23:34:06 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/23 00:10:24 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,57 @@
 
 bool	redpip_expand_check(t_values *v, char *s, t_tab_redpip *tab_redpip)
 {
+	size_t	i;
 	size_t	y;
 	size_t	step;
+	size_t	counter;
+	char	*temp_str;
 
+	(void)v;
+	(void)tab_redpip;
+	i = 0;
 	y = 0;
 	step = 0;
+	counter = 0;
+	while (s[y])
+	{
+		if (is_redpip(s[y]))
+			counter++;
+		y++;
+	}
+	temp_str = malloc(sizeof(char) * counter + 1);
+	if (!temp_str)
+		return (false);				//  check if return false even makes senses here
+	y = 0;
 	while (s[y])
 	{
 		if (is_redpip(s[y]))
 		{
-			if (tab_is_redpip_valid(&s[y], &step, tab_redpip) != -1)
-			{
-				y += step;
-				continue ;
-			}
-			v->redpip_counter = 0;
-			return (false);
+			temp_str[i] = s[y];
+			i++;
 		}
 		y++;
 	}
+	temp_str[i] = 0;
+	if (allocate_string(temp_str, counter, tab_redpip) == false)
+		return (false);
+	free(temp_str);
+	return (true);
+	
+//	while (s[y])
+//	{
+//		if (is_redpip(s[y]))
+//		{
+//			if (tab_is_redpip_valid(&s[y], &step, tab_redpip) != -1)
+//			{
+//				y += step;
+//				continue ;
+//			}
+//			v->redpip_counter = 0;
+//			return (false);
+//		}
+//		y++;
+//	}
 	return (true);
 }
 

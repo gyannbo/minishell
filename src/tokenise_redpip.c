@@ -6,7 +6,7 @@
 /*   By: gbonis <gbonis@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 13:37:15 by gbonis            #+#    #+#             */
-/*   Updated: 2024/12/19 23:53:17 by gbonis           ###   ########.fr       */
+/*   Updated: 2024/12/23 00:05:17 by gbonis           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ bool	expand_for_redpip(t_values *v, size_t *i, t_tab_redpip *tab_redpip)
 {
 	int	status;
 
+	tab_redpip->valid = false;
 	v->tab_redpip = tab_redpip;		// DO NOT FORGET TO SET TO NULL AT EXIT ?  // je pense que c'est pas grave comme c'est set a chaque fois ici, normalement ya pas de risque quon utilise du bullshit
 	v->just_a_check = true;
 	v->expand_pointer = NULL;
